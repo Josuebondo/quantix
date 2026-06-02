@@ -1,0 +1,37 @@
+# Ignore dependencies
+/vendor/
+/node_modules/
+
+# Environment files
+/.env
+/.env.local
+/.env.*.local
+
+# PHP unit & coverage
+/.phpunit.result.cache
+/coverage/
+
+# Composer
+/composer.phar
+
+# IDE files
+/.vscode/
+/.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and cache
+*.log
+/.cache
+
+# Storage directories
+/storage/
+/stockage/
+!/.gitkeep
+/storage/.gitkeep
+/stockage/.gitkeep

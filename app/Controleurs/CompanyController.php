@@ -1,0 +1,343 @@
+<?php
+
+namespace App\Controleurs;
+
+use App\BaseControleur;
+use App\Modeles\permission;
+use App\Services\CompanyService;
+use App\Services\WizardService;
+use Core\Reponse;
+use Core\Requete;
+
+/**
+ * CompanyController - Gère l'onboarding SaaS complet
+ */
+class CompanyController extends BaseControleur
+{
+    private CompanyService $companyService;
+    private WizardService $wizardService;
+
+    public function __construct()
+    {
+        $this->companyService = new CompanyService();
+        $this->wizardService = new WizardService();
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════════════════
+     * ACTIVATION FLOW
+     * ═══════════════════════════════════════════════════════════════════════════
+     */
+
+    /**
+     * GET /company/activate?token=abc123
+     * Page d'activation - Utilisateur clique le lien depuis l'email
+     */
+    public function activate(Requete $requete, Reponse $response)
+    {
+        $token = $requete->obtenir('token');
+        // dd($token);
+        if (!$token) {
+            return vue('company.activation', [
+                'status' => 'error',
+                'title' => 'Token manquant',
+                'message' => 'Le lien d\'activation est invalide ou a expiré',
+            ]);
+        }
+
+        // Appeler le endpoint d'activation
+        $result = $this->companyService->activateUserAccount($token);
+        // dd($result);
+        if (!$result['success']) {
+            return vue('company.activation', [
+                'status' => 'error',
+                'title' => 'Activation échouée',
+                'message' => $result['message'],
+            ]);
+        }
+        // cas token expiré ou invalide
+
+        if ($result['data']['already_actived'] ?? false) {
+            return vue('company.activation', [
+                'status' => 'warning',
+                'title' => 'Compte déjà activé',
+                'message' => 'Votre compte est déjà activé. Veuillez vous connecter.',
+            ]);
+        }
+        // Success: afficher page de bienvenue
+        return vue('company.bien', [
+            'status' => 'success',
+            'title' => 'Activation réussie',
+            'message' => 'Compte activé avec succès !',
+            'redirectUrl' => $result['data']['redirectUrl'],
+            'email' => $result['data']['user']['email'],
+            'first_name' => $result['data']['user']['first_name'],
+            'last_name' => $result['data']['user']['last_name'],
+            'name' => $result['data']['user']['first_name'] . ' ' . $result['data']['user']['last_name'],
+            'user' => $result['data']['user'],
+            'company' => $result['data']['user']['company'],
+        ]);
+    }
+
+    /**
+     * POST /api/company/activate
+     * Endpoint d'activation (appelé via AJAX ou form POST)
+     */
+    public function apiActivate(Requete $requete, Reponse $response)
+    {
+        $token = $requete->obtenir('token') ?? '';
+
+        $result = $this->companyService->activateUserAccount($token);
+
+        return $response->json($result, $result['code'] ?? 200);
+    }
+
+    /**
+     * GET /welcome
+     * Page de bienvenue après activation
+     */
+    public function welcome(Requete $requete, Reponse $response)
+    {
+        // Utilisateur doit être authentifié  
+        //gere par midleware
+
+
+        $user = auth()->user();
+
+        return vue('company.welcome', [
+            'user' => $user,
+            'company' => is_array($user) ? ($user['company'] ?? null) : ($user->company ?? null),
+        ]);
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════════════════
+     * WIZARD INITIALIZATION
+     * ═══════════════════════════════════════════════════════════════════════════
+     */
+
+    /**
+     * POST /api/wizard/init
+     * Initialiser une nouvelle session wizard (ou reprendre existante)
+     */
+    public function wizardInit(Requete $requete, Reponse $response)
+    {
+
+
+        $authUser = auth()->user();
+        if (!$authUser) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Utilisateur non valide',
+            ], 401);
+        }
+
+        $result = $this->wizardService->initializeWizard($authUser);
+
+        return $response->json($result, $result['code'] ?? 200);
+    }
+
+    /**
+     * GET /workspace/setup?session=abc123
+     * Page du wizard d'onboarding
+     */
+    public function configurationInitiale(Requete $requete, Reponse $response)
+    {
+        if (!auth()->isAuthenticated()) {
+            session()->enregistrer('url_intended', $requete->obtenir('REQUEST_URI') ?? '/welcome');
+            return redirection('/login');
+        }
+
+        $sessionId = $requete->obtenir('session') ?? '';
+        $user = auth()->user();
+
+        // Fetch real wizard session data from backend
+        $wizardData = $this->wizardService->resumeWizard($sessionId);
+
+        return vue('company.configuration_initiale', [
+            'sessionId' => $sessionId,
+            'user' => $user,
+            'wizardData' => $wizardData, // Pass real backend data
+            'currentStep' => $wizardData['success'] ? ($wizardData['data']['step'] ?? 1) : 1,
+            'wizardState' => $wizardData['success'] ? ($wizardData['data']['state'] ?? []) : [],
+        ]);
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════════════════
+     * WIZARD ENDPOINTS
+     * ═══════════════════════════════════════════════════════════════════════════
+     */
+
+    /**
+     * GET /api/wizard/resume?session=abc123
+     * Reprendre une session wizard existante
+     */
+    public function wizardResume(Requete $requete, Reponse $response)
+    {
+
+
+        $sessionId = $requete->obtenir('session') ?? '';
+
+        if (!$sessionId) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Session ID manquant',
+            ], 400);
+        }
+
+        $result = $this->wizardService->resumeWizard($sessionId);
+
+        return $response->json($result, $result['code'] ?? 200);
+    }
+
+    /**
+     * POST /api/wizard/autosave
+     * Sauvegarder l'état du wizard (appelé fréquemment avec debounce)
+     */
+    public function wizardAutosave(Requete $requete, Reponse $response)
+    {
+
+        $data = $requete->tousCorps();
+
+        $sessionId = $data['wizardSessionId'] ?? '';
+        $state = $data['state'] ?? [];
+        $step = $data['step'] ?? 1;
+        $dirtyFields = $data['dirtyFields'] ?? null;
+
+        if (!$sessionId) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Session ID manquant',
+            ], 400);
+        }
+
+        $result = $this->wizardService->autosaveState($sessionId, $state, $step, $dirtyFields);
+
+        return $response->json($result, $result['statut'] ?? 200);
+    }
+
+    /**
+     * POST /api/wizard/deploy
+     * Finaliser le wizard et créer le workspace
+     * IDEMPOTENT: X-Idempotency-Key header
+     */
+    public function wizardDeploy(Requete $requete, Reponse $response)
+    {
+        if (!auth()->isAuthenticated()) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Non authentifié',
+            ], 401);
+        }
+
+        $data = $requete->json();
+        $headers = $requete->headers();
+
+        $sessionId = $data['wizardSessionId'] ?? '';
+        $finalState = $data['state'] ?? [];
+        $idempotencyKey = $headers['X-Idempotency-Key'] ?? '';
+
+        if (!$sessionId || !$finalState || !$idempotencyKey) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Données manquantes',
+                'required' => ['wizardSessionId', 'state', 'X-Idempotency-Key header'],
+            ], 400);
+        }
+
+        $result = $this->wizardService->deployWizard($sessionId, $finalState, $idempotencyKey);
+
+        return $response->json($result, $result['code'] ?? 200);
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════════════════
+     * WIZARD HELPER ENDPOINTS
+     * ═══════════════════════════════════════════════════════════════════════════
+     */
+
+    /**
+     * GET /api/wizard/permissions
+     * Récupérer les modules de permissions disponibles depuis la DB
+     */
+    public function wizardPermissions(Requete $requete, Reponse $response)
+    {
+        try {
+            // Récupérer tous les modules uniques depuis la table permissions
+            $allPermissions = permission::tout();
+
+            if (!$allPermissions) {
+                throw new \Exception('Aucune permission trouvée');
+            }
+
+            // Extraire les modules uniques
+            $modules = [];
+            foreach ($allPermissions as $perm) {
+                $module = $perm->module ?? null;
+                if ($module && !in_array($module, $modules)) {
+                    $modules[] = $module;
+                }
+            }
+
+            if (empty($modules)) {
+                // Si pas de modules, retourner liste par défaut
+                $modules = ['Inventaire', 'Sites', 'Commandes', 'Analyses', 'Utilisateurs'];
+            } else {
+                sort($modules);
+            }
+
+            return $response->json([
+                'success' => true,
+                'data' => $modules,
+            ]);
+        } catch (\Exception $e) {
+            // Retourner liste par défaut en cas d'erreur
+            return $response->json([
+                'success' => true,
+                'data' => ['Inventaire', 'Sites', 'Commandes', 'Analyses', 'Utilisateurs'],
+            ]);
+        }
+    }
+
+    /**
+     * POST /api/wizard/generate-sku
+     * Générer un SKU unique
+     */
+    public function wizardGenerateSku(Requete $requete, Reponse $response)
+    {
+        $data = $requete->tousCorps();
+
+        $productName = $data['productName'] ?? 'PROD';
+        $productCategory = $data['productCategory'] ?? 'GEN';
+        $skuPrefix = $data['skuPrefix'] ?? 'SKU-';
+
+        // Génération simple
+        $prefix = substr($productName, 0, 3);
+        $catCode = substr($productCategory, 0, 2);
+        $rand = strtoupper(substr(md5(time()), 0, 4));
+
+        $sku = "{$skuPrefix}{$catCode}-{$rand}";
+
+        return $response->json([
+            'success' => true,
+            'data' => [
+                'sku' => $sku,
+            ],
+        ]);
+    }
+
+    /**
+     * GET /dashboard (placeholder)
+     * Page dashboard après setup complet
+     */
+    public function dashboard(Requete $requete, Reponse $response)
+    {
+
+        $user = auth()->user();
+
+        return vue('dashboard.index', [
+            'user' => $user,
+        ]);
+    }
+}
