@@ -1,14 +1,20 @@
+<?php
+// dd($status, $title, $message); 
+?>
+
 <!DOCTYPE html>
 
-<html class="dark" lang="fr">
+<html class="dark overflow-x-hidden" lang="fr">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="csrf-token" content="<?php echo csrf_token(); ?>">
     <title>Quatinx | Erreur d'activation</title>
     <link rel="stylesheet" href="/css/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Hanken+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+
     <style>
         .glass-panel {
             background: rgba(29, 32, 34, 0.6);
@@ -55,10 +61,10 @@
     </style>
 </head>
 
-<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col items-center justify-between selection:bg-primary/30">
+<body class="bg-slate-950 text-slate-100 bg-pattern font-body-md min-h-screen flex flex-col items-center justify-between overflow-x-hidden max-w-full selection:bg-primary/30">
     <!-- Subtle Background Elements -->
     <div class="fixed inset-0 grid-bg pointer-events-none z-0"></div>
-    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="fixed top-[-10%] left-[-10%] w-[30%] h-[30%] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
     <!-- Header / Logo -->
     <header class="w-full z-10 py-12 px-margin-desktop max-w-container-max-width mx-auto flex justify-center">
         <div class="flex items-center gap-2 group cursor-pointer transition-transform duration-300 hover:scale-105">
@@ -73,23 +79,23 @@
             <div class="fade-transition" id="error-state">
                 <!-- Error Icon Visual -->
                 <div class="mb-8 relative inline-block">
-                    <div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150 animate-pulse"></div>
-                    <div class="relative w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center border border-white/10 mx-auto">
-                        <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 0, 'wght' 200;">link_off</span>
+                    <div class="absolute inset-0 text-green-600 blur-2xl rounded-full scale-150 animate-pulse"></div>
+                    <div class="relative w-20 h-20 text-green-600  rounded-full flex items-center justify-center border border-white/10 mx-auto">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0, 'wght' 200;">link_off</span>
                     </div>
                 </div>
                 <!-- Typography Content -->
-                <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 tracking-tight">
+                <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6 tracking-tight">
                     Lien d'activation expiré
                 </h1>
-                <p class="font-body-lg text-body-lg text-on-surface-variant mb-10 leading-relaxed max-w-md mx-auto">
+                <p class="font-body-lg text-body-lg text-slate-300 mb-10 leading-relaxed max-w-md mx-auto">
                     Oups ! Il semble que votre lien d'activation n'est plus valide ou a déjà été utilisé. Pour des raisons de sécurité, ces liens expirent après 24 heures.
                 </p>
                 <!-- Actions -->
                 <div class="flex flex-col items-center">
                     <!-- 1. INITIAL BUTTON -->
                     <div class="w-full" id="initial-action-container">
-                        <button class="w-full px-10 py-4 bg-primary text-on-primary-fixed font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="request-link-btn">
+                        <button class="w-full px-10 py-4 bg-primary text-white font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="request-link-btn">
                             <span id="btn-text-request">Demander un nouveau lien</span>
                             <span class="hidden material-symbols-outlined animate-spin-custom" id="loader-request">progress_activity</span>
                         </button>
@@ -97,25 +103,32 @@
                     <!-- 2. EMAIL INPUT (Hidden initially) -->
                     <form class="w-full space-y-6 hidden-state" id="activation-form">
                         <div class="w-full text-left">
-                            <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 ml-1" for="admin-email">Email de l'administrateur</label>
-                            <input class="w-full bg-surface-container-high border border-white/10 rounded-lg px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300" id="admin-email" name="email" placeholder="admin@entreprise.com" required="" type="email" />
+                            <label class="block font-label-sm text-label-sm text-slate-300 mb-2 ml-1" for="admin-email">Email de l'administrateur</label>
+                            <input class="w-full bg-surface-container-high border border-white/10 rounded-lg px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300" id="admin-email" name="email" placeholder="admin@entreprise.com" required="" type="email" />
                         </div>
-                        <button class="w-full px-10 py-4 bg-primary text-on-primary-fixed font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="submit-activation-btn" type="submit">
+                        <button class="w-full px-10 py-4 bg-primary text-white font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="submit-activation-btn" type="submit">
                             <span id="btn-text-submit">Envoyer le lien d'activation</span>
                             <span class="hidden material-symbols-outlined animate-spin-custom" id="loader-submit">progress_activity</span>
                         </button>
                     </form>
+                    <!-- message container -->
+                    <div class="mt-6 " id="message-container">
+
+
+
+                    </div>
                     <div class="flex flex-col md:flex-row items-center gap-6 mt-10">
-                        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2" href="#">
+                        <a class="font-label-sm text-label-sm text-slate-300 hover:text-primary transition-colors flex items-center gap-2" href="#">
                             <span class="material-symbols-outlined text-[18px]">support_agent</span>
                             Contacter le support
                         </a>
                         <span class="hidden md:block w-1 h-1 bg-surface-variant rounded-full"></span>
-                        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2" href="#">
+                        <a class="font-label-sm text-label-sm text-slate-300 hover:text-primary transition-colors flex items-center gap-2" href="#">
                             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                             Retour à la connexion
                         </a>
                     </div>
+
                 </div>
             </div>
             <!-- Success State (Hidden by default) -->
@@ -128,37 +141,40 @@
                     </div>
                 </div>
                 <!-- Typography Content -->
-                <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 tracking-tight">
+                <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6 tracking-tight">
                     Lien envoyé !
                 </h1>
-                <p class="font-body-lg text-body-lg text-on-surface-variant mb-10 leading-relaxed max-w-md mx-auto">
+                <p class="font-body-lg text-body-lg text-slate-300 mb-10 leading-relaxed max-w-md mx-auto">
                     Un nouveau lien d'activation a été envoyé à votre adresse email. Pensez à vérifier vos courriers indésirables si vous ne le recevez pas d'ici quelques minutes.
                 </p>
                 <!-- Actions -->
                 <div class="w-full">
-                    <a class="block w-full px-10 py-4 bg-primary text-on-primary-fixed text-center font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95" href="#">
+                    <a class="block w-full px-10 py-4 bg-primary text-white text-center font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95" href="/login">
                         Retour à la connexion
                     </a>
                 </div>
             </div>
+            <!-- Message Container  -->
         </div>
+
         <!-- Visual Decoration (Asymmetric context) -->
         <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/5 blur-[80px] rounded-full pointer-events-none"></div>
     </main>
     <!-- Footer -->
-    <footer class="w-full z-10 py-12 border-t border-white/5 bg-surface-container-lowest/50 backdrop-blur-sm mt-12">
+    <footer class="w-full z-10 py-12 border-t border-white/5 bg-slate-950/70 backdrop-blur-sm mt-12">
         <div class="max-w-container-max-width mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-on-surface-variant font-body-md text-[14px]">
+            <div class="text-slate-400 font-body-md text-[14px]">
                 © 2024 Quatinx Inc. All rights reserved.
             </div>
             <div class="flex items-center gap-8">
-                <a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                <a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
-                <a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">Security</a>
-                <a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+                <a class="font-body-md text-[14px] text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="font-body-md text-[14px] text-slate-400 hover:text-primary transition-colors" href="#">Terms of Service</a>
+                <a class="font-body-md text-[14px] text-slate-400 hover:text-primary transition-colors" href="#">Security</a>
+                <a class="font-body-md text-[14px] text-slate-400 hover:text-primary transition-colors" href="#">Contact</a>
             </div>
         </div>
     </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const initialActionContainer = document.getElementById('initial-action-container');
@@ -198,31 +214,90 @@
             });
 
             // 3 & 4: Submission State to Success State
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-
                 // Show loader on submit button
                 btnTextSubmit.classList.add('hidden');
                 loaderSubmit.classList.remove('hidden');
                 submitBtn.disabled = true;
+                let email = document.getElementById('admin-email').value;
+                let crsfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                if (!email) {
+                    document.getElementById('admin-email').classList.add('border-red-500');
+                    document.getElementById('admin-email').placeholder = 'Veuillez entrer une adresse email valide.';
+                    return;
+                }
+                try {
+                    let response = await fetch('/company/send-activation', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': crsfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            email,
+                            csrf_token: crsfToken
+                        })
+                    });
 
-                setTimeout(() => {
-                    // Transition to success state
-                    errorState.style.opacity = '0';
-                    errorState.style.transform = 'translateY(-10px)';
+                    // Parse JSON response
+                    let data = await response.json();
+                    console.log('[API RESPONSE]', data);
 
+
+
+                    if (data.success === true) {
+                        document.getElementById('admin-email').classList.remove('border-red-500');
+                        document.getElementById('message-container').innerHTML = `
+                            <p class="text-green-500 font-medium flex items-center gap-2 justify-center">
+                                <span>${data.message || 'Lien d\'activation envoyé avec succès !'}</span>
+                            </p>
+                        `;
+                        setTimeout(() => {
+                            const toasts = document.querySelectorAll('.message-container > p');
+                            toasts.forEach(toast => toast.remove());
+                        }, 5000);
+                        // Transition to success state
+                        errorState.style.opacity = '0';
+                        errorState.style.transform = 'translateY(-10px)';
+
+                        setTimeout(() => {
+                            errorState.classList.add('hidden-state');
+                            successState.classList.remove('hidden-state');
+
+                            // Trigger reflow
+                            void successState.offsetWidth;
+
+                            successState.style.display = 'block';
+                            successState.style.opacity = '1';
+                            successState.style.transform = 'translateY(0)';
+                        }, 300);
+
+                        console.log(data);
+                    } else {
+                        document.getElementById('admin-email').classList.add('border-red-500');
+                        document.getElementById('admin-email').placeholder = 'veuillez entrer une adresse email valide.';
+                        console.error('Error:', data);
+                        throw new Error(data);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('message-container').innerHTML = `
+                        <p class="text-red-500 font-medium flex items-center gap-2 justify-center">
+                            <span>Une erreur est survenue. Veuillez réessayer.</span>
+                        </p>
+                    `;
                     setTimeout(() => {
-                        errorState.classList.add('hidden-state');
-                        successState.classList.remove('hidden-state');
-
-                        // Trigger reflow
-                        void successState.offsetWidth;
-
-                        successState.style.display = 'block';
-                        successState.style.opacity = '1';
-                        successState.style.transform = 'translateY(0)';
-                    }, 300);
-                }, 1500); // 1.5 seconds loader
+                        const toasts = document.querySelectorAll('.message-container > p');
+                        toasts.forEach(toast => toast.innerHTML = '');
+                    }, 5000);
+                } finally {
+                    // Reset submit button state
+                    btnTextSubmit.classList.remove('hidden');
+                    loaderSubmit.classList.add('hidden');
+                    submitBtn.disabled = false;
+                }
             });
 
             // Mouse interaction for button glow
@@ -232,8 +307,16 @@
                     const rect = btn.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    btn.style.setProperty('--x', `${x}px`);
-                    btn.style.setProperty('--y', `${y}px`);
+                    btn.style.setProperty('--x', `
+                                            $ {
+                                                x
+                                            }
+                                            px`);
+                    btn.style.setProperty('--y', `
+                                            $ {
+                                                y
+                                            }
+                                            px`);
                 });
             });
         });

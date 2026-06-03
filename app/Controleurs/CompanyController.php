@@ -38,7 +38,7 @@ class CompanyController extends BaseControleur
         $token = $requete->obtenir('token');
         // dd($token);
         if (!$token) {
-            return vue('company.activation', [
+            return vue('company.setup_error', [
                 'status' => 'error',
                 'title' => 'Token manquant',
                 'message' => 'Le lien d\'activation est invalide ou a expiré',
@@ -48,24 +48,21 @@ class CompanyController extends BaseControleur
         // Appeler le endpoint d'activation
         $result = $this->companyService->activateUserAccount($token);
         // dd($result);
+        // Cas d'erreur (token invalide, expiré, etc.)
         if (!$result['success']) {
-            return vue('company.activation', [
+            return vue('company.setup_error', [
                 'status' => 'error',
                 'title' => 'Activation échouée',
                 'message' => $result['message'],
             ]);
         }
-        // cas token expiré ou invalide
+        // cas où le compte est déjà activé
 
-        if ($result['data']['already_actived'] ?? false) {
-            return vue('company.activation', [
-                'status' => 'warning',
-                'title' => 'Compte déjà activé',
-                'message' => 'Votre compte est déjà activé. Veuillez vous connecter.',
-            ]);
+        if ($result['data']['already_activated'] ?? false) {
+            return redirection('/dashboard');
         }
         // Success: afficher page de bienvenue
-        return vue('company.bien', [
+        return vue('company.activation', [
             'status' => 'success',
             'title' => 'Activation réussie',
             'message' => 'Compte activé avec succès !',
@@ -75,7 +72,7 @@ class CompanyController extends BaseControleur
             'last_name' => $result['data']['user']['last_name'],
             'name' => $result['data']['user']['first_name'] . ' ' . $result['data']['user']['last_name'],
             'user' => $result['data']['user'],
-            'company' => $result['data']['user']['company'],
+            'company' => $result['data']['company'],
         ]);
     }
 

@@ -114,6 +114,7 @@ class CompanyService
         ]);
         $v->ajouter('company_phone', [
             'string',
+            'telephone',
             'max:20'
         ]);
         $v->ajouter('admin_first_name', [
@@ -221,20 +222,20 @@ class CompanyService
      * 3. Create wizard session
      * 4. Return activation data
      */
+
+
     public function activateUserAccount(string $token): array
     {
-
         try {
-            // Verify JWT token
-            $jwt = $this->authService->getAuth()->getTokenProvider();
-            $verified = $jwt->verify($token);
 
-            if (!$verified) {
+            // 1. Verify token (UNE SEULE FOIS)
+            $jwt = $this->authService->getAuth()->getTokenProvider();
+            $decoded = $jwt->verify($token);
+
+            if (!$decoded) {
                 return $this->error('Token invalide ou expiré', 401);
             }
 
-            // Decode to get user data
-            $decoded = $jwt->verify($token);
             $userId = $decoded['user_id'] ?? null;
             $userEmail = $decoded['email'] ?? null;
 
@@ -242,107 +243,88 @@ class CompanyService
                 return $this->error('Token malformé', 401);
             }
 
-            // Find user
-            $user = users::ou('id', '=', $userId)->ou('email', '=', $userEmail)->premier();
+            // 2. Find user
+            $user = users::ou('id', '=', $userId)
+                ->ou('email', '=', $userEmail)
+                ->premier();
+
             if (!$user) {
                 return $this->error('Utilisateur introuvable', 404);
             }
-            // Get associated company
+
+            // 3. Get company
             $company = company::ou('id', '=', $user->company_id)->premier();
 
-            // Already activated?
-            if ($user->activation_status === 'activated') {
-                // Compte already activated - just return tokens for login
-                $tokenProvider = $this->authService->getAuth()->getTokenProvider();
-                $accessToken = $tokenProvider->generate([
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                ], 3600);
+            $alreadyActivated = ($user->activation_status === 'activated');
 
-                $refreshToken = $tokenProvider->generate([
-                    'user_id' => $user->id,
-                    'type' => 'refresh',
-                ], 604800);
+            // 4. Activate user if not already
+            if (!$alreadyActivated) {
+                $user->activated_at = now();
+                $user->activation_status = 'activated';
+                $user->sauvegarder();
 
-                // Redirect based on setup status
-                $redirectUrl = ($company && $company->setup_completed_at)
-                    ? '/dashboard'
-                    : '/welcome';
+                if ($company) {
+                    $company->status = 1;
 
-                return $this->success([
-                    'user' => [
-                        'id' => $user->id,
-                        'first_name' => $user->first_name,
-                        'last_name' => $user->last_name,
-                        'email' => $user->email,
-                        'company' => [
-                            'id' => $company->id ?? null,
-                            'name' => $company->name ?? null,
-                            'setup_completed_at' => $company->setup_completed_at ?? null,
-                        ],
-                    ],
-                    'tokens' => [
-                        'access_token' => $accessToken,
-                        'refresh_token' => $refreshToken,
-                        'expires_in' => 3600,
-                        'token_type' => 'Bearer',
-                    ],
-                    'message' => 'Compte déjà activé',
-                    'redirectUrl' => $redirectUrl,
-                    'already_activated' => true,
-                ], 'Déjà activé - Auto-login', 200);
+                    if (!$company->setup_step || $company->setup_step == 0) {
+                        $company->setup_step = 1;
+                    }
+
+                    $company->sauvegarder();
+                }
             }
 
-            // Mark user as activated
-            $user->activated_at = now();
-            $user->activation_status = 'activated'; // ✅ Correct field name
-            $user->sauvegarder();
-
-            // Get associated company
-            $company = company::ou('id', '=', $user->company_id)->premier();
-            if ($company) {
-                $company->status = 1; // Activate company
-                $company->setup_step = 1; // ✅ Initialize setup step
-                $company->sauvegarder();
-            }
-
-            // ✅ PHASE 2: Generate tokens for auto-login
+            // 5. Generate tokens (always login)
             $tokenProvider = $this->authService->getAuth()->getTokenProvider();
+
             $accessToken = $tokenProvider->generate([
                 'user_id' => $user->id,
                 'email' => $user->email,
-            ], 3600); // 1 hour expiration
+            ], 3600);
 
             $refreshToken = $tokenProvider->generate([
                 'user_id' => $user->id,
                 'type' => 'refresh',
-            ], 604800); // 7 days expiration
+            ], 604800);
 
+            // 6. Compute next step (IMPORTANT FLOW LOGIC)
+            $next = 'wizard';
+
+            if ($company && $company->setup_completed_at) {
+                $next = 'dashboard';
+            }
+
+            // 7. Response clean (STATE-BASED)
             return $this->success([
+                'state' => $alreadyActivated ? 'already_activated' : 'activated',
+
                 'user' => [
                     'id' => $user->id,
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'email' => $user->email,
-                    'company_id' => $company->id ?? null,
                 ],
+
                 'company' => $company ? [
                     'id' => $company->id,
                     'name' => $company->name,
-                    'setup_step' => 1,
+                    'setup_step' => $company->setup_step ?? 1,
+                    'setup_completed_at' => $company->setup_completed_at,
                 ] : null,
-                'tokens' => [
+
+                'auth' => [
                     'access_token' => $accessToken,
                     'refresh_token' => $refreshToken,
                     'expires_in' => 3600,
                     'token_type' => 'Bearer',
                 ],
-                'message' => 'Compte activé avec succès',
-                'redirectUrl' => '/welcome',
-                'already_actived' => false,
-            ], 'Activation réussie - Auto-login activé', 200);
+
+                'redirectUrl' => $next,
+
+            ], 'Activation traitée avec succès', 200);
         } catch (\Exception $e) {
-            return $this->error('Erreur activation: ' . $e->getMessage() . $e->getCode(), 500);
+            // dd($e);
+            return $this->error('Erreur activation: token invalide ou expiré', 500);
         }
     }
 }

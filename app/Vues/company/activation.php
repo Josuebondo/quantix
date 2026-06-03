@@ -5,205 +5,257 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Quatinx - Activation Réussie</title>
+    <meta name="csrf-token" content="<?php echo csrf_token(); ?>">
+    <title>Quantix | Bienvenue à bord</title>
     <link rel="stylesheet" href="/css/tailwind.css">
-    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <!-- Google Fonts: Hanken Grotesk -->
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
 
-    }],
-    "body-lg": ["18px", {
-    "lineHeight": "28px",
-    "fontWeight": "400"
-    }],
-    "headline-lg-mobile": ["28px", {
-    "lineHeight": "36px",
-    "fontWeight": "600"
-    }]
-    }
-    },
-    },
-    }
-    </script>
+
     <style>
         body {
-            font-family: 'Hanken Grotesk', sans-serif;
-            background-color: #051424;
-            background-image: radial-gradient(circle at 2px 2px, #122131 1px, transparent 0);
-            background-size: 40px 40px;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        @keyframes check-bounce {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-
-            70% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .animate-check {
-            animation: check-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            background-color: #0b0f10;
+            color: #e0e3e5;
+            -webkit-font-smoothing: antialiased;
         }
 
         .glass-card {
-            background: rgba(18, 33, 49, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(139, 144, 160, 0.15);
+            background: rgba(29, 32, 34, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .btn-hover-effect {
+        .emerald-glow {
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.15);
+        }
+
+        .step-transition {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-hover-effect:active {
-            transform: scale(0.97);
+        .step-transition:hover {
+            transform: translateX(8px);
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
         }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center p-gutter-mobile md:p-gutter-desktop text-on-background">
-    <!-- Main Content -->
-    <main class="w-full max-w-[540px] flex-grow flex flex-col items-center justify-center">
-        <!-- Logo Section for Visual Harmony -->
-        <div class="mb-gutter-desktop">
-            <img alt="Quatinx Logo" class="h-12 w-auto object-contain opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATUcku_1M5WA7ShpAB1ocpicZ1t6Tx5fxQUGW1XNXkxJRgn24xFPUEhLcSsnWCTXUDmoegPAwnQP9cleMl9zpVHuMbj-jo2TCN2KUMuo2gvQxwMaAZ3pLtuqKsCJdjgnMAFjr0uV_0RECLFIate4gszLOdAjXrT7o5ofwiKm4dbrnfBGovmrv974lKrbLnQiQ7uTPIsSb5Scpeus8lDZMF1eIncxB_rlyXh7nlsNos_PGTgfepsRtlIeDS1dmAoFie1g2d7gA8H3Q" />
-        </div>
-        <!-- Animated Emerald Icon -->
-        <div class="mb-gutter-desktop relative">
-            <div class="w-28 h-28 rounded-full bg-secondary-container/10 border border-secondary/20 flex items-center justify-center animate-check shadow-[0_0_40px_rgba(0,165,114,0.1)]">
-                <?php if (($status ?? '') === 'error'): ?>
-                    <span class="material-symbols-outlined text-[64px] text-red-500">
-                        error
-                    </span>
-
-                <?php elseif (($status ?? '') === 'warning'): ?>
-                    <span class="material-symbols-outlined text-[64px] text-yellow-500">
-                        warning
-                    </span>
-
-                <?php else: ?>
-                    <span class="material-symbols-outlined text-[64px] text-secondary">
-                        check_circle
-                    </span>
-                <?php endif; ?>
+<body class="font-body-md overflow-x-hidden">
+    <!-- Atmospheric Background Elements -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+        <div class="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-[100px]"></div>
+    </div>
+    <!-- Top Navigation Anchor -->
+    <header class="w-full h-20 flex justify-center items-center px-margin-desktop sticky top-0 z-50">
+        <div class="w-full max-w-container-max-width flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img alt="Quatinx Logo" class="h-10 w-auto" data-alt="A sleek, professional company logo for Quatinx featuring an abstract geometric 'Q' mark combined with three-dimensional box icons. The color scheme is a premium gradient of deep sapphire blue and vibrant azure. The logo conveys high-speed logistics and sophisticated inventory management through clean lines and a modern, corporate aesthetic against a white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD41d90lUx5aT7azQyB5sAKmQ0o-EiFdmQm2IP3Chc7yhlSV5KkWrw4vCWFqQJhK5-d3ygdc8xBVCc271Y_zIY68EQQoJhM4owN4ff7LFiyqt-X3HQBggTvv4npb-Za6YEPqBr4_rlZ4ey12H5UvGPQlBjqi4ReVEkQ_p8SQQ3c21OroMEWMyU_wEA0nYsca7HBfrSnNihk08wtDnrtQmvuzwoqBcCRde0laE9LbKq1sFpA33S7qBaU3sVqVC0sXpMdZOe84tpzh9w" />
+                <span class="font-headline-md text-headline-md text-on-surface tracking-tight">Quatinx</span>
             </div>
-            <!-- Subtle atmospheric glow -->
-            <div class="absolute -inset-8 bg-secondary-container/5 rounded-full blur-3xl -z-10"></div>
+            <div class="flex items-center gap-4">
+                <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">help</button>
+                <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">settings</button>
+            </div>
         </div>
-        <!-- Success Content Card -->
-        <div class="glass-card w-full rounded-xl p-8 md:p-10 text-center shadow-2xl">
-            <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-6">
-                <?= htmlspecialchars($title ?? 'Activation réussie') ?>
-            </h1>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-10 leading-relaxed max-w-[400px] mx-auto">
-                <?= htmlspecialchars($message ?? '') ?>
-            </p>
-            <!-- Primary Action Button -->
-            <?php if (($status ?? '') === 'error'): ?>
-
-                <button onclick="window.location.href='/login'"
-                    class="w-full py-4 px-8 bg-red-500 text-white rounded-lg">
-                    Retour à la connexion
-                </button>
-
-            <?php elseif (($status ?? '') === 'warning'): ?>
-
-                <button onclick="window.location.href='/login'"
-                    class="w-full py-4 px-8 bg-yellow-500 text-black rounded-lg">
-                    Se connecter
-                </button>
-
-            <?php else: ?>
-
-                <button id="startBtn"
-                    class="w-full py-4 px-8 bg-secondary-container text-on-secondary-container rounded-lg">
-                    Lancer la configuration
-                </button>
-
-            <?php endif; ?>
-            <!-- Secondary Info -->
-            <div class="mt-10 pt-8 border-t border-outline-variant/20">
-                <div class="flex items-center justify-center gap-4">
-                    <div class="flex -space-x-2">
-                        <img alt="User" class="w-7 h-7 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO-tzaUakrbHXt53gCDLKpQhQ0FkSlaLyRWPtlPuE5IF6U3RJl6FwpqGY3li1IdEGFVX_r-9eubbDhphCwb_hKSJRDzwS207Rui92i6B7NOWJqMRf5sBN_qtYVPghO4ty0BioihIeNE58mU72R-i5LTIsznDGzE8kaQ4G9HQPWIGSTSiYRzy5qQ2JwL_pnuTyUsohZJvSuQuj6F25IePc_AbSCZbc7cbdIuMR_6KOkJxHVEczX3yHQhT5nRCIcPKZTbgUI1b8RBRM" />
-                        <img alt="Admin" class="w-7 h-7 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASNiOhctgDcCo9iw8WhDT_vaK5DrymS4kBs3j7UI5v04ol0IneDUt6cEO9y_DXOdLB4l1r3WPCftVuDdXN0VUnhghXWRwUSOCVOPHqFj2W9kYj6r2kZWr0BtUFQTjvya3vQNyMJjNfpbIIK1LCQNRkhwiZo8A_NfpcnQRUX3CTH11N5JktAjx533VOTo5dxP7If0ZZgNEwSvUUW00iqzC4PHCbeDYM9FHEFim5BYNs_G99MPi263tUXKL38nxGBJxD5wd_OEnbT2g" />
+    </header>
+    <main class="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative">
+        <div class="max-w-[720px] w-full text-center space-y-12">
+            <!-- Hero Section -->
+            <section class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high border border-outline-variant text-primary font-label-sm uppercase tracking-widest mb-4">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    Système Prêt
+                </div>
+                <h1 class="font-display-lg text-display-lg text-on-surface leading-none">Bienvenue à bord !</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[540px] mx-auto">
+                    Commençons par configurer votre espace de travail <span class="text-on-surface font-semibold">Quatinx</span> pour l'adapter à vos besoins opérationnels spécifiques.
+                </p>
+            </section>
+            <!-- Configuration Steps -->
+            <div class="space-y-4 text-left">
+                <!-- Step 1 -->
+                <div class="glass-card p-6 rounded-xl flex items-center justify-between step-transition group cursor-pointer">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-2xl fill-icon">work</span>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-body-lg text-on-surface">Workspace</h3>
+                            <p class="text-label-sm text-on-surface-variant">Devise, langue et paramètres régionaux.</p>
+                        </div>
                     </div>
-                    <span class="font-body-md text-sm text-on-surface-variant italic">
-                        Rejoignez plus de 200 entreprises leaders
-                    </span>
+                    <div class="flex items-center gap-3">
+                        <span class="text-label-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant group-hover:border-primary/50 transition-colors">Prêt à configurer</span>
+                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">chevron_right</span>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="glass-card p-6 rounded-xl flex items-center justify-between step-transition group cursor-pointer">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-2xl fill-icon">language</span>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-body-lg text-on-surface">Sites</h3>
+                            <p class="text-label-sm text-on-surface-variant">Créez votre premier Entrepôt ou Point de Vente.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-label-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant group-hover:border-primary/50 transition-colors">Prêt à configurer</span>
+                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">chevron_right</span>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="glass-card p-6 rounded-xl flex items-center justify-between step-transition group cursor-pointer">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-2xl fill-icon">category</span>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-body-lg text-on-surface">Structure d'Inventaire</h3>
+                            <p class="text-label-sm text-on-surface-variant">Catégories et produits initiaux.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-label-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant group-hover:border-primary/50 transition-colors">Prêt à configurer</span>
+                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">chevron_right</span>
+                    </div>
+                </div>
+                <!-- Step 4 -->
+                <div class="glass-card p-6 rounded-xl flex items-center justify-between step-transition group cursor-pointer">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-2xl fill-icon">group</span>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-md text-body-lg text-on-surface">Équipe</h3>
+                            <p class="text-label-sm text-on-surface-variant">Rôles et invitations collaborateurs.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-label-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant group-hover:border-primary/50 transition-colors">Prêt à configurer</span>
+                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">chevron_right</span>
+                    </div>
+                </div>
+            </div>
+            <!-- CTA Section -->
+            <div class="pt-8 space-y-6">
+                <button id="startWizardBtn" class="  w-full py-5 px-8 rounded-xl bg-primary text-on-primary font-bold text-body-lg emerald-glow hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                    Commencer la configuration
+                    <span class="material-symbols-outlined font-bold">arrow_forward</span>
+                </button>
+                <!-- Loading State (hidden by default) -->
+                <button id="loadingState" class=" hidden w-full py-5 px-8 rounded-xl bg-primary text-on-primary font-bold text-body-lg emerald-glow hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                    Initialisation du wizard...
+                    <span class="material-symbols-outlined  animate-spin">autorenew</span>
+                </button>
+
+
+                <!-- Error State (hidden by default) -->
+                <div id="errorState" class="hidden">
+                    <div class="glass-effect rounded-xl border border-error/10 p-8 text-center space-y-4">
+                        <div class="flex justify-center">
+                            <span class="material-symbols-outlined text-5xl text-error">error</span>
+                        </div>
+                        <p id="errorMessage" class="text-on-surface-variant">Une erreur est survenue lors de l'initialisation du wizard.</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center gap-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-lg">schedule</span>
+                    <span class="font-label-sm">Installation estimée : 4 minutes</span>
                 </div>
             </div>
         </div>
-        <!-- Help Link -->
-        <p class="mt-8 font-body-md text-sm text-on-surface-variant">
-            Besoin d'aide ? <a class="text-primary font-semibold hover:underline decoration-primary/30 underline-offset-4" href="#">Consulter la documentation</a>
-        </p>
     </main>
-    <!-- Professional Footer -->
-    <footer class="w-full max-w-[1440px] px-margin-mobile md:px-margin-desktop py-8 mt-auto flex flex-col md:flex-row items-center justify-between gap-6 border-t border-outline-variant/10 bg-surface/50 backdrop-blur-sm">
-        <div class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity">
-            <span class="material-symbols-outlined text-secondary text-[22px]">inventory_2</span>
-            <span class="font-body-md text-sm text-on-surface font-medium">Quatinx Inc. - Solution de gestion intelligente</span>
-        </div>
-        <div class="flex flex-col md:flex-row items-center gap-gutter-desktop">
-            <span class="font-label-sm text-xs text-on-surface-variant/70">© 2024 Tous droits réservés</span>
-            <nav class="flex gap-gutter-mobile">
-                <a class="font-label-sm text-xs text-on-surface-variant hover:text-secondary transition-colors" href="#">Confidentialité</a>
-                <a class="font-label-sm text-xs text-on-surface-variant hover:text-secondary transition-colors" href="#">Support technique</a>
-            </nav>
+    <!-- Visual Footer Accent -->
+    <footer class="w-full py-8 border-t border-outline-variant/30 mt-auto">
+        <div class="max-w-container-max-width mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 text-on-surface-variant font-label-sm">
+            <p>© 2024 Quatinx Enterprise. Tous droits réservés.</p>
+            <div class="flex gap-8">
+                <a class="hover:text-primary transition-colors" href="#">Confidentialité</a>
+                <a class="hover:text-primary transition-colors" href="#">Support Technique</a>
+                <a class="hover:text-primary transition-colors" href="#">Documentation</a>
+            </div>
         </div>
     </footer>
-    <!-- Interactive Feedback -->
+    <!-- Inline Interaction Script -->
     <script>
-        const btn = document.querySelector('button');
-        btn.addEventListener('click', () => {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span> Initialisation...`;
-            btn.disabled = true;
-            btn.classList.add('opacity-80', 'cursor-not-allowed');
-
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.classList.remove('opacity-80', 'cursor-not-allowed');
-                window.location.href = '/dashboard'; // Redirection à la page de configuration après l'animation
-            }, 1800);
-        });
-
-        // Atmospheric mouse glow effect
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
-            const glow = document.createElement('div');
-            glow.style.position = 'fixed';
-            glow.style.left = x + 'px';
-            glow.style.top = y + 'px';
-            glow.style.width = '1px';
-            glow.style.height = '1px';
-            glow.style.boxShadow = '0 0 120px 60px rgba(0, 165, 114, 0.05)';
-            glow.style.borderRadius = '50%';
-            glow.style.pointerEvents = 'none';
-            glow.style.zIndex = '-1';
-            document.body.appendChild(glow);
-
-            setTimeout(() => {
-                glow.remove();
-            }, 600);
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.step-transition');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 + (index * 150));
+            });
         });
     </script>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+        document.getElementById('startWizardBtn').addEventListener('click', initializeWizard);
+
+        async function initializeWizard() {
+            try {
+                // Show loading state
+                document.getElementById('startWizardBtn').classList.add('hidden');
+                document.getElementById('loadingState').classList.remove('hidden');
+                document.getElementById('errorState').classList.add('hidden');
+
+                // Call wizard init endpoint
+                const response = await fetch('/api/wizard/init', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('[WIZARD INIT RESULT]', result);
+                if (!result.success || !result.data?.sessionId) {
+                    throw new Error(result.message || 'Failed to initialize wizard');
+                }
+
+                // Redirect to wizard with session ID
+                const sessionId = result.data.sessionId;
+                window.location.href = `/workspace/setup?session=${encodeURIComponent(sessionId)}`;
+
+            } catch (error) {
+                console.error('[WIZARD INIT ERROR]', error);
+
+                // Show error state
+                document.getElementById('startWizardBtn').classList.remove('hidden');
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = error.message || 'Erreur lors de l\'initialisation du wizard';
+            }
+        }
+
+        function resetWizardButton() {
+            document.getElementById('startWizardBtn').classList.remove('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+        }
+    </script>
+
 </body>
 
 </html>

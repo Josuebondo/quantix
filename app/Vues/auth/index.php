@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Connexion - Quatinx</title>
+    <title>Quantix | Connexion</title>
     <link rel="stylesheet" href="/css/tailwind.css">
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />

@@ -52,8 +52,9 @@ function successMessage() {
 
   document.getElementById("mesage").innerHTML = html;
 }
-function errorMessage(msg) {
+function errorMessage(msg, code = null) {
   document.getElementById("mesage").innerHTML = "";
+  const formattedMsg = String(msg).replace(/\n/g, "<br />");
   let html = `                    <div class="w-32 h-32 bg-red-600/10 rounded-full flex items-center justify-center mb-12 ring-1 ring-red-600/30 relative">
                         <div class="absolute inset-0 bg-red-600/20 rounded-full blur-2xl opacity-50"></div>
                         <span class="material-symbols-outlined text-6xl text-red-600 relative z-10 font-thin">error</span>
@@ -61,7 +62,7 @@ function errorMessage(msg) {
                     <h2 class="text-4xl font-bold text-white mb-6 font-headline-md tracking-tight">Une erreur est survenue</h2>
                   <P class="text-white/70 text-lg font-body-md leading-relaxed mb-12 max-w-lg">
                     <br>
-                    ${msg}
+                    ${formattedMsg}
                     </P>
                     <div class="flex flex-col gap-8 w-full items-center">
                         <button onclick="retry()" class="w-full sm:w-auto bg-primary text-midnight font-bold py-5 px-16 rounded-xl hover:bg-primary/90 active:scale-95 transition-all shadow-xl shadow-primary/20 text-sm tracking-widest uppercase">
@@ -176,11 +177,15 @@ function loading() {
     </div>
   `;
 }
+const csrfToken = document
+  .querySelector('meta[name="csrf-token"]')
+  .getAttribute("content");
 // Soumettre l'enregistrement au backend
 async function submitCompanyRegistration() {
   try {
     // Récupérer les données de tous les formulaires
     const forms = document.querySelectorAll(".info-form");
+
     const data = {};
     forms.forEach((form) => {
       const inputs = form.querySelectorAll("input");
@@ -206,6 +211,7 @@ async function submitCompanyRegistration() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRF-TOKEN": csrfToken,
       },
       body: JSON.stringify(data),
     });
@@ -217,6 +223,20 @@ async function submitCompanyRegistration() {
     if (!response.ok || !result.success) {
       console.error("Erreurs:", result.message || result.errors);
       let errorMsg = result.message || "Une erreur est survenue";
+
+      if (result.errors && typeof result.errors === "object") {
+        const fieldErrors = [];
+        Object.values(result.errors).forEach((errorList) => {
+          if (Array.isArray(errorList)) {
+            fieldErrors.push(...errorList);
+          } else if (typeof errorList === "string") {
+            fieldErrors.push(errorList);
+          }
+        });
+        if (fieldErrors.length > 0) {
+          errorMsg = fieldErrors.join(" \n");
+        }
+      }
 
       errorMessage(errorMsg);
       await new Promise((r) => setTimeout(r, 2400));
@@ -251,12 +271,13 @@ async function sendActivationEmail(email) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-CSRF-TOKEN": csrfToken,
     },
     body: JSON.stringify({
       email: email,
     }),
   });
-  const res = await req.text();
+  const res = await req.json();
   console.log("Réponse de l'e-mail de réactivation:", res);
 
   if (req.ok) {

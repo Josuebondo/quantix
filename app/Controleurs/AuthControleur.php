@@ -192,6 +192,7 @@ class AuthControleur extends BaseControleur
             'id' => $user->id,
             'email' => $user->email,
             'first_name' => $user->first_name,
+            'company_id' => $user->company_id,
         ]);
 
         return $response->json(['success' => true, 'message' => 'Email d\'activation envoyé']);

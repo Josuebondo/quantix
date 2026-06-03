@@ -26,7 +26,7 @@ Routeur::obtenir('/login', 'AuthControleur@index')->nom('login');
 Routeur::obtenir('/logout', 'AuthControleur@logout')->nom('logout');
 Routeur::obtenir('/get-started', 'AuthControleur@sighin')->nom('register');
 Routeur::obtenir('/company/register', 'AuthControleur@registerCompanyPage')->nom('company.register');
-Routeur::publier('/company/send-activation', 'AuthControleur@sendActivationEmail')->nom('company.send-activation');
+Routeur::publier('/company/send-activation', 'AuthControleur@sendActivationEmail')->middleware(MiddlewareCSRF::class)->nom('company.send-activation');
 
 Routeur::obtenir('/company/activate', 'CompanyController@activate')->nom('company.activate');
 Routeur::publier('/company/activate', 'CompanyController@activation')->nom('company.activate.post');

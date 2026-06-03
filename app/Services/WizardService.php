@@ -178,8 +178,8 @@ class WizardService
                 // Update existing company with finalized data
                 $company->name = $finalState['workspaceName'] ?? $company->name;
                 $company->slug = $this->generateSlug($finalState['workspaceName']);
-                $company->currency = $finalState['currency'] ?? 'EUR';
-                $company->country = $finalState['country'] ?? 'FR';
+                $company->currency = $finalState['currency'] ?? 'USD';
+                $company->country = $finalState['country'] ?? 'RDC';
                 $company->timezone = $finalState['timezone'] ?? 'UTC+1';
                 $company->status = 1; // Active
                 $company->setup_step = 100; // ✅ Completed

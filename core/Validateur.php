@@ -28,13 +28,14 @@ class Validateur
         'requis' => 'Le champ {champ} est requis',
         'email' => 'Le champ {champ} doit être une adresse email valide',
         'min' => 'Le champ {champ} doit contenir au minimum {param} caractères',
-        'max' => 'Le champ {champ} peut contenir au maximum {param} caractères',
+        'max' => 'Le champ {champ} doit contenir au maximum {param} caractères',
         'regex' => 'Le champ {champ} a un format invalide',
         'unique' => 'La valeur du champ {champ} existe déjà',
         'match' => 'Le champ {champ} ne correspond pas à {param}',
         'nombre' => 'Le champ {champ} doit être un nombre',
         'entier' => 'Le champ {champ} doit être un entier',
         'url' => 'Le champ {champ} doit être une URL valide',
+        'telephone' => 'Le champ {champ} doit être un numéro de téléphone valide',
     ];
 
     /**
@@ -95,6 +96,7 @@ class Validateur
             'nombre' => empty($valeur) || is_numeric($valeur),
             'entier' => empty($valeur) || is_int($valeur) || ctype_digit((string)$valeur),
             'url' => empty($valeur) || filter_var($valeur, FILTER_VALIDATE_URL),
+            'telephone' => empty($valeur) || preg_match('/^\+?[1-9]\d{1,14}$/', (string)$valeur),
             default => true,
         };
     }

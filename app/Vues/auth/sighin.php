@@ -6,47 +6,18 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quatinx - Inscription Premium</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="/css/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#13ec80", // Updated to emerald green from login
-                        "on-primary": "#020617",
-                        "primary-container": "#13ec80",
-                        "on-primary-container": "#020617",
-                        "surface": "#101415",
-                        "background": "#020617",
-                        "surface-container": "#1d2022",
-                        "surface-container-high": "#272a2c",
-                        "surface-container-highest": "#323537",
-                        "on-surface": "#e0e3e5",
-                        "on-surface-variant": "#cbc3d7",
-                        "outline": "#958ea0",
-                        "outline-variant": "#494454",
-                        "error": "#ffb4ab"
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    fontFamily: {
-                        "headline-md": ["Manrope", "Hanken Grotesk"],
-                        "body-md": ["Inter"],
-                        "label-sm": ["Inter"],
-                        "display-lg": ["Manrope", "Hanken Grotesk"],
-                        "display-lg-mobile": ["Manrope", "Hanken Grotesk"],
-                        "body-lg": ["Inter"]
-                    }
-                },
-            },
-        }
+    "body-md": ["Inter"],
+    "label-sm": ["Inter"],
+    "display-lg": ["Manrope", "Hanken Grotesk"],
+    "display-lg-mobile": ["Manrope", "Hanken Grotesk"],
+    "body-lg": ["Inter"]
+    }
+    },
+    },
+    }
     </script>
     <style>
         .material-symbols-outlined {
