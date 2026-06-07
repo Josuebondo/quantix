@@ -19,8 +19,12 @@ async function login(email, password) {
 
     const data = await res.json();
     console.log("Réponse login :", data);
-    // return;
+
     if (data.success == true) {
+      if (data.statut == 403) {
+        window.location.href = "/403";
+        return false;
+      }
       loginMessage.classList.remove("text-red-600");
       loginMessage.classList.add("text-green-600");
       loginMessage.textContent = "Connexion réussie, redirection...";

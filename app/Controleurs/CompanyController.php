@@ -41,7 +41,7 @@ class CompanyController extends BaseControleur
             return vue('company.setup_error', [
                 'status' => 'error',
                 'title' => 'Token manquant',
-                'message' => 'Le lien d\'activation est invalide ou a expiré',
+                'message' => 'Le lien d\'activation est invalide ou a expiré. Veuillez réessayer.',
             ]);
         }
 
@@ -58,9 +58,6 @@ class CompanyController extends BaseControleur
         }
         // cas où le compte est déjà activé
 
-        if ($result['data']['already_activated'] ?? false) {
-            return redirection('/dashboard');
-        }
         // Success: afficher page de bienvenue
         return vue('company.activation', [
             'status' => 'success',
@@ -140,14 +137,30 @@ class CompanyController extends BaseControleur
      */
     public function configurationInitiale(Requete $requete, Reponse $response)
     {
-        if (!auth()->isAuthenticated()) {
-            session()->enregistrer('url_intended', $requete->obtenir('REQUEST_URI') ?? '/welcome');
-            return redirection('/login');
-        }
 
-        $sessionId = $requete->obtenir('session') ?? '';
+
+        $sessionId = $requete->obtenir('session');
         $user = auth()->user();
+        if (!$sessionId) {
+            // Pas de session ID, initialiser une nouvelle session wizard
+            $initResult = $this->wizardService->initializeWizard($user);
+            if (!$initResult['success']) {
+                return vue('company.setup_error', [
+                    'status' => 'error',
+                    'title' => 'Erreur d\'initialisation de la configuration',
+                    'message' => $initResult['message'],
+                ]);
+            }
 
+            $sessionId = $initResult['data']['sessionId'] ?? null;
+            if (!$sessionId) {
+                return vue('company.setup_error', [
+                    'status' => 'error',
+                    'title' => 'Session de configuration introuvable',
+                    'message' => 'Impossible de démarrer la configuration. Veuillez réessayer.',
+                ]);
+            }
+        }
         // Fetch real wizard session data from backend
         $wizardData = $this->wizardService->resumeWizard($sessionId);
 
@@ -261,17 +274,21 @@ class CompanyController extends BaseControleur
     public function wizardPermissions(Requete $requete, Reponse $response)
     {
         try {
-            // Récupérer tous les modules uniques depuis la table permissions
-            $allPermissions = permission::tout();
-
+            // Récupérer toutes les permissions depuis la table et les convertir en tableaux
+            $allPermissions = permission::ou('id', '>', 0)->obtenir();
             if (!$allPermissions) {
                 throw new \Exception('Aucune permission trouvée');
             }
 
-            // Extraire les modules uniques
+            // Convertir les modèles en tableaux simples pour consommation JS
+            $permissions = array_map(function ($p) {
+                return is_object($p) && method_exists($p, 'enTableau') ? $p->enTableau() : (array)$p;
+            }, $allPermissions);
+
+            // Extraire les modules uniques depuis les permissions
             $modules = [];
-            foreach ($allPermissions as $perm) {
-                $module = $perm->module ?? null;
+            foreach ($permissions as $perm) {
+                $module = $perm['module'] ?? null;
                 if ($module && !in_array($module, $modules)) {
                     $modules[] = $module;
                 }
@@ -287,12 +304,14 @@ class CompanyController extends BaseControleur
             return $response->json([
                 'success' => true,
                 'data' => $modules,
+                'permissions' => $permissions,
             ]);
         } catch (\Exception $e) {
             // Retourner liste par défaut en cas d'erreur
             return $response->json([
                 'success' => true,
                 'data' => ['Inventaire', 'Sites', 'Commandes', 'Analyses', 'Utilisateurs'],
+                'permissions' => [],
             ]);
         }
     }
@@ -310,11 +329,7 @@ class CompanyController extends BaseControleur
         $skuPrefix = $data['skuPrefix'] ?? 'SKU-';
 
         // Génération simple
-        $prefix = substr($productName, 0, 3);
-        $catCode = substr($productCategory, 0, 2);
-        $rand = strtoupper(substr(md5(time()), 0, 4));
-
-        $sku = "{$skuPrefix}{$catCode}-{$rand}";
+        $sku = generate_sku($productName, $productCategory, $skuPrefix);
 
         return $response->json([
             'success' => true,

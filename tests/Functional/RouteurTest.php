@@ -111,4 +111,18 @@ class RouteurTest extends TestCase
             'La méthode middleware() doit retourner la route pour permettre le chaînage'
         );
     }
+
+    /**
+     * Test que la méthode vue existe et retourne une route
+     */
+    public function testVueRouteCanBeRegistered(): void
+    {
+        $route = Routeur::vue('/bienvenue', 'accueil');
+
+        $this->assertInstanceOf(
+            Route::class,
+            $route,
+            'Routeur::vue() doit exister et retourner un objet Route'
+        );
+    }
 }

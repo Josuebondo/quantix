@@ -51,7 +51,8 @@ let wizardDraftState = {
   selectedRole: "Admin",
 
   // STEP 6: Permissions
-  permissions: {}, // será buildado dinámicamente
+  permissions: [], // sera buildado dinámicamente
+  selectedPermissions: [],
 
   // STEP 7: Invitations
   invitations: [],
@@ -118,6 +119,130 @@ const stepInfo = [
   },
 ];
 
+const moduleTranslations = {
+  products: "Produits",
+  stocks: "Stocks",
+  sales: "Ventes",
+  users: "Utilisateurs",
+  roles: "Rôles",
+  auth: "Authentification",
+};
+
+const permissionTranslations = {
+  "product.view": "Voir le produit",
+  "product.list": "Lister les produits",
+  "product.create": "Créer le produit",
+  "product.update": "Modifier le produit",
+  "product.delete": "Supprimer le produit",
+  "product.export": "Exporter les produits",
+  "stock.view": "Voir le stock",
+  "stock.list": "Lister le stock",
+  "stock.create": "Créer le stock",
+  "stock.update": "Modifier le stock",
+  "stock.delete": "Supprimer le stock",
+  "stock.adjust": "Ajuster le stock",
+  "stock.history": "Historique du stock",
+  "stock.export": "Exporter le stock",
+  "sale.view": "Voir la vente",
+  "sale.list": "Lister les ventes",
+  "sale.create": "Créer une vente",
+  "sale.update": "Modifier la vente",
+  "sale.delete": "Supprimer la vente",
+  "sale.refund": "Rembourser la vente",
+  "sale.export": "Exporter les ventes",
+  "user.create": "Créer l'utilisateur",
+  "user.view": "Voir l'utilisateur",
+  "user.list": "Lister les utilisateurs",
+  "user.update": "Modifier l'utilisateur",
+  "user.delete": "Supprimer l'utilisateur",
+  "user.manage": "Gérer les utilisateurs",
+  "user.assign_role": "Assigner un rôle",
+  "role.create": "Créer le rôle",
+  "role.view": "Voir le rôle",
+  "role.list": "Lister les rôles",
+  "role.update": "Modifier le rôle",
+  "role.delete": "Supprimer le rôle",
+  "role.manage": "Gérer les rôles",
+  "role.assign_permission": "Assigner une permission",
+  "auth.login": "Connexion",
+  "auth.logout": "Déconnexion",
+  "auth.refresh": "Renouveler le token",
+  "auth.sessions": "Sessions utilisateur",
+  "auth.impersonate": "Usurper un compte",
+};
+
+function translateModule(moduleKey) {
+  return moduleTranslations[moduleKey] || moduleKey || "Module";
+}
+
+function translatePermission(code, fallback = "") {
+  return permissionTranslations[code] || fallback || code;
+}
+
+const crudPermissionKeys = ["view", "list", "create", "update", "delete"];
+
+function translateCrudPermission(key) {
+  const translations = {
+    view: "Voir",
+    list: "Lister",
+    create: "Créer",
+    update: "Modifier",
+    delete: "Supprimer",
+    export: "Exporter",
+    adjust: "Ajuster",
+    history: "Historique",
+
+    assign_role: "Assigner rôle",
+  };
+  return translations[key] || key;
+}
+
+function extractPermissionKey(code) {
+  return code?.split(".").pop();
+}
+
+/**
+ * Normalize module key to permission prefix (handles plural -> singular)
+ */
+function moduleToPrefix(moduleKey) {
+  if (!moduleKey) return moduleKey;
+  const map = {
+    products: "product",
+    stocks: "stock",
+    sales: "sale",
+    users: "user",
+    roles: "role",
+    auth: "auth",
+  };
+  return (
+    map[moduleKey] ||
+    (moduleKey.endsWith("s") ? moduleKey.slice(0, -1) : moduleKey)
+  );
+}
+
+function orderPermissionCodes(codes) {
+  const order = {
+    view: 1,
+    list: 2,
+    create: 3,
+    update: 4,
+    delete: 5,
+    export: 6,
+    adjust: 7,
+    history: 8,
+    assign_role: 9,
+  };
+
+  return [...codes].sort((a, b) => {
+    const aKey = a.split(".").pop();
+    const bKey = b.split(".").pop();
+    const aOrder = order[aKey] ?? 999;
+    const bOrder = order[bKey] ?? 999;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return a.localeCompare(b);
+  });
+}
+
 /**
  * ═══════════════════════════════════════════════════════════════════════════
  * UTILITIES & HELPERS
@@ -165,8 +290,9 @@ const WizardController = {
    */
   async initialize() {
     const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get("session");
-
+    const sessionId =
+      urlParams.get("session") ||
+      (typeof SESSION_WIZARD_ID !== "undefined" ? SESSION_WIZARD_ID : null);
     if (!sessionId) {
       console.error("[WIZARD] No session ID in URL");
       return;
@@ -337,7 +463,7 @@ const WizardController = {
         }
       }, 2000);
     } catch (error) {
-      console.error("[AUTOSAVE ERROR]", error.message);
+      // console.error("[AUTOSAVE ERROR]", error.message);
       uiState.saveError = error.message;
 
       // Show error state
@@ -403,7 +529,7 @@ const WizardController = {
       this.updateField("productSku", sku);
       if (skuInput) skuInput.value = sku;
     } catch (error) {
-      console.error("SKU generation error:", error.message);
+      // console.error("SKU generation error:", error.message);
       // Fallback local generation
       const sku = this.generateLocalSKU();
       this.updateField("productSku", sku);
@@ -430,16 +556,22 @@ const WizardController = {
    */
   async loadPermissions() {
     const body = document.getElementById("permissions-body");
+    const head = document.getElementById("permissions-head");
     const loader = document.getElementById("permissions-loader");
-    const table = document.getElementById("permissions-table-container");
+    const tableContainer = document.getElementById(
+      "permissions-table-container",
+    );
     const roleDisplay = document.getElementById("current-role-display");
 
-    if (!body) return;
+    if (!body || !head) return;
 
     try {
+      // console.debug("[WIZARD] loadPermissions(): start", {
+      //   step: uiState.currentStep,
+      // });
       roleDisplay.innerText = wizardDraftState.selectedRole;
-      table?.classList.add("opacity-30");
-      loader?.classList.remove("hide");
+      tableContainer?.classList.add("opacity-30");
+      loader?.classList.remove("hidden");
 
       const response = await fetch("/api/wizard/permissions", {
         method: "GET",
@@ -449,31 +581,231 @@ const WizardController = {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const response_data = await response.json();
-      const modules = Array.isArray(response_data)
+      // console.debug("[WIZARD] loadPermissions(): response_data", response_data);
+      if (response_data && response_data.success === false) {
+        throw new Error(
+          response_data.message || "Impossible de charger les permissions",
+        );
+      }
+
+      const permissions = Array.isArray(response_data)
         ? response_data
-        : response_data.data || [];
+        : response_data.permissions || [];
+
+      // console.debug(
+      //   "[WIZARD] loadPermissions(): permissions count",
+      //   // permissions.length,
+      // );
+
+      if (!permissions.length) {
+        head.innerHTML = `
+          <tr>
+            <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold">Module</th>
+            ${crudPermissionKeys
+              .map(
+                (key) =>
+                  `<th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold text-center">${translateCrudPermission(
+                    key,
+                  )}</th>`,
+              )
+              .join("")}
+          </tr>
+        `;
+        body.innerHTML = `
+          <tr>
+            <td class="p-5 text-center text-white/50" colspan="${crudPermissionKeys.length + 1}">Aucune permission trouvée.</td>
+          </tr>
+        `;
+        wizardDraftState.permissions = [];
+        wizardDraftState.selectedPermissions =
+          wizardDraftState.selectedPermissions || [];
+        loader?.classList.add("hidden");
+        tableContainer?.classList.remove("opacity-30");
+        return;
+      }
+
+      const modules = Array.from(
+        new Set(permissions.map((p) => p.module)),
+      ).sort((a, b) => translateModule(a).localeCompare(translateModule(b)));
+
+      const extraPermissions = permissions.filter(
+        (p) => !crudPermissionKeys.includes(extractPermissionKey(p.code)),
+      );
+
+      const extraContainer = document.getElementById(
+        "permissions-extra-container",
+      );
+
+      wizardDraftState.permissions = permissions;
+      wizardDraftState.selectedPermissions =
+        wizardDraftState.selectedPermissions || [];
+
+      head.innerHTML = `
+        <tr>
+          <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold">Module</th>
+          ${crudPermissionKeys
+            .map(
+              (key) =>
+                `<th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold text-center">${translateCrudPermission(
+                  key,
+                )}</th>`,
+            )
+            .join("")}
+        </tr>
+      `;
 
       body.innerHTML = "";
 
-      modules.forEach((mod) => {
-        const isAdmin = wizardDraftState.selectedRole === "Admin";
-        const tr = document.createElement("tr");
-        tr.className = "animate-slide-in";
-        tr.innerHTML = `
-          <td class="p-5 font-medium text-sm">${mod}</td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-        `;
-        body.appendChild(tr);
+      // console.debug(
+      //   "[WIZARD] loadPermissions(): rendering modules",
+      //   modules.length,
+      // );
+
+      modules.forEach((moduleKey) => {
+        const modulePermissions = permissions.filter(
+          (p) => p.module === moduleKey,
+        );
+
+        const hasCrudRow = crudPermissionKeys.some((action) =>
+          modulePermissions.some(
+            (permission) => extractPermissionKey(permission.code) === action,
+          ),
+        );
+
+        if (!hasCrudRow) {
+          return;
+        }
+
+        const row = document.createElement("tr");
+        row.className = "animate-slide-in odd:bg-white/5 even:bg-transparent";
+
+        const cells = [
+          `<td class="p-5 font-medium text-sm text-white">${translateModule(moduleKey)}</td>`,
+          ...crudPermissionKeys.map((action) => {
+            let permission = modulePermissions.find(
+              (p) => extractPermissionKey(p.code) === action,
+            );
+            // fallback: try normalized prefix (e.g. products -> product)
+            if (!permission) {
+              const prefix = moduleToPrefix(moduleKey);
+              permission = permissions.find(
+                (p) =>
+                  p.code === `${prefix}.${action}` ||
+                  p.code === `${moduleKey}.${action}`,
+              );
+            }
+
+            if (!permission) {
+              return `<td class="p-5 text-center text-white/30">-</td>`;
+            }
+
+            const isAdmin = wizardDraftState.selectedRole === "Admin";
+            const checked = isAdmin
+              ? true
+              : wizardDraftState.selectedPermissions.includes(permission.code);
+
+            return `<td class="p-5 text-center">
+                <input
+                  type="checkbox"
+                  data-module="${moduleKey}"
+                  data-perm="${permission.code}"
+                  title="${translatePermission(permission.code)}"
+                  ${checked ? "checked" : ""}
+                  class="perm-checkbox w-4 h-4 rounded bg-white/5 border border-white/10 text-primary focus:ring-primary"
+                />
+              </td>`;
+          }),
+        ];
+
+        row.innerHTML = cells.join("");
+        body.appendChild(row);
       });
 
-      loader?.classList.add("hide");
-      table?.classList.remove("opacity-30");
+      if (extraContainer) {
+        if (extraPermissions.length) {
+          extraContainer.classList.remove("hidden");
+          extraContainer.innerHTML = `
+            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-4">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <h3 class="text-sm uppercase tracking-widest text-white/50">Actions spécifiques</h3>
+                  <p class="text-xs text-white/50">Permissions non-CRUD, affichées uniquement pour les modules qui en ont.</p>
+                </div>
+              </div>
+              <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                ${extraPermissions
+                  .map((permission) => {
+                    const checked =
+                      wizardDraftState.selectedRole === "Admin" ||
+                      wizardDraftState.selectedPermissions.includes(
+                        permission.code,
+                      );
+                    return `
+                      <label class="group flex items-center justify-between gap-3 p-4 rounded-2xl border border-white/10 bg-slate-950/70 hover:border-primary transition-all">
+                        <div class="min-w-0">
+                          <div class="text-sm font-medium text-white">${translatePermission(permission.code)}</div>
+                          <div class="text-[11px] text-white/50 truncate">${permission.code}</div>
+                        </div>
+                        <input
+                          type="checkbox"
+                          data-module="${permission.module}"
+                          data-perm="${permission.code}"
+                          title="${translatePermission(permission.code)}"
+                          ${checked ? "checked" : ""}
+                          class="perm-checkbox w-5 h-5 rounded bg-white/5 border border-white/10 text-primary focus:ring-primary"
+                        />
+                      </label>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            </div>
+          `;
+        } else {
+          extraContainer.classList.add("hidden");
+          extraContainer.innerHTML = "";
+        }
+      }
+
+      // Event delegation for permission checkbox state
+      if (tableContainer) {
+        tableContainer
+          .querySelectorAll(".perm-checkbox")
+          .forEach((checkbox) => {
+            checkbox.addEventListener("change", (event) => {
+              const target = event.target;
+              const permCode = target.dataset.perm;
+              if (!permCode) return;
+
+              const selectedPermissions = new Set(
+                wizardDraftState.selectedPermissions || [],
+              );
+
+              if (target.checked) {
+                selectedPermissions.add(permCode);
+              } else {
+                selectedPermissions.delete(permCode);
+              }
+
+              wizardDraftState.selectedPermissions = [...selectedPermissions];
+              WizardController.autosaveDebounced();
+            });
+          });
+      }
+
+      loader?.classList.add("hidden");
+      tableContainer?.classList.remove("opacity-30");
     } catch (error) {
       console.error("Permissions load error:", error.message);
-      // Fallback: render static modules
+      head.innerHTML = `
+        <tr>
+          <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold">Module</th>
+          <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold text-center">Voir</th>
+          <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold text-center">Ajouter</th>
+          <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold text-center">Éditer</th>
+          <th class="p-5 text-white/50 uppercase tracking-wider text-[10px] font-bold text-center">Supprimer</th>
+        </tr>
+      `;
       const modules = ["Stock", "Ventes", "Sites", "Analyses", "Utilisateurs"];
       body.innerHTML = "";
 
@@ -482,16 +814,16 @@ const WizardController = {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td class="p-5 font-medium text-sm">${mod}</td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
-          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-surface-container border-outline-variant text-primary focus:ring-primary"></td>
+          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-white/5 border border-white/10 text-primary focus:ring-primary"></td>
+          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-white/5 border border-white/10 text-primary focus:ring-primary"></td>
+          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-white/5 border border-white/10 text-primary focus:ring-primary"></td>
+          <td class="p-5 text-center"><input type="checkbox" ${isAdmin ? "checked" : ""} class="w-5 h-5 rounded bg-white/5 border border-white/10 text-primary focus:ring-primary"></td>
         `;
         body.appendChild(tr);
       });
 
-      loader?.classList.add("hide");
-      table?.classList.remove("opacity-30");
+      loader?.classList.add("hidden");
+      tableContainer?.classList.remove("opacity-30");
     }
   },
 
@@ -533,11 +865,13 @@ const WizardController = {
         loaderSub.innerText = updates[i].sub;
 
         // FINAL API CALL
-        const response = await fetch("/api/wizard/deploy", {
+        const req = await fetch("/api/wizard/deploy", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-Idempotency-Key": wizardSession.idempotencyKey,
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              ?.content,
           },
           body: JSON.stringify({
             wizardSessionId: wizardSession.id,
@@ -546,11 +880,12 @@ const WizardController = {
           }),
         });
 
-        if (!response.ok) {
+        if (!req.ok) {
           throw new Error(`Deploy step ${i + 1} failed`);
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        const res = await req.json();
+        console.debug(`[DEPLOY] Step ${i + 1} response:`, res);
       }
 
       // Final step
@@ -562,9 +897,9 @@ const WizardController = {
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      finalLoader.classList.add("hide");
-      document.getElementById("loader-status").classList.add("hide");
-      document.getElementById("final-success").classList.remove("hide");
+      finalLoader.classList.add("hidden");
+      document.getElementById("loader-status").classList.add("hidden");
+      document.getElementById("final-success").classList.remove("hidden");
     } catch (error) {
       console.error("[DEPLOY ERROR]", error);
       loaderText.innerText = "ERREUR DÉPLOIEMENT";
@@ -614,6 +949,7 @@ async function init() {
 
   renderSidebar();
   updateUI();
+  hydrateFormFields();
 
   // Setup input listeners with field tracking
   document.querySelectorAll("[data-state]").forEach((el) => {
@@ -629,6 +965,44 @@ async function init() {
 
   renderCategories();
   renderRoles();
+  renderInvitations();
+  populateCategorySelect();
+  populateRoleInviteSelect();
+}
+
+function getStateValue(fieldPath) {
+  return fieldPath.split(".").reduce((current, key) => {
+    return current && typeof current === "object" ? current[key] : undefined;
+  }, wizardDraftState);
+}
+
+function hydrateFormFields() {
+  document.querySelectorAll("[data-state]").forEach((el) => {
+    const fieldPath = el.getAttribute("data-state");
+    const value = getStateValue(fieldPath);
+
+    if (el.type === "checkbox") {
+      el.checked = Boolean(value);
+      return;
+    }
+
+    if (el.tagName === "SELECT") {
+      if (
+        value !== undefined &&
+        value !== null &&
+        el.querySelector(`option[value="${value}"]`)
+      ) {
+        el.value = value;
+      }
+      return;
+    }
+
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+      if (value !== undefined && value !== null) {
+        el.value = value;
+      }
+    }
+  });
 }
 
 function renderSidebar() {
@@ -640,26 +1014,52 @@ function renderSidebar() {
     const isActive = stepNum === uiState.currentStep;
 
     const div = document.createElement("div");
-    div.className = `group flex items-center gap-4 p-4 rounded-xl transition-all duration-300 ${isActive ? "bg-surface-container-high/50 shadow-sm" : ""}`;
+    div.className = `group flex items-center gap-4 p-3 rounded-xl transition-all duration-300 min-w-[84px] flex-shrink-0 ${isActive ? "bg-white/10 shadow-sm" : ""}`;
+    // mark for styling and easier selection
+    div.classList.add("nav-item");
+    if (isActive) div.classList.add("active");
 
     div.innerHTML = `
-                <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border transition-colors ${isActive ? "bg-primary border-primary text-on-primary" : isCompleted ? "bg-secondary/10 border-secondary text-secondary" : "bg-surface-container/50 border-outline-variant/30 text-on-surface-variant"}">
-                    <span class="material-symbols-outlined text-[18px]">${isCompleted ? "check" : step.icon}</span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-[10px] font-bold tracking-widest uppercase opacity-40 leading-none mb-1">0${stepNum}</span>
-                    <span class="font-label-md text-sm ${isActive ? "text-on-surface font-bold" : "text-on-surface-variant"}">${step.name}</span>
-                </div>
-            `;
+          <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border transition-colors ${isActive ? "bg-primary border-primary text-white" : isCompleted ? "bg-white/5 border-white/10 text-white/70" : "bg-white/5 border-white/10 text-white/50"}">
+            <span class="material-symbols-outlined text-[18px]">${isCompleted ? "check" : step.icon}</span>
+          </div>
+          <div class="hidden md:flex flex-col">
+            <span class="text-[10px] font-bold tracking-widest uppercase opacity-40 leading-none mb-1">0${stepNum}</span>
+            <span class="text-sm ${isActive ? "text-white font-bold" : "text-white/50"}">${step.name}</span>
+          </div>
+          <div class="flex md:hidden flex-col items-center">
+            <span class="text-[10px] font-bold tracking-widest uppercase opacity-40 leading-none">0${stepNum}</span>
+          </div>
+        `;
     container.appendChild(div);
   });
+
+  // Ensure the active step is visible on small screens (scroll into view)
+  try {
+    const active = container.querySelector(".nav-item.active");
+    if (active) {
+      if (window.innerWidth < 768) {
+        // on mobile: bring the active step into the first visible place
+        active.scrollIntoView({
+          behavior: "smooth",
+          inline: "start",
+          block: "nearest",
+        });
+      } else {
+        // on desktop: ensure it's visible without smooth scrolling
+        active.scrollIntoView({ behavior: "auto", block: "nearest" });
+      }
+    }
+  } catch (e) {
+    // ignore scroll errors on older browsers
+  }
 }
 
 function updateUI() {
   for (let i = 1; i <= uiState.totalSteps; i++) {
     const section = document.getElementById(`step-${i}`);
-    if (i === uiState.currentStep) section.classList.remove("hide");
-    else section.classList.add("hide");
+    if (i === uiState.currentStep) section.classList.remove("hidden");
+    else section.classList.add("hidden");
   }
 
   renderSidebar();
@@ -687,9 +1087,6 @@ function updateUI() {
   if (uiState.currentStep === 7) populateRoleInviteSelect();
 }
 
-/**
- * STEP 3: CATEGORIES
- */
 function renderCategories() {
   const container = document.getElementById("category-list");
   if (!container) return;
@@ -698,7 +1095,7 @@ function renderCategories() {
     const tag = document.createElement("span");
     tag.className =
       "px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm flex items-center gap-2 animate-slide-in";
-    tag.innerHTML = `${cat} <button onclick="removeCategory('${cat}')" class="material-symbols-outlined text-xs hover:text-on-surface">close</button>`;
+    tag.innerHTML = `${cat} <button onclick="removeCategory('${cat}')" class="material-symbols-outlined text-xs hover:text-white">close</button>`;
     container.appendChild(tag);
   });
 }
@@ -738,7 +1135,7 @@ function renderRoles() {
   wizardDraftState.roles.forEach((role) => {
     const isActive = wizardDraftState.selectedRole === role;
     const btn = document.createElement("button");
-    btn.className = `px-6 py-4 rounded-xl border-2 transition-all flex items-center gap-3 animate-slide-in ${isActive ? "border-primary bg-primary/5 text-on-surface" : "border-outline-variant/30 text-on-surface-variant hover:border-outline-variant"}`;
+    btn.className = `px-6 py-4 rounded-xl border-2 transition-all flex items-center gap-3 animate-slide-in ${isActive ? "border-primary bg-primary/5 text-white" : "border-white/10 text-white/50 hover:border-white/20"}`;
     btn.innerHTML = `
                 <span class="material-symbols-outlined text-sm">${isActive ? "check_circle" : "circle"}</span>
                 <span class="font-bold">${role}</span>
@@ -770,6 +1167,7 @@ function removeRole(name) {
     WizardController.updateField("selectedRole", "Admin");
   }
   WizardController.updateField("roles", updated);
+  renderRoles();
 }
 
 function selectRole(role) {
@@ -808,16 +1206,16 @@ function renderInvitations() {
   wizardDraftState.invitations.forEach((inv, index) => {
     const item = document.createElement("div");
     item.className =
-      "flex items-center justify-between p-5 bg-surface-container/30 border border-outline-variant/30 rounded-xl animate-slide-in";
+      "flex items-center justify-between p-5 bg-white/5 border border-white/10 rounded-xl animate-slide-in";
     item.innerHTML = `
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-xs">${inv.email.charAt(0).toUpperCase()}</div>
                     <div>
                         <p class="text-sm font-bold">${inv.email}</p>
-                        <p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-widest">${inv.role}</p>
+                        <p class="text-[10px] text-white/50 font-medium uppercase tracking-widest">${inv.role}</p>
                     </div>
                 </div>
-                <button onclick="removeInvite(${index})" class="text-on-surface-variant hover:text-error">
+                <button onclick="removeInvite(${index})" class="text-white/50 hover:text-error">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
             `;
@@ -828,6 +1226,7 @@ function renderInvitations() {
 function removeInvite(index) {
   const updated = wizardDraftState.invitations.filter((_, i) => i !== index);
   WizardController.updateField("invitations", updated);
+  renderInvitations();
 }
 
 /**

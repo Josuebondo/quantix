@@ -20,7 +20,7 @@ class Flash
     /**
      * Enregistre un message flash
      */
-    public static function ajouter(string $type, string $message): void
+    public static function ajouter(string $type, string $message, $code): void
     {
         if (!isset($_SESSION['flash'])) {
             $_SESSION['flash'] = [];

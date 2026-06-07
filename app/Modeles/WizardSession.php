@@ -163,6 +163,17 @@ class WizardSession extends Modele
     {
         // Use last_saved_at if available (activity clock), otherwise created_at
         $lastActivity = $this->last_saved_at ?? $this->created_at;
+
+        // Convert to string if DateTime object
+        if ($lastActivity instanceof \DateTime) {
+            $lastActivity = $lastActivity->format('Y-m-d H:i:s');
+        }
+
+        // Return false if no activity recorded (session just created)
+        if (!$lastActivity) {
+            return false;
+        }
+
         return diffInDays($lastActivity, now()) > 30;
     }
 

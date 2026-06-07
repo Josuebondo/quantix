@@ -87,6 +87,16 @@ class Routeur
     }
 
     /**
+     * Enregistre une route GET qui rend directement une vue
+     */
+    public static function vue(string $chemin, string $vue, array $donnees = []): Route
+    {
+        return self::obtenir($chemin, function (Requete $requete, Reponse $reponse, array $parametres = []) use ($vue, $donnees) {
+            return vue($vue, $donnees);
+        });
+    }
+
+    /**
      * Enregistre une route avec methode specifiee
      */
     protected static function enregistrer(string $methode, string $chemin, $action): Route
@@ -315,7 +325,10 @@ class Routeur
         if (is_string($action)) {
             $this->executerControleur($action, $requete, $reponse, $route->obtenirParametres());
         } elseif ($action instanceof Fermeture) {
-            call_user_func_array($action, [$requete, $reponse, $route->obtenirParametres()]);
+            $result = call_user_func_array($action, [$requete, $reponse, $route->obtenirParametres()]);
+            if (is_string($result)) {
+                echo $result;
+            }
         }
     }
 

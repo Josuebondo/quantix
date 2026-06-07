@@ -17,7 +17,6 @@ if (!function_exists('env')) {
         return \Core\Env::obtenir($cle, $default);
     }
 }
-
 if (!function_exists('config')) {
     /**
      * Obtient une valeur de configuration
@@ -205,7 +204,69 @@ if (!function_exists('session')) {
         return new \Core\Session();
     }
 }
+if (!function_exists('deny')) {
+    /**
+     * garder erreur  à la session
+     */
+    function deny(array $data)
+    {
 
+        return \Core\Session::enregistrer('403', $data);
+    }
+}
+
+
+if (!function_exists('generate_sku')) {
+
+    /**
+     * Générer un SKU unique
+     */
+    function generate_sku(
+        string $name = 'PROD',
+        string $category = 'GEN',
+        string $prefix = 'SKU',
+        int $randomLength = 6
+    ): string {
+
+        $nameCode = make_sku_code($name, 3);
+        $catCode  = make_sku_code($category, 3);
+
+        $random = strtoupper(substr(bin2hex(random_bytes(10)), 0, $randomLength));
+
+        return "{$prefix}-{$nameCode}{$catCode}-{$random}";
+    }
+}
+
+if (!function_exists('make_sku_code')) {
+
+    /**
+     * Génère un code court depuis un texte
+     */
+    function make_sku_code(string $text, int $length = 3): string
+    {
+        $text = preg_replace('/[^a-zA-Z]/', '', $text);
+
+        if (empty($text)) {
+            return strtoupper(substr(bin2hex(random_bytes(2)), 0, $length));
+        }
+
+        return strtoupper(substr($text, 0, $length));
+    }
+}
+if (!function_exists('maskEmail')) {
+    function maskEmail(string $email): string
+    {
+        [$name, $domain] = explode('@', $email);
+
+        if (strlen($name) <= 3) {
+            $name = substr($name, 0, 1) . str_repeat('*', max(1, strlen($name) - 1));
+        } else {
+            $name = substr($name, 0, 3) . str_repeat('*', strlen($name) - 3);
+        }
+
+        return $name . '@' . $domain;
+    }
+}
 if (!function_exists('flash')) {
     /**
      * Récupère un message flash

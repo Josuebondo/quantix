@@ -1,5 +1,7 @@
 <?php
 // dd($status, $title, $message); 
+
+
 ?>
 
 <!DOCTYPE html>
@@ -94,26 +96,19 @@
                 </div>
                 <!-- Typography Content -->
                 <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6 tracking-tight">
-                    <?= e($title) ?? "Lien d'activation expiré" ?>
+                    Activez votre compte pour commencer
                 </h1>
                 <p class="font-body-lg text-body-lg text-slate-300 mb-10 leading-relaxed max-w-md mx-auto">
-                    <?= e($message) ?? "Le lien d'activation que vous avez utilisé est expiré ou invalide. Veuillez demander un nouveau lien d'activation pour continuer la configuration de votre compte." ?>
+                    veillez cliquer sur le bouton ci-dessous pour recevoir un nouveau lien d'activation par email. Si vous ne recevez pas l'email dans les prochaines minutes, pensez à vérifier votre dossier de courriers indésirables ou contactez notre support pour assistance.
                 </p>
                 <!-- Actions -->
                 <div class="flex flex-col items-center">
-                    <!-- 1. INITIAL BUTTON -->
-                    <div class="w-full" id="initial-action-container">
-                        <button type="button" class="w-full px-10 py-4 bg-primary text-white font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="request-link-btn">
-                            <span id="btn-text-request">Demander un nouveau lien</span>
-                            <span class="hidden material-symbols-outlined transition-transform animate-spin-custom" id="loader-request">progress_activity</span>
 
-                        </button>
-                    </div>
                     <!-- 2. EMAIL INPUT (Hidden initially) -->
-                    <form class="w-full space-y-6 hidden-state" id="activation-form">
-                        <div class="w-full text-left">
+                    <form class="w-full space-y-6 " id="activation-form">
+                        <div class="w-full text-left hidden" id="email-input-container">
                             <label class="block font-label-sm text-label-sm text-slate-300 mb-2 ml-1" for="admin-email">Email de l'administrateur</label>
-                            <input class="w-full bg-surface-container-high border border-white/10 rounded-lg px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300" id="admin-email" name="email" placeholder="admin@entreprise.com" required="" type="email" />
+                            <input class="w-full bg-surface-container-high border border-white/10 rounded-lg px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300" id="admin-email" name="email" placeholder="admin@entreprise.com" required="" type="email" value="<?= e($email) ?>" />
                         </div>
                         <button class="w-full px-10 py-4 bg-primary text-white font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="submit-activation-btn" type="submit">
                             <span id="btn-text-submit">Envoyer le lien d'activation</span>
@@ -154,13 +149,33 @@
                     Lien envoyé !
                 </h1>
                 <p class="font-body-lg text-body-lg text-slate-300 mb-10 leading-relaxed max-w-md mx-auto">
-                    Un nouveau lien d'activation a été envoyé à votre adresse email. Pensez à vérifier vos courriers indésirables si vous ne le recevez pas d'ici quelques minutes.
+                    Un e-mail contenant votre nouveau lien d'activation a été envoyé à
+                    <span class="font-semibold text-white">
+                        <?= htmlspecialchars(maskEmail($email)) ?>
+                    </span>.
+                    Suivez les instructions du message pour activer votre compte.
                 </p>
                 <!-- Actions -->
-                <div class="w-full">
-                    <a class="block w-full px-10 py-4 bg-primary text-white text-center font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95" href="/login">
+                <div class="w-full space-y-3">
+
+                    <!-- Retour connexion -->
+                    <a href="/login"
+                        class="block w-full px-10 py-4 bg-slate-700 text-white text-center font-semibold rounded-lg transition-all duration-300 hover:brightness-110 active:scale-95">
                         Retour à la connexion
                     </a>
+
+                    <!-- Ouvrir boîte mail (auto détecté) -->
+                    <?php if ($mailUrl): ?>
+                        <a href="<?= $mailUrl ?>" target="_blank"
+                            class="block w-full px-10 py-4 bg-primary text-white text-center font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95">
+                            <?= $mailLabel ?>
+                        </a>
+                    <?php else: ?>
+                        <p class="text-sm text-slate-400 text-center">
+                            Ouvre ta boîte mail pour consulter le lien d’activation.
+                        </p>
+                    <?php endif; ?>
+
                 </div>
             </div>
             <!-- Message Container  -->
@@ -186,10 +201,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const initialActionContainer = document.getElementById('initial-action-container');
-            const requestLinkBtn = document.getElementById('request-link-btn');
-            const btnTextRequest = document.getElementById('btn-text-request');
-            const loaderRequest = document.getElementById('loader-request');
 
             const form = document.getElementById('activation-form');
             const submitBtn = document.getElementById('submit-activation-btn');
@@ -199,28 +210,7 @@
             const errorState = document.getElementById('error-state');
             const successState = document.getElementById('success-state');
 
-            // 1 & 2: Transition from Initial Button to Input
-            requestLinkBtn.addEventListener('click', () => {
-                // Show loader on initial button
-                btnTextRequest.classList.add('hidden');
-                loaderRequest.classList.remove('hidden');
-                requestLinkBtn.disabled = true;
 
-                setTimeout(() => {
-                    // Hide initial button container
-                    initialActionContainer.classList.add('hidden');
-
-                    // Show form
-                    form.classList.remove('hidden-state');
-                    form.classList.remove('hidden');
-                    form.classList.add('flex', 'flex-col');
-
-                    // Trigger reflow for transition
-                    void form.offsetWidth;
-                    form.style.opacity = '1';
-                    form.style.transform = 'translateY(0)';
-                }, 1000); // 1 second loader
-            });
 
             // 3 & 4: Submission State to Success State
             form.addEventListener('submit', async (e) => {

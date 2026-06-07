@@ -7,6 +7,7 @@ use Bmvc\BAuth\Adapters\BMVC\BmvcAuthProvider;
 use Bmvc\BAuth\Auth;
 use Bmvc\BAuth\Config;
 use Bmvc\BAuth\Exceptions\AuthenticationException;
+use Bmvc\BAuth\Exceptions\UserNotFoundException;
 use Bmvc\BAuth\Support\Password;
 use Core\Session;
 
@@ -52,20 +53,30 @@ class BAuthService
             $v->ajouter('email', ['email', 'requis']);
             $v->ajouter('password', ['min:8', 'requis']);
             if (!$v->valider(['email' => $email, 'password' => $password])) {
+
                 return $this->error($v->premier(), 422, $v->erreurs());
             }
 
 
-            // Utiliser BAuth pour authentifier
-            $loginResult = $this->auth->login($email, $password);
 
+            // Utiliser BAuth pour authentifier
+            $user = $this->auth->login($email, $password)['user'] ?? null;
+            // dd($user);
             // Extraire les infos utilisateur
-            $user = $loginResult['user'];
-            $accessToken = $loginResult['token'];
+            if (!$user) {
+                return $this->error('Utilisateur non trouvé', 404);
+            }
+            if ($user['activation_status'] !== 'activated') {
+                return $this->error('Votre compte n\'est pas encore activé. Veuillez vérifier votre email pour le lien d\'activation.', 403);
+            }
+            $accessToken = $this->auth->getTokenProvider()->generate([
+                'user_id' => $user['id'],
+                'email' => $user['email'],
+            ], self::ACCESS_TOKEN_EXPIRES);
 
             // Générer un refresh token avec une durée de vie plus longue
             $refreshToken = $this->generateRefreshToken($user['id']);
-
+            $this->auth->getSessionProvider()->start($user, $accessToken);
             return $this->success(
                 [
                     'user' => [
@@ -86,6 +97,8 @@ class BAuthService
                 'Connexion réussie',
                 200
             );
+        } catch (UserNotFoundException $e) {
+            return $this->error('Utilisateur non trouvé', 404);
         } catch (AuthenticationException $e) {
             return $this->error('Mot de passe incorrect', 401);
         } catch (\Exception $e) {
@@ -134,7 +147,10 @@ class BAuthService
             // Authentifier l'utilisateur nouvellement créé
             try {
                 $loginResult = $this->auth->login($userData['email'], $userpassword);
-                $accessToken = $loginResult['token'];
+                $accessToken = $this->auth->getTokenProvider()->generate([
+                    'user_id' => $loginResult['id'],
+                    'email' => $loginResult['email'],
+                ], self::ACCESS_TOKEN_EXPIRES);
                 // dd($loginResult);
             } catch (\Exception $e) {
                 return $this->error('Utilisateur créé mais authentification échouée: ' . $e->getMessage(), 400);

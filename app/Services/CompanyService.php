@@ -290,7 +290,7 @@ class CompanyService
             // 6. Compute next step (IMPORTANT FLOW LOGIC)
             $next = 'wizard';
 
-            if ($company && $company->setup_completed_at) {
+            if ($company && $company->setup_completed_at || $company->setup_step == 100) {
                 $next = 'dashboard';
             }
 
@@ -326,5 +326,25 @@ class CompanyService
             // dd($e);
             return $this->error('Erreur activation: token invalide ou expiré', 500);
         }
+    }
+    public function isActive(string $companyId): bool
+    {
+        $company = company::ou('id', '=', $companyId)->premier();
+        if (!$company) {
+            return false;
+        }
+        if ($company->status !== 1) {
+            return false;
+        }
+        return true;
+    }
+    public static function isCompleted(string $companyId): bool
+    {
+        $company = company::ou('id', '=', $companyId)->premier();
+
+        if (!$company->setup_completed_at || $company->setup_completed_at == null && $company->setup_step != 100) {
+            return false;
+        }
+        return true;
     }
 }

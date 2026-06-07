@@ -15,8 +15,10 @@ use Core\Middlewares\MiddlewareCSRF;
 // Route accueil
 Routeur::obtenir('/', 'AccueilControleur@index')->nom('accueil');
 
-// Route page de démarrage
-Routeur::obtenir('/demarrage', 'DémarrageControlleur@index')->nom('démarrage');
+// Route page des erreures
+Routeur::vue('/403', 'errors.403')->nom('403');
+Routeur::vue('/404', 'errors.404')->nom('403');
+
 
 // Route page de documentation
 Routeur::obtenir('/documentation', 'DocumentationControleur@index')->nom('documentation');
@@ -24,6 +26,7 @@ Routeur::obtenir('/documentation', 'DocumentationControleur@index')->nom('docume
 // Route page de connexion
 Routeur::obtenir('/login', 'AuthControleur@index')->nom('login');
 Routeur::obtenir('/logout', 'AuthControleur@logout')->nom('logout');
+Routeur::obtenir('/acount/activate', 'AuthControleur@activeAcount')->nom('account.activate');
 Routeur::obtenir('/get-started', 'AuthControleur@sighin')->nom('register');
 Routeur::obtenir('/company/register', 'AuthControleur@registerCompanyPage')->nom('company.register');
 Routeur::publier('/company/send-activation', 'AuthControleur@sendActivationEmail')->middleware(MiddlewareCSRF::class)->nom('company.send-activation');

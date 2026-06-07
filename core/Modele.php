@@ -62,18 +62,14 @@ class Modele
     /**
      * Récupère tous les enregistrements
      */
-    public static function tout(): array
+    public static function tout(): self
     {
         $instance = new static();
         $sql = "SELECT * FROM {$instance->table}";
         $resultats = $instance->bd->tous($sql);
-
-        return array_map(function ($donnees) {
-            $modele = new static();
-            $modele->donnees = $donnees;
-            $modele->existe = true;
-            return $modele;
-        }, $resultats);
+        $instance->donnees = $resultats;
+        $instance->existe = true;
+        return $instance;
     }
     public static function tous(): array
     {
@@ -111,7 +107,7 @@ class Modele
     /**
      * Trouve un enregistrement par ID
      */
-    public static function trouver($id): ?self
+    public static function trouver(int $id): ?self
     {
         $instance = new static();
         $sql = "SELECT * FROM {$instance->table} WHERE {$instance->clesPrimaire} = :id LIMIT 1";
@@ -129,7 +125,7 @@ class Modele
     /**
      * Filtre avec une condition WHERE
      */
-    public static function ou($colonne, $operateur = '=', $valeur = null): self
+    public static function ou(string $colonne, $operateur = '=', $valeur = null): self
     {
         if ($valeur === null) {
             $valeur = $operateur;
@@ -148,7 +144,7 @@ class Modele
     /**
      * Condition HAVING 
      */
-    public function a($colonne, $operateur = '=', $valeur = null): self
+    public function a(string $colonne, $operateur = '=', $valeur = null): self
     {
         if ($valeur === null) {
             $valeur = $operateur;

@@ -100,7 +100,7 @@
                     <span id="btnText">Se connecter</span>
                     <span id="btnLoader" class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">login</span>
                 </button>
-                <p class="text-white/50 text-sm mt-1 text-center" id="loginMessage"></p>
+                <p class=" text-sm mt-1 text-center " id="loginMessage"></p>
             </form>
             <!-- Social Login Divider -->
             <div class="relative my-8">
