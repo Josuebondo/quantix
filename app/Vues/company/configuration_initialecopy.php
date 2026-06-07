@@ -10,12 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <style>
-        body {
-            font-family: 'Hanken Grotesk', sans-serif;
-            background-color: #051424;
-            color: #d4e4fa;
-        }
-
         .glass-card {
             background: rgba(18, 33, 49, 0.6);
             backdrop-filter: blur(16px);
@@ -75,7 +69,7 @@
     </style>
 </head>
 
-<body class="flex flex-col md:flex-row h-screen overflow-hidden bg-background">
+<body class="flex flex-col md:flex-row h-screen overflow-hidden bg-background-dark text-slate-100">
     <!-- Sidebar Stepper -->
     <aside class="w-full md:w-80 bg-surface-container-lowest border-r border-outline-variant flex flex-col z-40 sticky top-0 h-full">
         <div class="p-8 flex flex-col gap-6">

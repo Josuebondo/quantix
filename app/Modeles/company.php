@@ -27,4 +27,18 @@ class company extends Modele
     {
         return $this->aPlusieurs('App\Modeles\role', 'company_id', 'id');
     }
+    public function hasCompleteSetup(): bool
+    {
+        // Vérifier les informations de base de l'entreprise
+        if (empty($this->name) || empty($this->email) || empty($this->phone)) {
+            return false;
+        }
+
+        //Verfier les setup step est complet
+        if (isset($this->setup_step) && $this->setup_step < 3) {
+            return false;
+        }
+
+        return true;
+    }
 }

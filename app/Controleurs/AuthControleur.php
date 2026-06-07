@@ -60,7 +60,43 @@ class AuthControleur extends BaseControleur
 
         return $response->json($result, $statusCode);
     }
+    public function activeAcount(Requete $requete)
+    {
+        $email = $requete->obtenir('email', 'josuebondojw@gmail.com');
+        $domain = strtolower(substr(strrchr($email, '@'), 1));
+        $session = session();
+        dd($session->tous());
+        $mailUrl = null;
+        $mailLabel = null;
 
+        switch ($domain) {
+            case 'gmail.com':
+                $mailUrl = 'https://mail.google.com/';
+                $mailLabel = 'Ouvrir Gmail';
+                break;
+
+            case 'outlook.com':
+            case 'hotmail.com':
+            case 'live.com':
+                $mailUrl = 'https://outlook.live.com/mail/';
+                $mailLabel = 'Ouvrir Outlook';
+                break;
+
+            case 'yahoo.com':
+                $mailUrl = 'https://mail.yahoo.com/';
+                $mailLabel = 'Ouvrir Yahoo Mail';
+                break;
+
+            case 'icloud.com':
+            case 'me.com':
+            case 'mac.com':
+                $mailUrl = 'https://www.icloud.com/mail/';
+                $mailLabel = 'Ouvrir iCloud Mail';
+                break;
+        }
+
+        return  vue('company.nonActive', ['email' => $email, 'mailUrl' => $mailUrl, 'mailLabel' => $mailLabel]);
+    }
     /**
      * Alias pour apiLogin (compatibilité)
      */

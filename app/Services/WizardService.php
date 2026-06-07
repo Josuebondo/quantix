@@ -21,8 +21,9 @@ class WizardService
     public function initializeWizard(?array $user): array
     {
         try {
-            // Get user ID
+            // Get user ID and company ID
             $userId = is_array($user) ? ($user['id'] ?? null) : ($user->id ?? null);
+            $companyId = is_array($user) ? ($user['company_id'] ?? null) : ($user->company_id ?? null);
 
             if (!$userId) {
                 return $this->error('Utilisateur invalide', 400);
@@ -47,14 +48,15 @@ class WizardService
             $session = WizardSession::creer([
                 'wizard_session_id' => $sessionId,
                 'user_id' => $userId,
-                'company_id' => null,
+                'company_id' => $companyId,
                 'status' => 'draft',
                 'current_step' => 1,
                 'state' => json_encode($this->getDefaultState()),
+                'last_saved_at' => now(), // Initialize for expiration tracking
             ]);
 
             // Link to user
-            $userModel = users::ou('id', '=', $userId)->premier();
+            $userModel = users::trouver($userId);
             if ($userModel) {
                 $userModel->wizard_session_id = $sessionId;
                 $userModel->sauvegarder();
@@ -224,7 +226,7 @@ class WizardService
     /**
      * Create wizard data from final state
      * Creates: sites, categories, products, roles, and sends invitations
-     * MUST be called inside a transaction (parent level handles rollback)
+     * MUST be called inside a transaction (parent bmvc handles rollback)
      */
     private function createWizardData(company $company, array $state): void
     {
