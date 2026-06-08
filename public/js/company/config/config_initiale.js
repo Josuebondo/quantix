@@ -836,6 +836,8 @@ const WizardController = {
     const finalLoader = document.getElementById("final-loader");
     const loaderText = document.getElementById("loader-text");
     const loaderSub = document.getElementById("loader-subtext");
+    const loaderStatus = document.getElementById("loader-status");
+    const finalSuccess = document.getElementById("final-success");
 
     uiState.isSaving = true;
 
@@ -855,39 +857,43 @@ const WizardController = {
         },
       ];
 
-      // Generate idempotency key
+      // Génération de la clé d'idempotence
       if (!wizardSession.idempotencyKey) {
         wizardSession.idempotencyKey = generateUUID();
       }
 
-      for (let i = 0; i < updates.length; i++) {
-        loaderText.innerText = updates[i].text;
-        loaderSub.innerText = updates[i].sub;
-
-        // FINAL API CALL
-        const req = await fetch("/api/wizard/deploy", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Idempotency-Key": wizardSession.idempotencyKey,
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              ?.content,
-          },
-          body: JSON.stringify({
-            wizardSessionId: wizardSession.id,
-            state: wizardDraftState,
-            step: i + 1,
-          }),
-        });
-
-        if (!req.ok) {
-          throw new Error(`Deploy step ${i + 1} failed`);
-        }
-
-        const res = await req.json();
-        console.debug(`[DEPLOY] Step ${i + 1} response:`, res);
+      // Animation des étapes
+      finalLoader.classList.remove("hidden");
+      loaderStatus.classList.remove("hidden");
+      finalSuccess.classList.add("hidden");
+      for (const update of updates) {
+        loaderText.textContent = update.text;
+        loaderSub.textContent = update.sub;
+        await new Promise((resolve) => setTimeout(resolve, 700));
       }
 
+      // Payload final
+      const payload = {
+        wizardSessionId: wizardSession.id,
+        state: wizardDraftState,
+      };
+
+      console.group("[DEPLOY]");
+      console.log("Payload envoyé :", payload);
+
+      const req = await fetch("/api/wizard/deploy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Idempotency-Key": wizardSession.idempotencyKey,
+          "X-CSRF-Token":
+            document.querySelector('meta[name="csrf-token"]')?.content || "",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const res = await req.json();
+      console.log(res);
       // Final step
       loaderText.innerText = "SYSTÈME PRÊT";
       loaderSub.innerText = "Redirection vers le tableau de bord";
@@ -897,9 +903,7 @@ const WizardController = {
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      finalLoader.classList.add("hidden");
-      document.getElementById("loader-status").classList.add("hidden");
-      document.getElementById("final-success").classList.remove("hidden");
+      window.location.href = `${res.data.redirectUrl}`;
     } catch (error) {
       console.error("[DEPLOY ERROR]", error);
       loaderText.innerText = "ERREUR DÉPLOIEMENT";
@@ -1262,11 +1266,14 @@ function runFinalSequence() {
  */
 
 document.getElementById("btn-next").addEventListener("click", () => {
-  if (uiState.currentStep < uiState.totalSteps) {
+  // console.log("Avant test", uiState.currentStep, uiState.totalSteps);
+  if (uiState.currentStep < uiState.totalSteps - 1) {
     uiState.currentStep++;
+
     updateUI();
-  } else if (uiState.currentStep === uiState.totalSteps) {
-    // Trigger final deploy sequence
+  } else {
+    uiState.currentStep = uiState.totalSteps;
+    updateUI();
     WizardController.deployWizard();
   }
 });

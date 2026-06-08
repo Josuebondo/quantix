@@ -6,18 +6,11 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quatinx - Inscription Premium</title>
+    <meta name="csrf-token" content="<?php echo csrf_token(); ?>">
     <link rel="stylesheet" href="/css/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    "body-md": ["Inter"],
-    "label-sm": ["Inter"],
-    "display-lg": ["Manrope", "Hanken Grotesk"],
-    "display-lg-mobile": ["Manrope", "Hanken Grotesk"],
-    "body-lg": ["Inter"]
-    }
-    },
-    },
-    }
+
     </script>
     <style>
         .material-symbols-outlined {
@@ -95,16 +88,16 @@
                 <!-- Step 1: INFOS -->
                 <div class="relative z-10 flex flex-col items-center gap-4">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center ring-8 ring-background transition-all duration-500 bg-primary text-on-primary shadow-[0_0_15px_rgba(19,236,128,0.3)]" id="marker-1">
-                        <span class="material-symbols-outlined text-base" id="icon-1">person</span>
+                        <span class="material-symbols-outlined text-base" id="icon-1">business</span>
                     </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary font-headline-md" id="label-1">Infos</span>
                 </div>
                 <!-- Step 2: FORFAIT -->
                 <div class="relative z-10 flex flex-col items-center gap-4">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center ring-8 ring-background transition-all duration-500 bg-surface-container-highest text-on-surface-variant/40" id="marker-2">
-                        <span class="material-symbols-outlined text-base" id="icon-2">payments</span>
+                        <span class="material-symbols-outlined text-base" id="icon-2">person</span>
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-outline font-headline-md opacity-50" id="label-2">Forfait</span>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-outline font-headline-md opacity-50" id="label-2">Owner</span>
                 </div>
                 <!-- Step 3: FIN -->
                 <div class="relative z-10 flex flex-col items-center gap-4">
@@ -129,23 +122,23 @@
                             <h3 class="text-sm font-bold text-primary uppercase tracking-[0.2em]">Informations Entreprise</h3>
                             <div class="flex flex-col gap-2.5">
                                 <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Nom de l'entreprise *</label>
-                                <input type="text" name="company_name" id="company_name" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="Entreprise SARL" required />
+                                <input type="text" name="company_name" id="company_name" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="Entreprise SARL" required />
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div class="flex flex-col gap-2.5">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Email entreprise</label>
-                                    <input type="email" name="company_email" id="company_email" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="contact@entreprise.com" />
+                                    <input type="email" name="company_email" id="company_email" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="contact@entreprise.com" />
                                 </div>
                                 <div class="flex flex-col gap-2.5">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Téléphone</label>
-                                    <input type="tel" name="company_phone" id="company_phone" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="+33 1 23 45 67 89" />
+                                    <input type="tel" name="company_phone" id="company_phone" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="+33 1 23 45 67 89" />
                                 </div>
                             </div>
                         </div>
 
 
                         <div class="pt-6">
-                            <button class="w-full bg-primary text-midnight font-bold py-5 rounded-xl hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-3 text-sm tracking-widest uppercase shadow-lg shadow-primary/10" type="submit">
+                            <button class="w-full bg-primary text-white font-bold py-5 rounded-xl hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-3 text-sm tracking-widest uppercase shadow-lg shadow-primary/10" type="submit">
                                 CONTINUER <span class="material-symbols-outlined text-lg">arrow_forward</span>
                             </button>
                         </div>
@@ -166,26 +159,26 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div class="flex flex-col gap-2.5">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Prénom *</label>
-                                    <input type="text" name="admin_first_name" id="admin_first_name" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="Jean" required />
+                                    <input type="text" name="admin_first_name" id="admin_first_name" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="Jean" required />
                                 </div>
                                 <div class="flex flex-col gap-2.5">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Nom *</label>
-                                    <input type="text" name="admin_last_name" id="admin_last_name" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="Dupont" required />
+                                    <input type="text" name="admin_last_name" id="admin_last_name" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="Dupont" required />
                                 </div>
                             </div>
                             <div class="flex flex-col gap-2.5">
                                 <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Email professionnel *</label>
-                                <input type="email" name="admin_email" id="admin_email" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="jean@entreprise.com" required />
+                                <input type="email" name="admin_email" id="admin_email" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="jean@entreprise.com" required />
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div class="flex flex-col gap-2.5">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Mot de passe *</label>
-                                    <input type="password" name="admin_password" id="admin_password" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="••••••••" required />
+                                    <input type="password" name="admin_password" id="admin_password" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="••••••••" required />
                                     <div class="text-[10px] text-white/40">Min. 8 caractères</div>
                                 </div>
                                 <div class="flex flex-col gap-2.5">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">Confirmer mot de passe *</label>
-                                    <input type="password" name="admin_password_confirm" id="admin_password_confirm" class="bg-white/5 border-white/10 text-on-surface rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="••••••••" required />
+                                    <input type="password" name="admin_password_confirm" id="admin_password_confirm" class="bg-white/5 border-white/10 text-white rounded-xl px-5 py-4 focus:ring-0 focus:outline-none input-focus-effect transition-all placeholder:text-white/10 text-sm font-body-md" placeholder="••••••••" required />
                                 </div>
                             </div>
                         </div>

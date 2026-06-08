@@ -136,8 +136,8 @@ function goToStep(stepNumber) {
     labels[i].className =
       "text-[10px] font-bold uppercase tracking-[0.2em] text-outline font-headline-md opacity-50";
   });
-  icons[0].innerHTML = "person";
-  icons[1].innerHTML = "business";
+  icons[0].innerHTML = "business";
+  icons[1].innerHTML = "person";
   icons[2].innerHTML = "verified";
 
   for (let i = 0; i < stepNumber; i++) {
@@ -173,7 +173,7 @@ function loading() {
   loadingContainer.innerHTML = `
     <div class="loader-wrapper">
       <div class="spinner"></div>
-      <p class="loader-text">Traitement en cours...</p>
+      <p class="loader-text text-white">Traitement en cours...</p>
     </div>
   `;
 }

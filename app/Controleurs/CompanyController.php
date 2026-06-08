@@ -234,19 +234,14 @@ class CompanyController extends BaseControleur
      */
     public function wizardDeploy(Requete $requete, Reponse $response)
     {
-        if (!auth()->isAuthenticated()) {
-            return $response->json([
-                'success' => false,
-                'message' => 'Non authentifié',
-            ], 401);
-        }
+
 
         $data = $requete->json();
-        $headers = $requete->headers();
-
+        $idempotencyKey = $requete->entete('X-Idempotency-Key') ?? '';
+        // dd($headers ?? null);
         $sessionId = $data['wizardSessionId'] ?? '';
         $finalState = $data['state'] ?? [];
-        $idempotencyKey = $headers['X-Idempotency-Key'] ?? '';
+
 
         if (!$sessionId || !$finalState || !$idempotencyKey) {
             return $response->json([
@@ -323,11 +318,9 @@ class CompanyController extends BaseControleur
     public function wizardGenerateSku(Requete $requete, Reponse $response)
     {
         $data = $requete->tousCorps();
-
-        $productName = $data['productName'] ?? 'PROD';
-        $productCategory = $data['productCategory'] ?? 'GEN';
-        $skuPrefix = $data['skuPrefix'] ?? 'SKU-';
-
+        $productName = preg_replace('/\s+/', '', strtoupper(trim($data['productName'] ?? 'PROD')));
+        $productCategory = preg_replace('/\s+/', '', strtoupper(trim($data['productCategory'] ?? 'GEN')));
+        $skuPrefix = preg_replace('/\s+/', '', strtoupper(trim($data['skuPrefix'] ?? 'SKU-')));
         // Génération simple
         $sku = generate_sku($productName, $productCategory, $skuPrefix);
 
