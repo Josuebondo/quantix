@@ -863,10 +863,12 @@ const WizardController = {
       }
 
       // Animation des étapes
+      finalLoader.classList.remove("hidden");
+      loaderStatus.classList.remove("hidden");
+      finalSuccess.classList.add("hidden");
       for (const update of updates) {
         loaderText.textContent = update.text;
         loaderSub.textContent = update.sub;
-
         await new Promise((resolve) => setTimeout(resolve, 700));
       }
 
@@ -879,7 +881,7 @@ const WizardController = {
       console.group("[DEPLOY]");
       console.log("Payload envoyé :", payload);
 
-      const response = await fetch("/api/wizard/deploy", {
+      const req = await fetch("/api/wizard/deploy", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -890,37 +892,22 @@ const WizardController = {
         body: JSON.stringify(payload),
       });
 
-      const rawResponse = await response.json();
-
-      console.log("Status :", response.status);
-      console.log("Réponse brute :", rawResponse);
-
-      console.groupEnd();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message || rawResponse || `Erreur HTTP ${response.status}`,
-        );
-      }
-
-      // Succès
-      loaderText.textContent = "SYSTÈME PRÊT";
-      loaderSub.textContent = "Redirection vers le tableau de bord";
+      const res = await req.json();
+      console.log(res);
+      // Final step
+      loaderText.innerText = "SYSTÈME PRÊT";
+      loaderSub.innerText = "Redirection vers le tableau de bord";
 
       wizardSession.status = "deployed";
       wizardSession.deployedAt = new Date().toISOString();
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      finalLoader?.classList.add("hidden");
-      loaderStatus?.classList.add("hidden");
-      finalSuccess?.classList.remove("hidden");
+      window.location.href = `${res.data.redirectUrl}`;
     } catch (error) {
       console.error("[DEPLOY ERROR]", error);
-
-      loaderText.textContent = "ERREUR DE DÉPLOIEMENT";
-      loaderSub.textContent =
-        error?.message || "Une erreur inattendue est survenue";
+      loaderText.innerText = "ERREUR DÉPLOIEMENT";
+      loaderSub.innerText = error.message;
     } finally {
       uiState.isSaving = false;
     }
@@ -1286,6 +1273,7 @@ document.getElementById("btn-next").addEventListener("click", () => {
     updateUI();
   } else {
     uiState.currentStep = uiState.totalSteps;
+    updateUI();
     WizardController.deployWizard();
   }
 });
