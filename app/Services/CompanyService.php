@@ -286,7 +286,18 @@ class CompanyService
                 'user_id' => $user->id,
                 'type' => 'refresh',
             ], 604800);
-
+            $user->last_login_at = now();
+            $user->sauvegarder();
+            $userdata = [
+                'id' => $user->id,
+                'email' => $user->email,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'company_id' => $user->company_id,
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
+            ];
+            $this->authService->getAuth()->getSessionProvider()->start($userdata, $accessToken);
             // 6. Compute next step (IMPORTANT FLOW LOGIC)
             $next = 'wizard';
 

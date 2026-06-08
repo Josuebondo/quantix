@@ -3,6 +3,7 @@
 namespace Core;
 
 use Exception;
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Arabic;
 
 /**
  * ======================================================================
@@ -528,6 +529,15 @@ class Modele
         $this->existe = true;
     }
 
+    /**
+     * Modfifier l'enregistrement actuel
+     */
+    public static function modifier($id, array $data): void
+    {
+        $instance = static::trouver($id);
+        $instance->donnees = $data;
+        $instance->sauvegarder();
+    }
     /**
      * Met à jour l'enregistrement actuel
      */

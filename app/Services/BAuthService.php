@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Modeles\role;
+use App\Modeles\User_role;
 use App\Modeles\users;
 use Bmvc\BAuth\Adapters\BMVC\BmvcAuthProvider;
 use Bmvc\BAuth\Auth;
@@ -131,7 +133,6 @@ class BAuthService
                 return $this->error('Cet email est déjà utilisé', 409);
             }
 
-            $userpassword = $userData['password'];
 
             // hash du mot de passe
             $userData['password'] = Password::hash($userData['password']);
@@ -143,14 +144,25 @@ class BAuthService
             if (!$createdUser || !isset($createdUser['id'])) {
                 return $this->error('Erreur lors de la création de l\'utilisateur', 400);
             }
-
+            $role = role::creer([
+                'company_id' => $userData['company_id'],
+                'name' => 'owner',
+                'code' => 'company.owner',
+                'description' => 'les proprietaire de company'
+            ]);
+            $roleId = $role->id;
+            $userRoles = User_role::creer([
+                'user_id' => $createdUser['id'],
+                'role_id' => $roleId
+            ]);
             // Authentifier l'utilisateur nouvellement créé
             try {
-                $loginResult = $this->auth->login($userData['email'], $userpassword);
+
                 $accessToken = $this->auth->getTokenProvider()->generate([
-                    'user_id' => $loginResult['id'],
-                    'email' => $loginResult['email'],
+                    'user_id' => $createdUser['id'],
+                    'email' => $createdUser['email'],
                 ], self::ACCESS_TOKEN_EXPIRES);
+                $this->auth->getSessionProvider()->start($createdUser, $accessToken);
                 // dd($loginResult);
             } catch (\Exception $e) {
                 return $this->error('Utilisateur créé mais authentification échouée: ' . $e->getMessage(), 400);

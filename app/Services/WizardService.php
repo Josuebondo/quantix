@@ -5,8 +5,12 @@ namespace App\Services;
 use App\Modeles\article;
 use App\Modeles\categorie;
 use App\Modeles\company;
+use App\Modeles\permision;
+use App\Modeles\product;
+use App\Modeles\role_permission;
 use App\Modeles\users;
 use App\Modeles\WizardSession;
+use App\Services\MailService;
 use Core\BaseBD;
 
 /**
@@ -139,7 +143,7 @@ class WizardService
     {
         try {
             $session = WizardSession::findBySessionId($sessionId);
-
+            // dd($session->company_id);
             if (!$session) {
                 return $this->error('Session wizard introuvable', 404);
             }
@@ -168,8 +172,8 @@ class WizardService
 
             try {
                 // ✅ CRITICAL FIX: Get existing company instead of creating new one
-                $existingCompany = company::ou('id', '=', $session->company_id)->premier();
-
+                $existingCompany = company::trouver($session->company_id);
+                // dd($existingCompany);<
                 if (!$existingCompany) {
                     $db->annuler();
                     return $this->error('Company not found - was it deleted?', 404);
@@ -222,7 +226,14 @@ class WizardService
             return $this->error('Erreur deployment: ' . $e->getMessage(), 500);
         }
     }
-
+    public function generateCode(string $type, string $name): string
+    {
+        $prefix = strtoupper(substr($type ?? 'DEP', 0, 3));
+        $name = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $name), 0, 4));
+        $random = rand(1000, 9999);
+        $code = $prefix . '-' . $name . '-' . $random;
+        return  $code;
+    }
     /**
      * Create wizard data from final state
      * Creates: sites, categories, products, roles, and sends invitations
@@ -232,19 +243,20 @@ class WizardService
     {
         // ✅ Create Primary Site
         if (!empty($state['siteName'])) {
+
+
             $site = \App\Modeles\warehouse::creer([
                 'company_id' => $company->id,
                 'name' => $state['siteName'],
                 'type' => $state['siteType'] ?? 'depot',
+                'code' => $this->generateCode($state['siteType'], $state['siteName']),
                 'address' => $state['siteAddress'] ?? '',
-                'is_default' => true,
-                'status' => 1,
             ]);
             if (!$site) {
                 throw new \Exception('Impossible de créer le site principal');
             }
         }
-
+        $category = null;
         // ✅ Create Categories
         if (!empty($state['categories']) && is_array($state['categories'])) {
             foreach ($state['categories'] as $categoryName) {
@@ -252,98 +264,111 @@ class WizardService
                     $category = categorie::creer([
                         'company_id' => $company->id,
                         'name' => trim($categoryName),
-                        'type' => 'category',
-                        'status' => 1,
+                        'description' => ''
                     ]);
+
                     if (!$category) {
                         throw new \Exception("Impossible de créer la catégorie: {$categoryName}");
                     }
                 }
             }
         }
-
+        $categoryId = $category->ou('name', '=', $state['productCategory'] ?? '')->premier()->id ?? null;
         // ✅ Create Default Product
         if (!empty($state['productName'])) {
-            $product = article::creer([
+            $product = product::creer([
                 'company_id' => $company->id,
+                'category_id' => $categoryId,
                 'name' => $state['productName'],
                 'sku' => $state['productSku'] ?? 'PROD-' . uniqid(),
-                'description' => '',
-                'price' => (float)($state['productPrice'] ?? 0),
-                'stock' => (int)($state['productStock'] ?? 0),
-                'status' => 1,
             ]);
             if (!$product) {
                 throw new \Exception('Impossible de créer le produit initial');
             }
         }
 
-        // ✅ Create Roles
+        // ✅ create Roles
+        $this->createRolesAndPermissions($company, $state);
+
+        // ✅ Send Invitations
+        if (!empty($state['invitations']) && is_array($state['invitations'])) {
+            $InvService = new InvitationService();
+            $InvService->createInvitation($state['invitations'], $company);
+        }
+    }
+
+    public function createRolesAndPermissions(company $company, array $state): void
+    {
+        $createdRoles = [];
+
+        // 1. CREATE ROLES
         if (!empty($state['roles']) && is_array($state['roles'])) {
-            $defaultPermissions = [
-                'read' => true,
-                'create' => true,
-                'update' => true,
-                'delete' => false,
-            ];
 
             foreach ($state['roles'] as $roleName) {
-                if (!empty(trim($roleName))) {
+
+                $roleName = trim($roleName);
+
+                if (!empty($roleName)) {
+
                     $role = \App\Modeles\role::creer([
                         'company_id' => $company->id,
-                        'name' => trim($roleName),
+                        'name' => $roleName,
                         'description' => '',
-                        'permissions' => json_encode($defaultPermissions, JSON_UNESCAPED_UNICODE),
-                        'status' => 1,
+                        'code' => strtoupper(
+                            preg_replace('/[^A-Za-z0-9]/', '_', trim($roleName))
+                        ),
                     ]);
+
                     if (!$role) {
                         throw new \Exception("Impossible de créer le rôle: {$roleName}");
                     }
+
+                    $createdRoles[$roleName] = $role->id;
                 }
             }
         }
 
-        // ✅ Send Invitations
-        if (!empty($state['invitations']) && is_array($state['invitations'])) {
-            $mailService = new MailService();
+        // 2. GET SELECTED ROLE
+        $selectedRoleId = null;
 
-            foreach ($state['invitations'] as $invitation) {
-                if (!empty($invitation['email'])) {
-                    $invitedUser = \App\Modeles\users::ou('email', '=', $invitation['email'])
-                        ->ou('company_id', '=', $company->id)
-                        ->premier();
+        if (!empty($state['selectedRole'])) {
 
-                    if (!$invitedUser) {
-                        $invitedUser = \App\Modeles\users::creer([
-                            'company_id' => $company->id,
-                            'email' => $invitation['email'],
-                            'first_name' => $invitation['firstName'] ?? 'Utilisateur',
-                            'last_name' => $invitation['lastName'] ?? 'Invité',
-                            'password' => password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT),
-                            'activation_status' => 'pending',
-                        ]);
-                    }
+            $selectedRole = \App\Modeles\role::ou('name', '=', $state['selectedRole'])
+                ->et('company_id', '=', $company->id)
+                ->premier();
 
-                    if ($invitedUser) {
-                        $invitationLink = route('api.auth.activate', ['token' => bin2hex(random_bytes(32))]);
-                        $message = vue('emails.invitation', [
-                            'recipient_name' => $invitedUser->first_name ?? 'Utilisateur',
-                            'company_name' => $company->name,
-                            'invitationLink' => $invitationLink,
-                            'logo_url' => asset('images/logo_quantix.png'),
-                        ]);
+            $selectedRoleId = $selectedRole->id ?? null;
+        }
 
-                        $mailService->send(
-                            $invitedUser->email,
-                            "Invitation - Rejoignez {$company->name} sur Quantix",
-                            $message
-                        );
-                    }
+        // 3. ASSIGN PERMISSIONS
+        if (
+            !empty($state['selectedPermissions']) &&
+            is_array($state['selectedPermissions']) &&
+            $selectedRoleId
+        ) {
+
+            foreach ($state['selectedPermissions'] as $permissionCode) {
+
+                $permission = \App\Modeles\permission::ou('code', '=', $permissionCode)->premier();
+
+                if (!$permission) {
+                    continue; // ignore invalid permissions
+                }
+
+                // avoid duplicates
+                $exists = \App\Modeles\role_permission::ou('role_id', '=', $selectedRoleId)
+                    ->et('permission_id', '=', $permission->id)
+                    ->premier();
+
+                if (!$exists) {
+                    \App\Modeles\role_permission::creer([
+                        'role_id' => $selectedRoleId,
+                        'permission_id' => $permission->id
+                    ]);
                 }
             }
         }
     }
-
     private function validateFinalState(array $state): array
     {
         $errors = [];
