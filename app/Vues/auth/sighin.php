@@ -97,7 +97,7 @@
                     <div class="w-10 h-10 rounded-full flex items-center justify-center ring-8 ring-background transition-all duration-500 bg-surface-container-highest text-on-surface-variant/40" id="marker-2">
                         <span class="material-symbols-outlined text-base" id="icon-2">person</span>
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-outline font-headline-md opacity-50" id="label-2">Forfait</span>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-outline font-headline-md opacity-50" id="label-2">Owner</span>
                 </div>
                 <!-- Step 3: FIN -->
                 <div class="relative z-10 flex flex-col items-center gap-4">
