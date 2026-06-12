@@ -1,0 +1,153 @@
+/* --- CERCLE DU Q --- */
+.q-circle {
+  stroke-dasharray: 565;
+  stroke-dashoffset: 565;
+  transform-origin: center;
+  transform: rotate(45deg);
+  filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.4));
+  animation: qLoop 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+/* --- QUEUE COUPE-NETTE --- */
+.q-tail {
+  stroke-dasharray: 90;
+  stroke-dashoffset: 90;
+  filter: drop-shadow(2px 4px 10px rgba(5, 11, 20, 0.7))
+    drop-shadow(0 0 15px rgba(56, 189, 248, 0.5));
+  animation: tailLoop 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+/* --- CUBES CENTRAUX --- */
+.q-cubes {
+  transform-origin: center;
+  animation: cubesLoop 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+/* --- EFFETS DE VITESSE (LIGNES + POINTS) --- */
+.speed-element {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: speedLoop 2.8s ease-in-out infinite;
+}
+
+.dot-element {
+  opacity: 0;
+  animation: dotLoop 2.8s ease-in-out infinite;
+}
+
+.group-1 {
+  animation-delay: 0s;
+}
+
+.group-2 {
+  animation-delay: 0.1s;
+}
+
+.group-3 {
+  animation-delay: 0.2s;
+}
+
+/* --- KEYFRAMES --- */
+@keyframes qLoop {
+  0% {
+    stroke-dashoffset: 565;
+    opacity: 0;
+  }
+
+  15%,
+  55% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  75%,
+  90% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: -565;
+    opacity: 0;
+  }
+}
+
+@keyframes tailLoop {
+  0%,
+  35% {
+    stroke-dashoffset: 90;
+    opacity: 0;
+  }
+
+  50%,
+  82% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  92%,
+  100% {
+    stroke-dashoffset: -90;
+    opacity: 0;
+  }
+}
+
+@keyframes cubesLoop {
+  0%,
+  25% {
+    opacity: 0;
+    transform: scale(0.8) translate(-5px, -5px);
+  }
+
+  48%,
+  78% {
+    opacity: 1;
+    transform: scale(1) translate(0, 0);
+  }
+
+  88%,
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translate(3px, 3px);
+  }
+}
+
+@keyframes speedLoop {
+  0%,
+  10% {
+    stroke-dashoffset: 60;
+    opacity: 0;
+  }
+
+  25%,
+  65% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+
+  80%,
+  100% {
+    stroke-dashoffset: -60;
+    opacity: 0;
+  }
+}
+
+@keyframes dotLoop {
+  0%,
+  15% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  30%,
+  65% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+
+  80%,
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}

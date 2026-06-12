@@ -182,8 +182,9 @@
             }
         });
     </script>
-    <script src="<?= asset('js/auth/login.js') ?>"></script>
-    <script src="<?= asset('js/auth/auth-service.js') ?>"></script>
+    <script type="module" src="<?= asset('js/qtix/bootstrap.js') ?>"></script>
+    <script type="module" src="<?= asset('js/auth/login.js') ?>"></script>
+
 </body>
 
 </html>
