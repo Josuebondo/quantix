@@ -32,8 +32,7 @@ class Router {
   /**
    * Navigate vers une route
    */
-
-  async navigate(path, data = {}, _internal = false) {
+  async navigate(path, data = {}) {
     if (this._navigating) return;
 
     this._navigating = true;
@@ -46,39 +45,26 @@ class Router {
 
       const route = this.routes[path];
 
-      // ⚠️ SAFE fallback (NE PAS rappeler navigate)
       if (!route) {
         console.warn(`Route non trouvée: ${path}`);
-
-        if (path !== "/404") {
-          await this.navigate("/404", {}, true);
-        }
         return;
       }
 
-      if (route.requireAuth && !auth.isLoggedIn()) {
-        window.location.href = "/login";
-        return;
-      }
+      // if (route.requireAuth && !auth.isLoggedIn()) {
+      //   window.location.href = "/login";
+      //   return;
+      // }
 
-      if (route.roles.length > 0) {
+      if (route.roles?.length > 0) {
         const hasRole = route.roles.some((role) => auth.hasRole(role));
+
         if (!hasRole) {
-          if (path !== "/403") {
-            await this.navigate("/403", {}, true);
-          }
+          console.warn("Accès refusé");
           return;
         }
       }
 
-      if (route.component) {
-        await this.loadComponent(path, route, data);
-      }
-
-      // ⚠️ pushState seulement si pas interne
-      if (!_internal) {
-        window.history.pushState({ path, data }, "", path);
-      }
+      await this.loadComponent(path, route, data);
 
       this.currentRoute = { path, route, data };
 
@@ -94,41 +80,37 @@ class Router {
    */
   async loadComponent(path, route, data) {
     try {
-      if (!this.pageContainer) {
-        this.pageContainer = document.getElementById("app");
-      }
+      this._loading = true;
+      // console.log("Loading route:", path, route);
+      // return;
+      const comp = route.component;
 
-      if (!this.pageContainer) {
-        console.error("Page container #app non trouvé");
-        return;
-      }
-
-      // Si c'est une fonction
-      if (typeof route.component === "function") {
-        const html = await route.component(data);
-        this.pageContainer.innerHTML = html;
+      if (typeof comp === "function") {
+        this.pageContainer.innerHTML = await comp(data);
+      } else if (
+        typeof comp === "object" &&
+        typeof comp.template === "function"
+      ) {
+        this.pageContainer.innerHTML = comp.template(data);
       } else {
-        // Si c'est une URL
-        const response = await fetch(route.component);
-        const html = await response.text();
-        this.pageContainer.innerHTML = html;
+        throw new Error("Route invalide: component doit être une fonction");
       }
 
-      // Exécuter init
-      if (route.init && typeof route.init === "function") {
-        await route.init.call({
-          ...route.methods,
-          data,
-          navigate: (p) => this.navigate(p),
-        });
-      }
-
-      // Déclencher Alpine
-      if (window.Alpine) {
-        window.Alpine?.flushAndStopDeferringMutations?.();
-      }
+      // 🔥 important pour Alpine / bindings Qtix
+      // if (window.Alpine) {
+      //   window.Alpine.initTree(this.pageContainer);
+      // }
     } catch (error) {
-      console.error("Erreur chargement composant:", error);
+      console.error("Erreur loadComponent:", error);
+
+      this.pageContainer.innerHTML = `
+      <div class="p-6 text-red-500">
+        <h2>Erreur de chargement</h2>
+        <p>${error.message}</p>
+      </div>
+    `;
+    } finally {
+      this._loading = false;
     }
   }
 

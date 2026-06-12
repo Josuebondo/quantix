@@ -27,7 +27,7 @@ loginBtn.addEventListener("click", async (e) => {
       showSuccess("Connexion réussie, redirection...");
 
       setTimeout(() => {
-        Qtix.navigate(data.redirect_url || "/dashboard");
+        window.location.href = "/app";
       }, 400);
     } else {
       showError(data.message || "Identifiants incorrects");
@@ -39,3 +39,26 @@ loginBtn.addEventListener("click", async (e) => {
     setLoading(false);
   }
 });
+function setLoading(isLoading) {
+  if (isLoading) {
+    btnText.style.display = "none";
+    btnLoader.style.display = "block";
+    loginBtn.disabled = true;
+  } else {
+    btnText.style.display = "block";
+    btnLoader.style.display = "none";
+    loginBtn.disabled = false;
+  }
+}
+
+function showError(message) {
+  loginMessage.textContent = message;
+  loginMessage.classList.remove("text-green-500");
+  loginMessage.classList.add("text-red-500");
+}
+
+function showSuccess(message) {
+  loginMessage.textContent = message;
+  loginMessage.classList.remove("text-red-500");
+  loginMessage.classList.add("text-green-500");
+}

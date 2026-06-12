@@ -49,12 +49,10 @@ export const html = `<div class="w-full h-full max-w-[240px] max-h-[240px] aspec
                                     stroke-linecap="square"
                                     class="q-circle" />
 
-                                <path
-                                    d="M 194 194 L 252 252"
-                                    stroke="url(#tailGradient)"
-                                    stroke-width="24"
-                                    stroke-linecap="square"
-                                    fill="none"
+                                <!-- Queue du Q améliorée -->
+                                <polygon
+                                    points="188,188 204,172 266,252 232,252"
+                                    fill="url(#tailGradient)"
                                     class="q-tail" />
 
                                 <g class="q-cubes">

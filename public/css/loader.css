@@ -1,7 +1,7 @@
 /* --- CERCLE DU Q --- */
 .q-circle {
-  stroke-dasharray: 565;
-  stroke-dashoffset: 565;
+  stroke-dasharray: 547;
+  stroke-dashoffset: 547;
   transform-origin: center;
   transform: rotate(45deg);
   filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.4));
@@ -10,11 +10,8 @@
 
 /* --- QUEUE COUPE-NETTE --- */
 .q-tail {
-  stroke-dasharray: 90;
-  stroke-dashoffset: 90;
-  filter: drop-shadow(2px 4px 10px rgba(5, 11, 20, 0.7))
-    drop-shadow(0 0 15px rgba(56, 189, 248, 0.5));
   animation: tailLoop 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  border-color: aliceblue;
 }
 
 /* --- CUBES CENTRAUX --- */

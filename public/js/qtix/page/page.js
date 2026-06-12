@@ -104,10 +104,10 @@ class PageManager {
    */
   async go(name, params = {}) {
     const page = this.pages[name];
-    if (!page) {
-      console.error(`Page '${name}' non enregistrée`);
-      return;
-    }
+    // if (!page) {
+    //   console.error(`Page '${name}' non enregistrée`);
+    //   return;
+    // }
 
     await router.navigate(page.route || `/${name}`, params);
   }

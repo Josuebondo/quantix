@@ -28,9 +28,9 @@ class LoadingManager {
 
     this.container.innerHTML = `
     <div class="qtix-loader-overlay hidden absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50">
-      <div class="bg-[#0b1220] px-4 py-3 rounded-xl shadow-lg flex items-center justify-center">
+
         ${html}
-      </div>
+   
     </div>
   `;
 
@@ -75,6 +75,7 @@ class LoadingManager {
   hide() {
     if (!this.overlay) return;
     this.overlay.classList.add("hidden");
+    this.container.innerHTML = "";
   }
 
   /**

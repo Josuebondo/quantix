@@ -35,4 +35,17 @@ class TeamController extends BaseControleur
 
         return json($users);
     }
+    public function entrepots(Requete $requete, Reponse $response)
+    {
+        // Simuler des données d'entrepôts
+        $entrepots = [
+            ['id' => 1, 'name' => 'Entrepôt A', 'location' => 'Paris'],
+            ['id' => 2, 'name' => 'Entrepôt B', 'location' => 'Lyon'],
+            ['id' => 3, 'name' => 'Entrepôt C', 'location' => 'Marseille'],
+        ];
+
+        return vue('company.entrepots', [
+            'entrepots' => $entrepots,
+        ]);
+    }
 }

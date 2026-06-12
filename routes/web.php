@@ -118,7 +118,8 @@ Routeur::publier('/api/company/activate', 'CompanyController@apiActivate')->nom(
 
 //gestion de equipes d'une entreprise
 Routeur::vue('/company/team', 'company.team')->nom('company.teams');
-Routeur::obtenir('/company/teams', 'TeamController@index')->nom('company.teams.index');
+Routeur::obtenir('/api/company/teams', 'TeamController@index')->nom('company.teams.index');
+Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('company.teams.entrepots');
 
 
 //app routes

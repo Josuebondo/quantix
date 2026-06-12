@@ -1,6 +1,8 @@
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/module.esm.js";
 import Qtix from "/js/qtix/qtix.js";
 import { setupAlpineDirectives } from "/js/qtix/alpine.js";
+import registerWebRoutes from "./routes/web.js";
+import registerCompanyRoutes from "./routes/company.js";
 
 window.Alpine = Alpine;
 window.Qtix = Qtix;
@@ -22,6 +24,7 @@ window.Qtix = Qtix;
     console.error("Global error:", error);
 
     if (error.status === 401) {
+      return;
       window.location.href = "/login";
     }
   });
@@ -34,6 +37,9 @@ window.Qtix = Qtix;
   Qtix.subscribeAuth((auth) => {
     Qtix.setState("user", auth.isAuthenticated ? auth.user : null);
   });
+
+  registerWebRoutes(Qtix);
+  registerCompanyRoutes(Qtix);
 
   Alpine.start();
 })();
