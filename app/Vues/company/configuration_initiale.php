@@ -36,6 +36,37 @@
             display: none;
         }
 
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-button {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: #1259bd;
+            /* slate-500 */
+            border-radius: 9999px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: #1259bd;
+            /* slate-600 */
+        }
+
+        .scrollbar-custom {
+            scrollbar-width: thin;
+            scrollbar-color: #1259bd transparent;
+        }
+
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
@@ -380,7 +411,7 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-slate-950">
         <div class="absolute top-0 w-full h-32 bg-gradient-to-b from-slate-950/80 to-transparent z-10 pointer-events-none"></div>
-        <div class="flex-1 overflow-y-auto px-6 md:px-12 py-24 z-0 no-scrollbar" id="content-container">
+        <div class="flex-1 overflow-y-auto scrollbar-custom px-6 md:px-12 py-24 z-0 " id="content-container">
             <div class="max-w-4xl mx-auto">
                 <!-- Step 1: Workspace -->
                 <section class="transition-content" id="step-1">
