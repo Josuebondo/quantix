@@ -114,3 +114,14 @@ Routeur::publier('/api/wizard/generate-sku', 'CompanyController@wizardGenerateSk
 
 // Activation endpoint
 Routeur::publier('/api/company/activate', 'CompanyController@apiActivate')->nom('api.company.activate');
+
+
+//gestion de equipes d'une entreprise
+Routeur::vue('/company/team', 'company.team')->nom('company.teams');
+Routeur::obtenir('/api/company/teams', 'TeamController@index')->nom('company.teams.index');
+Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('company.teams.entrepots');
+Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('company.teams.mouvements');
+
+
+//app routes
+Routeur::obtenir('/app', 'AppController@index')->nom('app.index');

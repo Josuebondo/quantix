@@ -1,0 +1,61 @@
+{
+  "name": "qtix",
+  "version": "1.0.0",
+  "description": "Framework frontend léger pour Quantix SaaS",
+  "type": "module",
+  "exports": {
+    ".": "./qtix.js",
+    "./core": "./core/app.js",
+    "./api": "./core/api.js",
+    "./auth": "./core/auth.js",
+    "./state": "./core/state.js",
+    "./router": "./core/router.js",
+    "./notification": "./core/notification.js",
+    "./error": "./core/error.js",
+    "./page": "./page/page.js",
+    "./components": "./components/index.js",
+    "./utils": "./utils/index.js"
+  },
+  "files": [
+    "core/",
+    "page/",
+    "components/",
+    "utils/",
+    "qtix.js",
+    "bootstrap.js",
+    "README.md",
+    "EXAMPLES.md"
+  ],
+  "keywords": [
+    "quantix",
+    "saas",
+    "framework",
+    "alpine",
+    "fetch",
+    "router",
+    "auth",
+    "state-management"
+  ],
+  "author": "Josue  Bondo",
+  "license": "MIT",
+  "peerDependencies": {
+    "alpinejs": "^3.0.0"
+  },
+  "devDependencies": {
+    "alpinejs": "^3.12.0"
+  },
+  "scripts": {
+    "dev": "echo 'Development server - use your PHP server'",
+    "build": "echo 'No build needed - ES modules ready'",
+    "test": "echo 'Add tests here'",
+    "docs": "echo 'Documentation in README.md'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantix-saas/qtix"
+  },
+  "bugs": {
+    "url": "https://github.com/quantix-saas/qtix/issues"
+  },
+  "homepage": "https://github.com/quantix-saas/qtix"
+}
