@@ -120,6 +120,7 @@ Routeur::publier('/api/company/activate', 'CompanyController@apiActivate')->nom(
 Routeur::vue('/company/team', 'company.team')->nom('company.teams');
 Routeur::obtenir('/api/company/teams', 'TeamController@index')->nom('company.teams.index');
 Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('company.teams.entrepots');
+Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('company.teams.mouvements');
 
 
 //app routes

@@ -27,14 +27,10 @@ class LoadingManager {
     }
 
     this.container.innerHTML = `
-    <div class="qtix-loader-overlay hidden absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50">
-
-        ${html}
    
-    </div>
-  `;
+        ${html}
 
-    this.overlay = this.container.querySelector(".qtix-loader-overlay");
+  `;
   }
 
   /**
@@ -65,17 +61,14 @@ class LoadingManager {
    * Show le spinner
    */
   show() {
-    if (!this.overlay) this.init();
-    this.overlay.classList.remove("hidden");
+    this.container.classList.remove("hidden");
   }
 
   /**
    * Hide le spinner
    */
   hide() {
-    if (!this.overlay) return;
-    this.overlay.classList.add("hidden");
-    this.container.innerHTML = "";
+    this.container.classList.add("hidden");
   }
 
   /**

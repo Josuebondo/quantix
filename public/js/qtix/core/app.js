@@ -301,8 +301,15 @@ class Qtix {
    * Wrap async en loading
    */
   async loadAsync(fn) {
-    if (!loading) return fn();
-    return loading.wrap(fn);
+    try {
+      if (this.loading?.wrap) {
+        return await this.loading.wrap(fn);
+      }
+      return await fn();
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
   // ===== Utility Methods =====

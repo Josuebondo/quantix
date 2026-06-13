@@ -11,9 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
 
-
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <style>
-        body {
+        <style>body {
             font-family: 'Manrope', sans-serif;
         }
 
@@ -133,7 +135,7 @@
     isDark: document.documentElement.classList.contains('dark'),
     sidebarOpen: false,
     activeTab: 'users',
-
+    activeRoute: window.location.pathname,
     init() {
         this.updateDarkMode();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
@@ -180,7 +182,7 @@
     get darkModeIcon() {
         return this.isDark ? 'light_mode' : 'dark_mode';
     }
-}" class="font-display bg-background-light text-on-surface dark:bg-background-dark dark:text-inverse-on-surface overflow-hidden">
+    }" class="font-display bg-background-light text-on-surface dark:bg-background-dark dark:text-inverse-on-surface overflow-hidden">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar for Desktop -->
         <!-- Mobile Sidebar Overlay -->
@@ -212,35 +214,36 @@
                 </div>
             </div>
             <nav class="flex-1 overflow-y-auto custom-scrollbar px-2 space-y-1" id="sidebar-nav">
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">dashboard</span> Tableau de bord
                 </a>
-                <a @click="Qtix.openPage('/entrepots')" class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200">
+                <a @click="Qtix.openPage('/entrepots')" class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200">
                     <span class="material-symbols-outlined">warehouse</span> Entrepôts
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">inventory_2</span> Produits
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">inventory</span> Stock
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+                <a @click="Qtix.openPage('/mouvements')" class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">swap_horiz</span> Mouvements
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">shopping_cart</span> Achats
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200 mb-4" href="#">
+                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200 mb-4" href="#">
                     <span class="material-symbols-outlined">analytics</span> Rapports
                 </a>
                 <div class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant dark:text-surface-variant">ADMINISTRATION</div>
                 <a @click="Qtix.openPage('/teams')" class="nav-item flex items-center cursor-pointer gap-3 bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container rounded-lg font-body-md px-4 py-3 mx-2 transition-all active-nav">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span> Teams
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+
+                <a class="nav-item  active flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">settings</span> Paramètres
                 </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-pimary font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-container-high hover:text-primary  rounded-lg transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined">payments</span> Abonnement
                 </a>
             </nav>
@@ -286,28 +289,33 @@
             </header>
 
 
-
-            <main class="theme-shell flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar" id="app">
-                <!-- TopAppBar -->
-
-
-            </main>
-
-
-            <div id="loader-container" class="absolute hidden inset-0 w-full h-full flex items-center justify-center z-50">
+            <div id="loader-container"
+                class="absolute hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex h-full w-32 items-center justify-center z-50">
                 hey
             </div>
+
+            <main
+                id="app"
+                class="theme-shell flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
+            </main>
+
 
 
         </div>
         <script type="module" src="<?= asset('js/qtix/bootstrap.js') ?>"></script>
         <script type="module">
             Qtix.iniLoading('loader-container');
-            Qtix.startLoading();
+            // Qtix.startLoading();
             //enregistrer les routes web
             Qtix.registerRoute('/entrepots', {
                 component: async () => {
                     return await fetch('/api/company/entrepots').then(r => r.text());
+                },
+                requireAuth: false // Accessible sans être connecté
+            });
+            Qtix.registerRoute('/mouvements', {
+                component: async () => {
+                    return await fetch('/api/company/mouvements').then(r => r.text());
                 },
                 requireAuth: false // Accessible sans être connecté
             });
@@ -318,11 +326,45 @@
                 requireAuth: false // Accessible sans être connecté
             });
 
-            function openPage(path) {
-                Qtix.navigate(path);
-                Qtix.stopLoading()
-            };
+            function delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+
+
+            async function openPage(path) {
+                const app = document.getElementById("app");
+
+                try {
+                    Qtix.startLoading();
+
+                    // Cache l'ancienne page
+                    app.style.opacity = "0";
+
+                    await Qtix.navigate(path);
+
+                    // Position initiale de la nouvelle page
+                    app.style.transition = "none";
+                    app.style.opacity = "0";
+                    app.style.transform = "translateY(100px)";
+
+                    // Force le rendu
+                    await delay(2700);
+
+                    // Animation d'entrée
+                    app.style.transition =
+                        "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)";
+                    app.style.opacity = "1";
+                    app.style.transform = "translateY(0)";
+
+
+
+                } finally {
+                    Qtix.stopLoading();
+                }
+            }
             Qtix.openPage = openPage; // Rendre la fonction accessible globalement
+            await Qtix.openPage('/teams'); // Charger la page par défaut
         </script>
 
 

@@ -48,4 +48,17 @@ class TeamController extends BaseControleur
             'entrepots' => $entrepots,
         ]);
     }
+    public function mouvements(Requete $requete, Reponse $response)
+    {
+        // Simuler des données de documents
+        $documents = [
+            ['id' => 1, 'name' => 'Document A', 'type' => 'PDF'],
+            ['id' => 2, 'name' => 'Document B', 'type' => 'Word'],
+            ['id' => 3, 'name' => 'Document C', 'type' => 'Excel'],
+        ];
+
+        return vue('company.mouvement', [
+            'documents' => $documents,
+        ]);
+    }
 }
