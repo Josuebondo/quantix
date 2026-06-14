@@ -223,8 +223,8 @@
                             @click="openPage(item.route)"
                             class="nav-item flex items-center gap-3 px-4 py-3 mx-2 rounded-lg cursor-pointer"
                             :class="isActive(item.route)
-                ? 'bg-blue-600 text-white'
-                : 'hover:bg-gray-100'">
+                                    ? 'bg-blue-600 text-white'
+                                    : 'hover:bg-gray-100'">
                             <span class="material-symbols-outlined" x-text="item.icon"></span>
 
                             <span x-text="item.title"></span>
@@ -339,7 +339,8 @@
             </main>
 
 
-
+            <!-- Modal Container -->
+            <div id="qtix-modals"></div>
         </div>
         <script src="<?= asset('js/qtix/utils/sidebare.js') ?>"></script>
         <script type="module" src="<?= asset('js/qtix/bootstrap.js') ?>"></script>
@@ -347,24 +348,7 @@
             Qtix.iniLoading('loader-container');
             // Qtix.startLoading();
             //enregistrer les routes web
-            Qtix.registerRoute('/entrepots', {
-                component: async () => {
-                    return await fetch('/api/company/entrepots').then(r => r.text());
-                },
-                requireAuth: false // Accessible sans être connecté
-            });
-            Qtix.registerRoute('/mouvements', {
-                component: async () => {
-                    return await fetch('/api/company/mouvements').then(r => r.text());
-                },
-                requireAuth: false // Accessible sans être connecté
-            });
-            Qtix.registerRoute('/teams', {
-                component: async () => {
-                    return await fetch('/api/company/teams').then(r => r.text());
-                },
-                requireAuth: true // Accessible sans être connecté
-            });
+
 
             function delay(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
@@ -431,7 +415,7 @@
             }
 
             Qtix.openPage = openPage; // Rendre la fonction accessible globalement
-            await Qtix.openPage('/teams'); // Charger la page par défaut
+            await Qtix.openPage("/teams"); // Charger la page par défaut
             // console.log(Qtix.hasPermission('subscriptions.manage'));
         </script>
 

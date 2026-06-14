@@ -1,15 +1,26 @@
 export default function registerCompanyRoutes(Qtix) {
-  Qtix.registerRoute("/company/teams", {
+  Qtix.registerRoute("/entrepots", {
     component: async () => {
-      return await fetch("/company/teams").then((r) => r.text());
+      return await fetch("/api/company/entrepots").then((r) => r.text());
     },
     requireAuth: false, // Accessible sans être connecté
   });
-
-  Qtix.registerRoute("/company/users", {
+  Qtix.registerRoute("/mouvements", {
     component: async () => {
-      return await fetch("/pages/company/users.html").then((r) => r.text());
+      return await fetch("/api/company/mouvements").then((r) => r.text());
     },
-    requireAuth: true,
+    requireAuth: false, // Accessible sans être connecté
+  });
+  Qtix.registerRoute("/teams", {
+    component: async () => {
+      return await fetch("/api/company/teams").then((r) => r.text());
+    },
+    requireAuth: true, // Accessible sans être connecté
+  });
+  Qtix.registerRoute("/dashboard", {
+    component: async () => {
+      return "<h1>Dashboard</h1>";
+    },
+    requireAuth: false, // Accessible sans être connecté
   });
 }

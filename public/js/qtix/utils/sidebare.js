@@ -3,7 +3,7 @@ window.QtixSidebar = {
     {
       title: "Tableau de bord",
       icon: "dashboard",
-      route: "/Accueil",
+      route: "/dashboard",
       module: "dashboard",
     },
 
@@ -92,7 +92,7 @@ window.QtixSidebar = {
     });
   },
   isActive(route, currentRoute) {
-    console.log("route:", route, "curent :", currentRoute);
+    // console.log("route:", route, "curent :", currentRoute);
     return route === currentRoute;
   },
 };

@@ -43,10 +43,17 @@ class Router {
         if (!shouldContinue) return;
       }
 
-      const route = this.routes[path];
+      const cleanPath = this.normalize(path);
+
+      const route = this.routes[cleanPath];
 
       if (!route) {
-        console.warn(`Route non trouvée: ${path}`);
+        // console.warn(`Route non trouvée: ${cleanPath}`);
+
+        setTimeout(() => {
+          this.navigate("/404");
+        }, 0);
+
         return;
       }
 
@@ -64,12 +71,12 @@ class Router {
         }
       }
 
-      await this.loadComponent(path, route, data);
+      await this.loadComponent(cleanPath, route, data);
 
-      this.currentRoute = { path, route, data };
+      this.currentRoute = { cleanPath, route, data };
 
       for (const hook of this.afterHooks) {
-        await hook(path, route);
+        await hook(cleanPath, route);
       }
     } finally {
       this._navigating = false;
@@ -113,7 +120,27 @@ class Router {
       this._loading = false;
     }
   }
+  normalize(path) {
+    if (!path) return "/";
 
+    // retirer hash si SPA hash mode
+    path = path.replace(/^#/, "");
+
+    // garantir slash initial
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+
+    // retirer slash final sauf root
+    if (path.length > 1 && path.endsWith("/")) {
+      path = path.slice(0, -1);
+    }
+
+    return path;
+  }
+  goTo404() {
+    return this.navigate("/404");
+  }
   /**
    * Before navigation hook
    */
