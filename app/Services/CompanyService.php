@@ -7,6 +7,7 @@ use App\Modeles\users;
 use App\Services\BAuthService;
 use App\Services\MailService;
 use Core\Validateur;
+use Exception;
 
 /**
  * CompanyService - Service de gestion des entreprises
@@ -302,7 +303,7 @@ class CompanyService
             $next = 'wizard';
 
             if ($company && $company->setup_completed_at || $company->setup_step == 100) {
-                $next = 'dashboard';
+                $next = 'app';
             }
 
             // 7. Response clean (STATE-BASED)

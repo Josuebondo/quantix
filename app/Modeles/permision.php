@@ -9,5 +9,5 @@ use Core\Modele;
  */
 class permision extends Modele
 {
-    protected string $table = 'permisions';
+    protected string $table = 'permissions';
 }

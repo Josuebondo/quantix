@@ -16,18 +16,16 @@ loginBtn.addEventListener("click", async (e) => {
   try {
     setLoading(true);
 
-    const data = await Qtix.post("/auth/login", {
-      email,
-      password,
-    });
-
+    const data = await Qtix.login(email, password);
+    console.log("Login response:", data);
+    // return;
     if (data.success) {
-      Qtix.setState("user", data.user || data.data);
+      // Qtix.setState("user", data.user || data.data);
 
       showSuccess("Connexion réussie, redirection...");
 
       setTimeout(() => {
-        window.location.href = "/app";
+        window.location.href = data.redirectUrl || "/app";
       }, 400);
     } else {
       showError(data.message || "Identifiants incorrects");

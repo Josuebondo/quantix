@@ -39,10 +39,6 @@ class MiddlewareJWTAuth
                 return $this->reponseNonAutorisee('Token invalide');
             }
 
-            $requete->user_id = $decoded['user_id'] ?? null;
-            if (!$requete->user_id) {
-                return $this->reponseNonAutorisee('Utilisateur non identifié dans le token');
-            }
 
             return $suivant($requete);
         } catch (\Exception $e) {

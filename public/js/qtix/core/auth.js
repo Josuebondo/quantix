@@ -24,9 +24,10 @@ class AuthManager {
    */
   async loadUser() {
     try {
-      const response = await api.get("/auth/me");
-      this.user = response.data || response;
+      const response = await api.get("/auth/me", { headers: api.getHeaders() });
+      this.user = response.user;
       this.notifyListeners();
+      console.log("Utilisateur chargé:", response);
     } catch (error) {
       console.error("Erreur chargement utilisateur:", error);
       this.logout();
@@ -39,17 +40,24 @@ class AuthManager {
   async login(email, password) {
     try {
       const response = await api.post("/auth/login", { email, password });
+      // return response;
+      this.token = response.data.tokens.access_token;
 
-      this.token = response.token || response.data.token;
       this.user = response.user || response.data.user;
       this.isAuthenticated = true;
+      this.redirectUrl = response.data.redirect_url || "/app";
 
       api.setToken(this.token);
       localStorage.setItem("auth_token", this.token);
       localStorage.setItem("user", JSON.stringify(this.user));
 
       this.notifyListeners();
-      return { success: true, user: this.user };
+      return {
+        success: true,
+        user: this.user,
+        redirectUrl: this.redirectUrl,
+        data: response.data,
+      };
     } catch (error) {
       console.error("Login error:", error);
       return { success: false, error: error.message };
@@ -167,7 +175,7 @@ class AuthManager {
    */
   hasPermission(permission) {
     if (!this.user) return false;
-    if (this.user.role === "super_admin") return true; // Super admin a tout
+    if (this.user.roles.includes("super_admin")) return true; // Super admin a tout
     return this.user.permissions?.includes(permission) || false;
   }
 
@@ -176,7 +184,7 @@ class AuthManager {
    */
   hasRole(role) {
     if (!this.user) return false;
-    return this.user.role === role;
+    return this.user.roles.includes(role);
   }
 
   /**

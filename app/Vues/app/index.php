@@ -277,13 +277,65 @@
                             <span class="material-symbols-outlined" id="darkModeIcon" x-text="darkModeIcon"></span>
                         </button>
                     </div>
-                    <div class="flex items-center gap-3 ml-2 cursor-pointer hover:bg-surface-container-low dark:hover:bg-surface-variant/30 p-1.5 rounded-lg transition-colors">
-                        <img alt="John Owner Profile" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-outline-variant dark:border-outline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_qpKMJP9VPm_iHhLpfCWjxLioMWEAvJ9SSVj0R8w_K9x7Mgtb3uGvR351uAuFFd6Q22aQpTtxiXkIhH39A75s-K-Gp6NWpNvY5Of8ygiJw_RYbLdpHi2kIg9jzT0XdSwmOpHi9Xm_-SptkRmOtH_E2Kgz5swOCiY0V_t-TU_Nd-x6aFgiDNoaZV0igce_BqPNuczYEGB_81swAW9OY3XpnavFGPdLqexdpqH10u4WpNAvg5L3UqPGnHHQdjB2nyrTFcYuqWvWq8cz" />
-                        <div class="hidden lg:block text-sm">
-                            <div class="text-sm font-bold text-on-surface dark:text-inverse-on-surface">John Owner</div>
-                            <div class="text-xs text-on-surface-variant dark:text-surface-variant">Owner</div>
+                    <div x-data="{ open: false }" class="relative">
+
+                        <!-- Profil -->
+                        <div
+                            @click="open = !open"
+                            class="flex items-center  gap-3 ml-2 cursor-pointer hover:bg-surface-container-low dark:hover:bg-surface-variant/30 p-1.5 rounded-lg transition-colors">
+                            <img
+                                alt="John Owner Profile"
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-outline-variant dark:border-outline"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_qpKMJP9VPm_iHhLpfCWjxLioMWEAvJ9SSVj0R8w_K9x7Mgtb3uGvR351uAuFFd6Q22aQpTtxiXkIhH39A75s-K-Gp6NWpNvY5Of8ygiJw_RYbLdpHi2kIg9jzT0XdSwmOpHi9Xm_-SptkRmOtH_E2Kgz5swOCiY0V_t-TU_Nd-x6aFgiDNoaZV0igce_BqPNuczYEGB_81swAW9OY3XpnavFGPdLqexdpqH10u4WpNAvg5L3UqPGnHHQdjB2nyrTFcYuqWvWq8cz" />
+
+                            <div class="hidden lg:block text-sm">
+                                <div x-text="Qtix.getUser() ? Qtix.getUser().first_name + ' ' + Qtix.getUser().last_name : ''" class="font-bold text-on-surface dark:text-inverse-on-surface">
+
+                                </div>
+
+
+                                <div x-text="Qtix.getUser() ? Qtix.getUser().roles[0] : ''" class="text-xs text-on-surface-variant dark:text-surface-variant">
+
+                                </div>
+                            </div>
+
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant hidden sm:block transition-transform"
+                                :class="{ 'rotate-180': open }">
+                                expand_more
+                            </span>
                         </div>
-                        <span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant hidden sm:block">expand_more</span>
+
+                        <!-- Menu -->
+                        <div
+                            x-show="open"
+                            x-transition
+                            @click.outside="open = false"
+                            class="absolute  right-0 mt-2 w-56 bg-surface dark:bg-surface-container rounded-xl shadow-lg border border-outline-variant z-50 overflow-hidden">
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 px-4 py-3 hover:bg-surface-container-low">
+                                <span class="material-symbols-outlined">person</span>
+                                Mon profil
+                            </a>
+
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 px-4 py-3 hover:bg-surface-container-low">
+                                <span class="material-symbols-outlined">settings</span>
+                                Paramètres
+                            </a>
+
+                            <div class="border-t border-outline-variant"></div>
+
+                            <button
+                                @click="Qtix.logout()"
+                                class="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-error-container text-error">
+                                <span class="material-symbols-outlined">logout</span>
+                                Déconnexion
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </header>
@@ -323,7 +375,7 @@
                 component: async () => {
                     return await fetch('/api/company/teams').then(r => r.text());
                 },
-                requireAuth: false // Accessible sans être connecté
+                requireAuth: true // Accessible sans être connecté
             });
 
             function delay(ms) {
@@ -363,6 +415,7 @@
                     Qtix.stopLoading();
                 }
             }
+            console.log(Qtix.getUser());
             Qtix.openPage = openPage; // Rendre la fonction accessible globalement
             await Qtix.openPage('/teams'); // Charger la page par défaut
         </script>

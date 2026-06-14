@@ -216,7 +216,7 @@ class WizardService
                     'message' => 'Workspace créé avec succès',
                     'companyId' => $company->id,
                     'companySlug' => $company->slug,
-                    'redirectUrl' => "/dashboard?company={$company->slug}",
+                    'redirectUrl' => "/app?company={$company->slug}",
                 ]);
             } catch (\Exception $transactionError) {
                 $db->annuler(); // ✅ ROLLBACK everything
