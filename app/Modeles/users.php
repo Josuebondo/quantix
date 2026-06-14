@@ -40,6 +40,7 @@ class users extends Modele
 
         $roles = [];
         $permissions = [];
+        $module = [];
 
         foreach ($rows as $row) {
 
@@ -56,11 +57,18 @@ class users extends Modele
             ) {
                 $permissions[] = $row['permission_code'];
             }
+            if (
+                !empty($row['permission_module']) &&
+                !in_array($row['permission_module'], $module, true)
+            ) {
+                $module[] = $row['permission_module'];
+            }
         }
 
         return [
             'roles' => $roles,
-            'permissions' => $permissions
+            'permissions' => $permissions,
+            'modules' => $module
         ];
     }
 }

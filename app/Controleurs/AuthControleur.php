@@ -293,7 +293,8 @@ class AuthControleur extends BaseControleur
                 'last_name' => $user['last_name'] ?? '',
                 'company_id' => $user['company_id'] ?? '',
                 'roles' => $rbac['roles'],
-                'permissions' => $rbac['permissions']
+                'permissions' => $rbac['permissions'],
+                'modules' => $rbac['modules']
             ]
         ]);
     }

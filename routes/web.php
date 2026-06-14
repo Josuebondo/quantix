@@ -13,7 +13,7 @@ use Core\Middlewares\MiddlewareCSRF;
 
 // ======== Routes Publiques ========
 // Route accueil
-Routeur::obtenir('/', 'AuthControleur@roleAndPermissions')->nom('accueil');
+Routeur::obtenir('/', 'AccueilControleur@index')->nom('accueil');
 
 // Route page des erreures
 Routeur::vue('/403', 'errors.403')->nom('403');
