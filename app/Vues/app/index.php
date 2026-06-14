@@ -184,10 +184,15 @@
     }
     }" class="font-display bg-background-light text-on-surface dark:bg-background-dark dark:text-inverse-on-surface overflow-hidden">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar for Desktop -->
+        <!-- decoration-->
+        <div class="absolute top-20 -left-20 w-96 h-96 bg-primary-container opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-tertiary-container opacity-10 rounded-full blur-3xl"></div>
+
         <!-- Mobile Sidebar Overlay -->
+
         <div class="fixed inset-0 bg-on-surface/45 dark:bg-black/60 z-40 lg:hidden" id="sidebar-overlay" @click="closeSidebar()" x-show="sidebarOpen" x-transition x-cloak></div>
         <!-- SideNavBar -->
+
         <aside class="w-[280px] h-screen  fixed lg:static left-0 top-0 bg-surface/95 dark:bg-surface-dark/95 border-r border-outline-variant dark:border-border-dark flex flex-col py-6 z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 backdrop-blur-xl" id="sidebar" :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }" @keydown.escape="closeSidebar()">
             <div class="px-6 mb-8 flex items-center justify-between">
                 <div class="flex items-center gap-3 text-2xl font-extrabold tracking-tight text-primary dark:text-primary-fixed">
@@ -224,7 +229,7 @@
                             class="nav-item flex items-center gap-3 px-4 py-3 mx-2 rounded-lg cursor-pointer"
                             :class="isActive(item.route)
                                     ? 'bg-blue-600 text-white'
-                                    : 'hover:bg-gray-100'">
+                                    : 'hover:bg-primary/10 dark:hover:bg-primary/5 '">
                             <span class="material-symbols-outlined" x-text="item.icon"></span>
 
                             <span x-text="item.title"></span>
@@ -298,17 +303,17 @@
                             x-show="open"
                             x-transition
                             @click.outside="open = false"
-                            class="absolute  right-0 mt-2 w-56 bg-surface dark:bg-surface-container rounded-xl shadow-lg border border-outline-variant z-50 overflow-hidden">
+                            class="absolute  right-0 mt-2 w-56  bg-surface-container-lowest dark:bg-surface-variant/10  text-on-surface dark:text-inverse-on-surface rounded-xl shadow-lg border border-outline-variant z-50 overflow-hidden">
                             <a
                                 href="#"
-                                class="flex items-center gap-3 px-4 py-3 hover:bg-surface-container-low">
+                                class="flex items-center gap-3 px-4 py-3 hover:bg-primary/10 dark:hover:bg-primary/5 ">
                                 <span class="material-symbols-outlined">person</span>
                                 Mon profil
                             </a>
 
                             <a
                                 href="#"
-                                class="flex items-center gap-3 px-4 py-3 hover:bg-surface-container-low">
+                                class="flex items-center gap-3 px-4 py-3 hover:bg-primary/10 dark:hover:bg-primary/5 ">
                                 <span class="material-symbols-outlined">settings</span>
                                 Paramètres
                             </a>
@@ -317,7 +322,7 @@
 
                             <button
                                 @click="Qtix.logout()"
-                                class="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-error-container text-error">
+                                class="w-full flex items-center gap-3 px-4 py-3 text-left  hover:bg-primary/10 dark:hover:bg-primary/5  text-error">
                                 <span class="material-symbols-outlined">logout</span>
                                 Déconnexion
                             </button>
@@ -335,7 +340,7 @@
 
             <main
                 id="app"
-                class="theme-shell flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
+                class="theme-shell px-gutter  gap-gutter flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
             </main>
 
 
