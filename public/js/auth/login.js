@@ -5,7 +5,7 @@ const btnLoader = document.getElementById("btnLoader");
 
 loginBtn.addEventListener("click", async (e) => {
   e.preventDefault();
-
+  Qtix.iniLoading("loginBtn");
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
@@ -14,19 +14,17 @@ loginBtn.addEventListener("click", async (e) => {
   }
 
   try {
-    setLoading(true);
-
     const data = await Qtix.login(email, password);
     console.log("Login response:", data);
+    Qtix.startLoading();
     // return;
     if (data.success) {
       // Qtix.setState("user", data.user || data.data);
 
       showSuccess("Connexion réussie, redirection...");
 
-      setTimeout(() => {
-        window.location.href = data.redirectUrl || "/app";
-      }, 400);
+      await Qtix.delay(2700);
+      window.location.href = data.redirectUrl || "/app";
     } else {
       showError(data.message || "Identifiants incorrects");
     }
@@ -34,17 +32,20 @@ loginBtn.addEventListener("click", async (e) => {
     console.error(err);
     showError("Impossible de contacter le serveur");
   } finally {
-    setLoading(false);
+    Qtix.stopLoading();
   }
 });
 function setLoading(isLoading) {
   if (isLoading) {
-    btnText.style.display = "none";
-    btnLoader.style.display = "block";
+    btnText.innerText = "Connexion...";
+    btnLoader.innerText = "autorenew";
+    btnLoader.classList.add("spin");
     loginBtn.disabled = true;
   } else {
-    btnText.style.display = "block";
-    btnLoader.style.display = "none";
+    btnText.innerText = "Se connecter";
+    btnLoader.innerText = "login";
+    btnLoader.classList.remove("spin");
+
     loginBtn.disabled = false;
   }
 }

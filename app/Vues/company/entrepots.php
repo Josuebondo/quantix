@@ -55,8 +55,3 @@
         </div>
     </div>
 </div>
-<div class="flex-1 overflow-y-auto p-4 md:p-6 scroll-smooth" id="container">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="documents-container">
-        <!-- Les documents seront injectés ici -->
-    </div>
-</div>

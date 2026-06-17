@@ -340,12 +340,11 @@
 
             <main
                 id="app"
-                class="theme-shell px-gutter  gap-gutter flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
+                class="theme-shell flex-1 flex flex-col w-full min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
             </main>
 
 
-            <!-- Modal Container -->
-            <div id="qtix-modals"></div>
+
         </div>
         <script src="<?= asset('js/qtix/utils/sidebare.js') ?>"></script>
         <script type="module" src="<?= asset('js/qtix/bootstrap.js') ?>"></script>
@@ -355,9 +354,7 @@
             //enregistrer les routes web
 
 
-            function delay(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
+
 
 
 
@@ -390,37 +387,13 @@
                     }
                 };
             };
-            async function openPage(path) {
-                const app = document.getElementById("app");
 
-                try {
-                    Qtix.startLoading();
-
-                    // Cache l'ancienne page
-                    app.style.opacity = "0";
-
-                    await Qtix.navigate(path);
-
-                    // Position initiale de la nouvelle page
-                    app.style.transition = "none";
-                    app.style.opacity = "0";
-                    app.style.transform = "translateY(100px)";
-
-                    // Force le rendu
-                    await delay(2700);
-
-                    // Animation d'entrée
-                    app.style.transition =
-                        "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)";
-                    app.style.opacity = "1";
-                    app.style.transform = "translateY(0)";
-                } finally {
-                    Qtix.stopLoading();
-                }
-            }
-
-            Qtix.openPage = openPage; // Rendre la fonction accessible globalement
-            await Qtix.openPage("/teams"); // Charger la page par défaut
+            // Qtix.openPage = openPage; // Rendre la fonction accessible globalement
+            document.addEventListener("alpine:init", () => {
+                Alpine.nextTick(async () => {
+                    await Qtix.openPage("/teams");
+                });
+            });
             // console.log(Qtix.hasPermission('subscriptions.manage'));
         </script>
 

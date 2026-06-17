@@ -6,7 +6,7 @@
             <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-on-surface dark:text-inverse-on-surface mb-2">Teams</h1>
             <p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">Gérez les utilisateurs, invitations et rôles de votre entreprise.</p>
         </div>
-        <button class="h-11 px-6 bg-primary hover:bg-primary-container dark:bg-primary-fixed dark:hover:bg-primary-fixed/90 text-on-primary dark:text-on-primary-fixed rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20 dark:shadow-primary/10" id="btnInviteUser" @click="openInvitationModal()">
+        <button id="btnInviteUser" class="h-11 px-6 bg-primary hover:bg-primary-container dark:bg-primary-fixed dark:hover:bg-primary-fixed/90 text-on-primary dark:text-on-primary-fixed rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20 dark:shadow-primary/10">
             <span class="material-symbols-outlined text-base">add</span> Inviter un utilisateur
         </button>
     </div>
@@ -32,8 +32,8 @@
                 </div>
                 <div>
                     <div class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant mb-1">Utilisateurs actifs</div>
-                    <div class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">12</div>
-                    <div class="font-body-sm text-body-sm text-[#22C55E] flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_up</span> +2 ce mois-ci</div>
+                    <div id="stat-active-users" class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">12</div>
+                    <div id="stat-active-trend" class="font-body-sm text-body-sm text-[#22C55E] flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_up</span> +2 ce mois-ci</div>
                 </div>
             </div>
             <div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
@@ -42,8 +42,8 @@
                 </div>
                 <div>
                     <div class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant mb-1">Invitations en attente</div>
-                    <div class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">4</div>
-                    <div class="font-body-sm text-body-sm text-error flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_down</span> -1 ce mois-ci</div>
+                    <div id="stat-pending-invites" class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">4</div>
+                    <div id="stat-pending-trend" class="font-body-sm text-body-sm text-error flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_down</span> -1 ce mois-ci</div>
                 </div>
             </div>
             <div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
@@ -52,7 +52,7 @@
                 </div>
                 <div>
                     <div class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant mb-1">Rôles définis</div>
-                    <div class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">5</div>
+                    <div id="stat-roles" class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">5</div>
                     <div class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant mt-1">Aucun changement</div>
                 </div>
             </div>
@@ -62,8 +62,8 @@
                 </div>
                 <div>
                     <div class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant mb-1">Total utilisateurs</div>
-                    <div class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">16</div>
-                    <div class="font-body-sm text-body-sm text-[#22C55E] flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_up</span> +3 ce mois-ci</div>
+                    <div id="stat-total-users" class="text-3xl font-bold text-on-surface dark:text-inverse-on-surface">16</div>
+                    <div id="stat-total-trend" class="font-body-sm text-body-sm text-[#22C55E] flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_up</span> +3 ce mois-ci</div>
                 </div>
             </div>
         </div>
@@ -72,11 +72,16 @@
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative w-full sm:w-64">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-                    <input class="w-full h-11 pl-10 pr-3 rounded-xl border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-body-md focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-on-surface dark:text-inverse-on-surface" placeholder="Rechercher un utilisateur..." type="text" />
+                    <input id="searchUsers" class="w-full h-11 pl-10 pr-3 rounded-xl border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-body-md focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-on-surface dark:text-inverse-on-surface" placeholder="Rechercher un utilisateur..." type="text" />
                 </div>
                 <div class="relative w-full sm:w-auto">
-                    <select class="w-full h-11 pl-3 pr-8 rounded-xl border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface text-body-md appearance-none focus:border-primary focus:ring-1 focus:ring-primary min-w-[120px] transition-colors">
-                        <option>Rôle: Tous</option>
+                    <select id="roleFilter" class="w-full h-11 pl-3 pr-8 rounded-xl border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface text-body-md appearance-none focus:border-primary focus:ring-1 focus:ring-primary min-w-[120px] transition-colors">
+
+                        <option value="all">Tous les rôles</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">Utilisateur</option>
+                        <option value="manager">Manager</option>
+
                     </select>
                     <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
                 </div>
@@ -108,93 +113,16 @@
                         <th class="py-4 px-6 font-semibold text-right">ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant dark:divide-outline">
+                <tbody id="usersTable" class="divide-y divide-outline-variant dark:divide-outline">
                     <!-- Row 1 -->
-                    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center gap-3">
-                                <img alt="John Owner" class="w-10 h-10 rounded-full object-cover shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjfq48RrZIj-zBN5CcqBHzKB0_vfOFQMvVofWPBDvrPP5gas4Qqu6d5nidIUBL7qVmeHEyP2CqDckqVAajqu24LzapZX9gJAMrzsaQ2_hBeAKFdz2Ha_6Q4xI0-BJcIsq6TI382aLASORX5h9ELo6g2B9v7zC9oQXTf1Jf_0QcgGKX0jAsEdZJVwPSFKtUZVoVGumjQwhF-vuEw2t8iMhO8f3X57FbKGaWnKYNNAZeBw4A_PB0sYEfnPgOx9RPCnSuFRkgtGl_g_Wv" />
-                                <div>
-                                    <div class="text-sm font-bold text-on-surface dark:text-inverse-on-surface flex items-center gap-2">John Owner <span class="bg-primary-fixed text-primary px-2 py-0.5 rounded text-xs font-medium">Vous</span></div>
-                                    <div class="text-on-surface-variant dark:text-surface-variant text-sm">owner@acme.cd</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-fixed text-primary">Owner</span>
-                        </td>
-                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface">Tous les entrepôts</td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#DCFCE7] dark:bg-[#052E16] text-[#16A34A] dark:text-[#86EFAC]">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16A34A] dark:bg-[#86EFAC]"></span> Actif
-                            </span>
-                        </td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">Aujourd'hui, 09:42</td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">10/06/2026</td>
-                        <td class="py-4 px-6 text-right relative">
-                            <button class="p-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-full text-on-surface-variant dark:text-surface-variant transition-colors action-btn" data-menu="menu-1">
-                                <span class="material-symbols-outlined pointer-events-none">more_vert</span>
-                            </button>
-                            <div class="absolute right-8 top-10 w-48 bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-xl shadow-lg py-2 z-10 hidden transition-colors action-menu" id="menu-1">
-                                <button class="w-full text-left px-4 py-2 text-body-md text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">visibility</span> Voir le profil
-                                </button>
-                                <button class="w-full text-left px-4 py-2 text-body-md text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">edit</span> Modifier
-                                </button>
-                                <div class="h-px bg-outline-variant dark:bg-outline my-1"></div>
-                                <button class="w-full text-left px-4 py-2 text-body-md text-error hover:bg-error-container/50 dark:hover:bg-error-container/20 hover:text-danger dark:hover:text-red-300 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">person_off</span> Désactiver
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-[#DBEAFE] dark:bg-[#1E3A8A] text-[#1E3A8A] dark:text-[#DBEAFE] flex items-center justify-center font-bold text-sm shrink-0">MK</div>
-                                <div>
-                                    <div class="text-sm font-bold text-on-surface dark:text-inverse-on-surface">Marie Kayembe</div>
-                                    <div class="text-on-surface-variant dark:text-surface-variant text-sm">marie@acme.cd</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#E0E7FF] dark:bg-[#312E81] text-[#4338CA] dark:text-[#A5B4FC]">Admin</span>
-                        </td>
-                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface">Entrepôt Central</td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#DCFCE7] dark:bg-[#052E16] text-[#16A34A] dark:text-[#86EFAC]">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16A34A] dark:bg-[#86EFAC]"></span> Actif
-                            </span>
-                        </td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">Hier, 16:20</td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">12/06/2026</td>
-                        <td class="py-4 px-6 text-right relative">
-                            <button class="p-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-full text-on-surface-variant dark:text-surface-variant transition-colors action-btn" data-menu="menu-2">
-                                <span class="material-symbols-outlined pointer-events-none">more_vert</span>
-                            </button>
-                            <div class="absolute right-8 top-10 w-48 bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-xl shadow-lg py-2 z-10 hidden transition-colors action-menu" id="menu-2">
-                                <button class="w-full text-left px-4 py-2 text-body-md text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">visibility</span> Voir le profil
-                                </button>
-                                <button class="w-full text-left px-4 py-2 text-body-md text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">edit</span> Modifier
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
             <!-- Pagination -->
             <div class="px-6 py-4 border-t border-outline-variant dark:border-outline flex flex-wrap items-center justify-between gap-4">
                 <span class="text-body-sm text-on-surface-variant dark:text-surface-variant">Affichage de 1 à 2 sur 12 utilisateurs</span>
-                <div class="flex items-center gap-2">
-                    <button class="w-8 h-8 rounded border border-outline-variant dark:border-outline flex items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed disabled:opacity-50"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
-                    <button class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center text-sm font-medium">1</button>
-                    <button class="w-8 h-8 rounded border border-outline-variant dark:border-outline flex items-center justify-center text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed text-sm font-medium">2</button>
-                    <button class="w-8 h-8 rounded border border-outline-variant dark:border-outline flex items-center justify-center text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+                <div class="flex items-center gap-2" id="pagination">
+
                 </div>
             </div>
         </div>

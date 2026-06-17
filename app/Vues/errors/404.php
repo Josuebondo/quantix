@@ -51,11 +51,10 @@
 
     <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
 
-        <a class="w-full sm:w-auto bg-primary hover:bg-primary/90 text-background dark:text-slate-900 px-10 py-4 rounded-xl text-lg font-bold transition-all transform hover:scale-105 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
-            href="/">
+        <button @click="Qtix.back()" class="w-full sm:w-auto bg-primary hover:bg-primary/90 text-background dark:text-slate-900 px-10 py-4 rounded-xl text-lg font-bold transition-all transform hover:scale-105 shadow-xl shadow-primary/20 flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">home</span>
             Retour à l'accueil
-        </a>
+        </button>
 
         <a class="w-full sm:w-auto border border-primary/30 dark:border-primary/20 hover:bg-primary/10 dark:hover:bg-primary/5 text-slate-900 dark:text-white px-10 py-4 rounded-xl text-lg font-bold transition-all flex items-center justify-center gap-2"
             href="#">
