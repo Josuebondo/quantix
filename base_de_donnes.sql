@@ -295,8 +295,8 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `company_id`, `name`, `code`, `description`, `created_at`, `deleted_at`) VALUES
-(1, 1, 'Super Admin', 'super_admin', 'Accès complet', '2026-05-16 10:46:11', NULL),
-(2, 1, 'Manager', 'manager', 'Gestion stock et ventes', '2026-05-16 10:46:11', NULL),
+(1, 0, 'Super Admin', 'super_admin', 'Accès complet', '2026-05-16 10:46:11', NULL),
+(2, 1, 'Owner', 'manager', 'Gestion stock et ventes', '2026-05-16 10:46:11', NULL),
 (3, 1, 'Cashier', 'cashier', 'Gestion ventes seulement', '2026-05-16 10:46:11', NULL);
 
 -- --------------------------------------------------------

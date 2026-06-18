@@ -184,10 +184,15 @@
     }
     }" class="font-display bg-background-light text-on-surface dark:bg-background-dark dark:text-inverse-on-surface overflow-hidden">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar for Desktop -->
+        <!-- decoration-->
+        <div class="absolute top-20 -left-20 w-96 h-96 bg-primary-container opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-tertiary-container opacity-10 rounded-full blur-3xl"></div>
+
         <!-- Mobile Sidebar Overlay -->
+
         <div class="fixed inset-0 bg-on-surface/45 dark:bg-black/60 z-40 lg:hidden" id="sidebar-overlay" @click="closeSidebar()" x-show="sidebarOpen" x-transition x-cloak></div>
         <!-- SideNavBar -->
+
         <aside class="w-[280px] h-screen  fixed lg:static left-0 top-0 bg-surface/95 dark:bg-surface-dark/95 border-r border-outline-variant dark:border-border-dark flex flex-col py-6 z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 backdrop-blur-xl" id="sidebar" :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }" @keydown.escape="closeSidebar()">
             <div class="px-6 mb-8 flex items-center justify-between">
                 <div class="flex items-center gap-3 text-2xl font-extrabold tracking-tight text-primary dark:text-primary-fixed">
@@ -213,39 +218,26 @@
                     <span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant">expand_more</span>
                 </div>
             </div>
-            <nav class="flex-1 overflow-y-auto custom-scrollbar px-2 space-y-1" id="sidebar-nav">
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">dashboard</span> Tableau de bord
-                </a>
-                <a @click="Qtix.openPage('/entrepots')" class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200">
-                    <span class="material-symbols-outlined">warehouse</span> Entrepôts
-                </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">inventory_2</span> Produits
-                </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">inventory</span> Stock
-                </a>
-                <a @click="Qtix.openPage('/mouvements')" class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">swap_horiz</span> Mouvements
-                </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">shopping_cart</span> Achats
-                </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200 mb-4" href="#">
-                    <span class="material-symbols-outlined">analytics</span> Rapports
-                </a>
-                <div class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant dark:text-surface-variant">ADMINISTRATION</div>
-                <a @click="Qtix.openPage('/teams')" class="nav-item flex items-center cursor-pointer gap-3 bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container rounded-lg font-body-md px-4 py-3 mx-2 transition-all active-nav">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span> Teams
-                </a>
+            <nav
+                class="flex-1 overflow-y-auto custom-scrollbar px-2 space-y-1"
+                x-data="sidebarData()">
+                <template x-for="item in items" :key="item.route">
 
-                <a class="nav-item  active flex items-center gap-3 text-on-surface-variant dark:text-surface-variant font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-variant hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">settings</span> Paramètres
-                </a>
-                <a class="nav-item flex items-center gap-3 text-on-surface-variant dark:text-pimary font-body-md px-4 py-3 mx-2 hover:bg-surface-container-high dark:hover:bg-surface-container-high hover:text-primary  rounded-lg transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined">payments</span> Abonnement
-                </a>
+                    <template x-if="!item.separator">
+                        <a
+                            @click="openPage(item.route)"
+                            class="nav-item flex items-center gap-3 px-4 py-3 mx-2 rounded-lg cursor-pointer"
+                            :class="isActive(item.route)
+                                    ? 'bg-blue-600 text-white'
+                                    : 'hover:bg-primary/10 dark:hover:bg-primary/5 '">
+                            <span class="material-symbols-outlined" x-text="item.icon"></span>
+
+                            <span x-text="item.title"></span>
+                        </a>
+                    </template>
+
+                </template>
+
             </nav>
 
         </aside>
@@ -277,13 +269,65 @@
                             <span class="material-symbols-outlined" id="darkModeIcon" x-text="darkModeIcon"></span>
                         </button>
                     </div>
-                    <div class="flex items-center gap-3 ml-2 cursor-pointer hover:bg-surface-container-low dark:hover:bg-surface-variant/30 p-1.5 rounded-lg transition-colors">
-                        <img alt="John Owner Profile" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-outline-variant dark:border-outline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_qpKMJP9VPm_iHhLpfCWjxLioMWEAvJ9SSVj0R8w_K9x7Mgtb3uGvR351uAuFFd6Q22aQpTtxiXkIhH39A75s-K-Gp6NWpNvY5Of8ygiJw_RYbLdpHi2kIg9jzT0XdSwmOpHi9Xm_-SptkRmOtH_E2Kgz5swOCiY0V_t-TU_Nd-x6aFgiDNoaZV0igce_BqPNuczYEGB_81swAW9OY3XpnavFGPdLqexdpqH10u4WpNAvg5L3UqPGnHHQdjB2nyrTFcYuqWvWq8cz" />
-                        <div class="hidden lg:block text-sm">
-                            <div class="text-sm font-bold text-on-surface dark:text-inverse-on-surface">John Owner</div>
-                            <div class="text-xs text-on-surface-variant dark:text-surface-variant">Owner</div>
+                    <div x-data="{ open: false }" class="relative">
+
+                        <!-- Profil -->
+                        <div
+                            @click="open = !open"
+                            class="flex items-center  gap-3 ml-2 cursor-pointer hover:bg-surface-container-low dark:hover:bg-surface-variant/30 p-1.5 rounded-lg transition-colors">
+                            <img
+                                alt="John Owner Profile"
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-outline-variant dark:border-outline"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_qpKMJP9VPm_iHhLpfCWjxLioMWEAvJ9SSVj0R8w_K9x7Mgtb3uGvR351uAuFFd6Q22aQpTtxiXkIhH39A75s-K-Gp6NWpNvY5Of8ygiJw_RYbLdpHi2kIg9jzT0XdSwmOpHi9Xm_-SptkRmOtH_E2Kgz5swOCiY0V_t-TU_Nd-x6aFgiDNoaZV0igce_BqPNuczYEGB_81swAW9OY3XpnavFGPdLqexdpqH10u4WpNAvg5L3UqPGnHHQdjB2nyrTFcYuqWvWq8cz" />
+
+                            <div class="hidden lg:block text-sm">
+                                <div x-text="Qtix.getUser() ? Qtix.getUser().first_name + ' ' + Qtix.getUser().last_name : ''" class="font-bold text-on-surface dark:text-inverse-on-surface">
+
+                                </div>
+
+
+                                <div x-text="Qtix.getUser() ? Qtix.getUser().roles[0] : ''" class="text-xs text-on-surface-variant dark:text-surface-variant">
+
+                                </div>
+                            </div>
+
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant hidden sm:block transition-transform"
+                                :class="{ 'rotate-180': open }">
+                                expand_more
+                            </span>
                         </div>
-                        <span class="material-symbols-outlined text-on-surface-variant dark:text-surface-variant hidden sm:block">expand_more</span>
+
+                        <!-- Menu -->
+                        <div
+                            x-show="open"
+                            x-transition
+                            @click.outside="open = false"
+                            class="absolute  right-0 mt-2 w-56  bg-surface-container-lowest dark:bg-surface-variant/10  text-on-surface dark:text-inverse-on-surface rounded-xl shadow-lg border border-outline-variant z-50 overflow-hidden">
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 px-4 py-3 hover:bg-primary/10 dark:hover:bg-primary/5 ">
+                                <span class="material-symbols-outlined">person</span>
+                                Mon profil
+                            </a>
+
+                            <a
+                                href="#"
+                                class="flex items-center gap-3 px-4 py-3 hover:bg-primary/10 dark:hover:bg-primary/5 ">
+                                <span class="material-symbols-outlined">settings</span>
+                                Paramètres
+                            </a>
+
+                            <div class="border-t border-outline-variant"></div>
+
+                            <button
+                                @click="Qtix.logout()"
+                                class="w-full flex items-center gap-3 px-4 py-3 text-left  hover:bg-primary/10 dark:hover:bg-primary/5  text-error">
+                                <span class="material-symbols-outlined">logout</span>
+                                Déconnexion
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </header>
@@ -296,75 +340,61 @@
 
             <main
                 id="app"
-                class="theme-shell flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
+                class="theme-shell flex-1 flex flex-col w-full min-w-0 overflow-y-auto custom-scrollbar transition-transform duration-500 ease-out">
             </main>
 
 
 
         </div>
+        <script src="<?= asset('js/qtix/utils/sidebare.js') ?>"></script>
         <script type="module" src="<?= asset('js/qtix/bootstrap.js') ?>"></script>
         <script type="module">
             Qtix.iniLoading('loader-container');
             // Qtix.startLoading();
             //enregistrer les routes web
-            Qtix.registerRoute('/entrepots', {
-                component: async () => {
-                    return await fetch('/api/company/entrepots').then(r => r.text());
-                },
-                requireAuth: false // Accessible sans être connecté
+
+
+
+
+
+
+
+
+            window.sidebarData = function() {
+                return {
+                    items: [],
+                    currentRoute: window.location.pathname, // 🔥 important
+
+                    init() {
+                        this.items = window.QtixSidebar.getItems();
+
+                        // sync route si navigation SPA
+                        window.addEventListener("popstate", () => {
+                            this.currentRoute = window.location.pathname;
+                        });
+                    },
+
+                    async openPage(route) {
+                        this.currentRoute = route; // 🔥 update UI immédiatement
+
+
+                        history.pushState({}, "", '/app' + route); // 🔥 important pour SPA
+                        await Qtix.openPage(route);
+                    },
+
+                    isActive(route) {
+                        return window.QtixSidebar.isActive(route, this.currentRoute);
+                    }
+                };
+            };
+
+            // Qtix.openPage = openPage; // Rendre la fonction accessible globalement
+            document.addEventListener("alpine:init", () => {
+                Alpine.nextTick(async () => {
+                    await Qtix.openPage("/teams");
+                });
             });
-            Qtix.registerRoute('/mouvements', {
-                component: async () => {
-                    return await fetch('/api/company/mouvements').then(r => r.text());
-                },
-                requireAuth: false // Accessible sans être connecté
-            });
-            Qtix.registerRoute('/teams', {
-                component: async () => {
-                    return await fetch('/api/company/teams').then(r => r.text());
-                },
-                requireAuth: false // Accessible sans être connecté
-            });
-
-            function delay(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-
-
-
-            async function openPage(path) {
-                const app = document.getElementById("app");
-
-                try {
-                    Qtix.startLoading();
-
-                    // Cache l'ancienne page
-                    app.style.opacity = "0";
-
-                    await Qtix.navigate(path);
-
-                    // Position initiale de la nouvelle page
-                    app.style.transition = "none";
-                    app.style.opacity = "0";
-                    app.style.transform = "translateY(100px)";
-
-                    // Force le rendu
-                    await delay(2700);
-
-                    // Animation d'entrée
-                    app.style.transition =
-                        "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)";
-                    app.style.opacity = "1";
-                    app.style.transform = "translateY(0)";
-
-
-
-                } finally {
-                    Qtix.stopLoading();
-                }
-            }
-            Qtix.openPage = openPage; // Rendre la fonction accessible globalement
-            await Qtix.openPage('/teams'); // Charger la page par défaut
+            // console.log(Qtix.hasPermission('subscriptions.manage'));
         </script>
 
 

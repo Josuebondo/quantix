@@ -27,6 +27,7 @@ Routeur::obtenir('/documentation', 'DocumentationControleur@index')->nom('docume
 Routeur::obtenir('/login', 'AuthControleur@index')->nom('login');
 Routeur::obtenir('/logout', 'AuthControleur@logout')->nom('logout');
 Routeur::obtenir('/acount/activate', 'AuthControleur@activeAcount')->nom('account.activate');
+Routeur::obtenir('/api/auth/me', 'AuthControleur@me')->nom('api.auth.me');
 Routeur::obtenir('/get-started', 'AuthControleur@sighin')->nom('register');
 Routeur::obtenir('/company/register', 'AuthControleur@registerCompanyPage')->nom('company.register');
 Routeur::publier('/company/send-activation', 'AuthControleur@sendActivationEmail')->middleware(MiddlewareCSRF::class)->nom('company.send-activation');
@@ -119,9 +120,10 @@ Routeur::publier('/api/company/activate', 'CompanyController@apiActivate')->nom(
 //gestion de equipes d'une entreprise
 Routeur::vue('/company/team', 'company.team')->nom('company.teams');
 Routeur::obtenir('/api/company/teams', 'TeamController@index')->nom('company.teams.index');
+Routeur::obtenir('/api/company/teams/list', 'TeamController@all')->nom('company.teams.index');
 Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('company.teams.entrepots');
 Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('company.teams.mouvements');
 
 
 //app routes
-Routeur::obtenir('/app', 'AppController@index')->nom('app.index');
+Routeur::obtenir('/app', 'AppController@index')->middleware(MiddlewareAuth::class)->nom('app.index');

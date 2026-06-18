@@ -7,6 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quantix | Connexion</title>
     <link rel="stylesheet" href="/css/tailwind.css">
+    <link rel="stylesheet" href="/css/loader.css">
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
@@ -96,9 +97,9 @@
                     </label>
                     <a class="text-primary/90 hover:text-primary transition-colors font-medium" href="#">Mot de passe oublié ?</a>
                 </div>
-                <button id="loginBtn" class="w-full py-3.5 px-4 bg-primary hover:bg-primary/90 text-midnight font-bold rounded-xl shadow-lg shadow-primary/10 transform active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group" type="submit">
+                <button id="loginBtn" class="w-full py-3.5 px-3h h-16 bg-primary hover:bg-primary/90 text-midnight font-bold rounded-xl shadow-lg shadow-primary/10 transform active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group" type="submit">
                     <span id="btnText">Se connecter</span>
-                    <span id="btnLoader" class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">login</span>
+                    <span id="btnLoader" class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform ">login</span>
                 </button>
                 <p class=" text-sm mt-1 text-center " id="loginMessage"></p>
             </form>
