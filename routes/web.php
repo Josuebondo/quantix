@@ -126,4 +126,4 @@ Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('c
 
 
 //app routes
-Routeur::obtenir('/app', 'AppController@index')->nom('app.index');
+Routeur::obtenir('/app', 'AppController@index')->middleware(MiddlewareAuth::class)->nom('app.index');

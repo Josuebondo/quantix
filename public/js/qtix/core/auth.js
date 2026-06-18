@@ -79,7 +79,7 @@ class AuthManager {
     this.notifyListeners();
 
     // Rediriger vers login
-    window.location.href = "/login";
+    window.location.href = "/logout";
   }
 
   /**
