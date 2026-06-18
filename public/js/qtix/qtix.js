@@ -16,7 +16,7 @@ export { default as error } from "./core/error.js";
 export { default as page } from "./page/page.js";
 
 // Components
-export { createModal, renderModal } from "./components/modal.js";
+export { createModal } from "./components/modal.js";
 export { createTable, renderTable } from "./components/table.js";
 export { createForm, renderForm, renderFormField } from "./components/form.js";
 

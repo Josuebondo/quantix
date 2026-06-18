@@ -1,25 +1,9 @@
-CREATE TABLE `wizard_sessions` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `wizard_session_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'UUID unique pour le wizard',
-  `user_id` bigint unsigned NOT NULL,
-  `company_id` bigint unsigned DEFAULT NULL COMMENT 'NULL tant que pas créée',
-  `status` enum('draft','in_progress','completed','deployed') COLLATE utf8mb4_unicode_ci DEFAULT 'draft',
-  `current_step` int DEFAULT '1',
-  `state` json DEFAULT NULL,
-  `idempotency_key` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Pour deploy idempotent',
-  `deployment_metadata` longtext COLLATE utf8mb4_unicode_ci COMMENT 'Résultats du déploiement',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `last_saved_at` timestamp NULL DEFAULT NULL,
-  `deployed_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `wizard_session_id` (`wizard_session_id`),
-  UNIQUE KEY `uk_wizard_session_id` (`wizard_session_id`),
-  UNIQUE KEY `idempotency_key` (`idempotency_key`),
-  KEY `idx_user_id` (`user_id`),
-  KEY `idx_company_id` (`company_id`),
-  KEY `idx_status` (`status`),
-  KEY `idx_created_at` (`created_at`),
-  CONSTRAINT `fk_wizard_company_id` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_wizard_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+ALTER TABLE users
+ADD COLUMN warehouse_id BIGINT UNSIGNED NULL,
+ADD CONSTRAINT fk_users_warehouse
+FOREIGN KEY
+(warehouse_id) REFERENCES warehouses
+(id)
+ON
+DELETE
+SET NULL;

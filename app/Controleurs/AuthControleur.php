@@ -269,4 +269,33 @@ class AuthControleur extends BaseControleur
 
         return $response->json($result, $statusCode);
     }
+    public function me(Requete $requete, Reponse $response)
+    {
+        $auth = $this->authService->getAuth();
+        $user = $auth->user();
+
+        if (!$user) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Utilisateur non authentifié'
+            ], 401);
+        }
+
+
+        $rbac = Users::getUserRolesWithPermissions($user['id']);
+
+        return $response->json([
+            'success' => true,
+            'user' => [
+                'id' => $user['id'],
+                'email' => $user['email'],
+                'first_name' => $user['first_name'] ?? '',
+                'last_name' => $user['last_name'] ?? '',
+                'company_id' => $user['company_id'] ?? '',
+                'roles' => $rbac['roles'],
+                'permissions' => $rbac['permissions'],
+                'modules' => $rbac['modules']
+            ]
+        ]);
+    }
 }

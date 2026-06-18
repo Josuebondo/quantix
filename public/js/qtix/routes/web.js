@@ -17,6 +17,12 @@ export default function registerWebRoutes(Qtix) {
     },
     requireAuth: false, // Nécessite une authentification
   });
+  Qtix.registerRoute("/404", {
+    component: async () => {
+      return await fetch("/404").then((r) => r.text());
+    },
+    requireAuth: false, // Nécessite une authentification
+  });
   Qtix.registerRoute("/dashboard", {
     component: async () => {
       return "<h1>Dashboard</h1>";
@@ -30,7 +36,7 @@ export default function registerWebRoutes(Qtix) {
     requireAuth: false, // Accessible sans être connecté
   });
 
-  Qtix.registerRoute("/products", {
+  Qtix.registerRoute("/product", {
     component: async () => {
       return await fetch("/spa/products").then((r) => r.text());
     },

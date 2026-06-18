@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Modeles\permision;
 use App\Modeles\role;
+use App\Modeles\role_permission;
 use App\Modeles\User_role;
 use App\Modeles\users;
 use Bmvc\BAuth\Adapters\BMVC\BmvcAuthProvider;
@@ -12,6 +14,7 @@ use Bmvc\BAuth\Exceptions\AuthenticationException;
 use Bmvc\BAuth\Exceptions\UserNotFoundException;
 use Bmvc\BAuth\Support\Password;
 use Core\Session;
+use Exception;
 
 class BAuthService
 {
@@ -79,6 +82,8 @@ class BAuthService
             // Générer un refresh token avec une durée de vie plus longue
             $refreshToken = $this->generateRefreshToken($user['id']);
             $this->auth->getSessionProvider()->start($user, $accessToken);
+
+            $rbac = Users::getUserRolesWithPermissions($user['id']);
             return $this->success(
                 [
                     'user' => [
@@ -87,6 +92,8 @@ class BAuthService
                         'first_name' => $user['first_name'] ?? '',
                         'last_name' => $user['last_name'] ?? '',
                         'company_id' => $user['company_id'] ?? '',
+                        'roles' => $rbac['roles'],
+                        'permissions' => $rbac['permissions']
                     ],
                     'tokens' => [
                         'access_token' => $accessToken,
@@ -94,7 +101,7 @@ class BAuthService
                         'expires_in' => self::ACCESS_TOKEN_EXPIRES,
                         'token_type' => 'Bearer',
                     ],
-                    'redirect_url' => Session::obtenir('url_intended') ?? '/dashboard',
+                    'redirect_url' => Session::obtenir('url_intended') ?? '/app',
                 ],
                 'Connexion réussie',
                 200
@@ -155,6 +162,7 @@ class BAuthService
                 'user_id' => $createdUser['id'],
                 'role_id' => $roleId
             ]);
+            $permissions =  $this->assignAllPermissionsToOwner($userData['company_id']);
             // Authentifier l'utilisateur nouvellement créé
             try {
 
@@ -179,6 +187,8 @@ class BAuthService
                         'first_name' => $userData['first_name'] ?? '',
                         'last_name' => $userData['last_name'] ?? '',
                         'company_id' => $userData['company_id'] ?? '',
+                        'roles' => [$userRoles->name],
+                        'permissions' => $permissions
                     ],
                     'tokens' => [
                         'access_token' => $accessToken,
@@ -353,5 +363,42 @@ class BAuthService
     public function getAuth(): Auth
     {
         return $this->auth;
+    }
+    public function assignAllPermissionsToOwner(int $companyId)
+    {
+        // 1. Récupérer le rôle owner de l'entreprise
+
+        $ownerRole = role::ou('company_id', $companyId)->et('code', 'company.owner')
+            ->premier();
+        // dd($ownerRole);
+        if (!$ownerRole) {
+            throw new Exception("Owner role not found for company");
+        }
+
+        // 2. Récupérer toutes les permissions système
+        $permissions = permision::ou('module', '<>', 'system')->obtenir();
+        // dd($permissions);
+
+        // 3. Préparer insert bulk
+        $existing = role_permission::ou('role_id', $ownerRole->id)->obtenir();
+
+        $existingIds = array_map(fn($r) => $r->permission_id, $existing);
+        $per = null;
+        foreach ($permissions as $permission) {
+            $per[] = [
+                'name' => $permission->name,
+                'code' => $permission->code,
+                'module' => $permission->module
+            ];
+            if (!in_array($permission->id, $existingIds)) {
+                role_permission::creer([
+                    "role_id" => $ownerRole->id,
+                    "permission_id" => $permission->id
+                ]);
+            }
+        }
+        // dd($data);
+
+        return $per;
     }
 }

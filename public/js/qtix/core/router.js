@@ -13,6 +13,9 @@ class Router {
     this.afterHooks = [];
     this.pageContainer = null;
     this._navigating = false;
+    this.currentController = null;
+    this.historyStack = [];
+    this.historyIndex = -1;
   }
 
   /**
@@ -21,6 +24,7 @@ class Router {
   register(path, config) {
     this.routes[path] = {
       component: config.component || null,
+      controller: config.controller || null,
       init: config.init || null,
       methods: config.methods || {},
       requireAuth: config.requireAuth !== false,
@@ -43,10 +47,17 @@ class Router {
         if (!shouldContinue) return;
       }
 
-      const route = this.routes[path];
+      const cleanPath = this.normalize(path);
+
+      const route = this.routes[cleanPath];
 
       if (!route) {
-        console.warn(`Route non trouvée: ${path}`);
+        // console.warn(`Route non trouvée: ${cleanPath}`);
+
+        setTimeout(() => {
+          this.navigate("/404");
+        }, 0);
+
         return;
       }
 
@@ -63,13 +74,21 @@ class Router {
           return;
         }
       }
+      // si on avance normalement (pas back/forward)
+      this.historyStack = this.historyStack.slice(0, this.historyIndex + 1);
 
-      await this.loadComponent(path, route, data);
+      this.historyStack.push({
+        path: cleanPath,
+        data,
+      });
 
-      this.currentRoute = { path, route, data };
+      this.historyIndex++;
+      await this.loadComponent(cleanPath, route, data);
+
+      this.currentRoute = { cleanPath, route, data };
 
       for (const hook of this.afterHooks) {
-        await hook(path, route);
+        await hook(cleanPath, route);
       }
     } finally {
       this._navigating = false;
@@ -81,8 +100,15 @@ class Router {
   async loadComponent(path, route, data) {
     try {
       this._loading = true;
-      // console.log("Loading route:", path, route);
-      // return;
+
+      // Détruire la page précédente
+      if (
+        this.currentController &&
+        typeof this.currentController.destroy === "function"
+      ) {
+        await this.currentController.destroy();
+      }
+
       const comp = route.component;
 
       if (typeof comp === "function") {
@@ -93,27 +119,51 @@ class Router {
       ) {
         this.pageContainer.innerHTML = comp.template(data);
       } else {
-        throw new Error("Route invalide: component doit être une fonction");
+        throw new Error("Route invalide");
       }
 
-      // 🔥 important pour Alpine / bindings Qtix
-      // if (window.Alpine) {
-      //   window.Alpine.initTree(this.pageContainer);
-      // }
-    } catch (error) {
-      console.error("Erreur loadComponent:", error);
+      // Alpine
+      if (window.Alpine) {
+        window.Alpine.initTree(this.pageContainer);
+      }
 
-      this.pageContainer.innerHTML = `
-      <div class="p-6 text-red-500">
-        <h2>Erreur de chargement</h2>
-        <p>${error.message}</p>
-      </div>
-    `;
+      // Charger le contrôleur frontend
+      if (route.controller) {
+        const controller = await import(route.controller);
+
+        this.currentController = controller;
+
+        if (typeof controller.init === "function") {
+          await controller.init(data);
+        }
+      }
+    } catch (error) {
+      console.error(error);
     } finally {
       this._loading = false;
     }
   }
+  normalize(path) {
+    if (!path) return "/";
 
+    // retirer hash si SPA hash mode
+    path = path.replace(/^#/, "");
+
+    // garantir slash initial
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+
+    // retirer slash final sauf root
+    if (path.length > 1 && path.endsWith("/")) {
+      path = path.slice(0, -1);
+    }
+
+    return path;
+  }
+  goTo404() {
+    return this.navigate("/404");
+  }
   /**
    * Before navigation hook
    */
@@ -132,14 +182,24 @@ class Router {
    * Back browser
    */
   back() {
-    window.history.back();
+    if (this.historyIndex > 0) {
+      this.historyIndex--;
+      const previous = this.historyStack[this.historyIndex];
+
+      this.navigate(previous.path, previous.data);
+    }
   }
 
   /**
    * Forward browser
    */
   forward() {
-    window.history.forward();
+    if (this.historyIndex < this.historyStack.length - 1) {
+      this.historyIndex++;
+      const next = this.historyStack[this.historyIndex];
+
+      this.navigate(next.path, next.data);
+    }
   }
 
   /**
@@ -155,8 +215,8 @@ class Router {
   async reload() {
     if (!this.currentRoute) return;
 
-    const { path, route, data } = this.currentRoute;
-    await this.loadComponent(path, route, data);
+    const { cleanPath, route, data } = this.currentRoute;
+    await this.loadComponent(cleanPath, route, data);
 
     if (window.Alpine) {
       window.Alpine.flushAndStopDeferringMutations?.();

@@ -1,0 +1,688 @@
+[
+  {
+    "id": "1",
+    "name": "View Product",
+    "code": "product.view",
+    "module": "products",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "2",
+    "name": "List Products",
+    "code": "product.list",
+    "module": "products",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "3",
+    "name": "Create Product",
+    "code": "product.create",
+    "module": "products",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "4",
+    "name": "Update Product",
+    "code": "product.update",
+    "module": "products",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "5",
+    "name": "Delete Product",
+    "code": "product.delete",
+    "module": "products",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "6",
+    "name": "Export Products",
+    "code": "product.export",
+    "module": "products",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "7",
+    "name": "View Stock",
+    "code": "stock.view",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "8",
+    "name": "List Stock",
+    "code": "stock.list",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "9",
+    "name": "Create Stock",
+    "code": "stock.create",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "10",
+    "name": "Update Stock",
+    "code": "stock.update",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "11",
+    "name": "Delete Stock",
+    "code": "stock.delete",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "12",
+    "name": "Adjust Stock",
+    "code": "stock.adjust",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "13",
+    "name": "Stock History",
+    "code": "stock.history",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "14",
+    "name": "Export Stock",
+    "code": "stock.export",
+    "module": "stocks",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "15",
+    "name": "View Sales",
+    "code": "sale.view",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "16",
+    "name": "List Sales",
+    "code": "sale.list",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "17",
+    "name": "Create Sale",
+    "code": "sale.create",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "18",
+    "name": "Update Sale",
+    "code": "sale.update",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "19",
+    "name": "Delete Sale",
+    "code": "sale.delete",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "20",
+    "name": "Refund Sale",
+    "code": "sale.refund",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "21",
+    "name": "Export Sales",
+    "code": "sale.export",
+    "module": "sales",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "22",
+    "name": "Create User",
+    "code": "user.create",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "23",
+    "name": "View User",
+    "code": "user.view",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "24",
+    "name": "List Users",
+    "code": "user.list",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "25",
+    "name": "Update User",
+    "code": "user.update",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "26",
+    "name": "Delete User",
+    "code": "user.delete",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "27",
+    "name": "Manage Users",
+    "code": "user.manage",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "28",
+    "name": "Assign Role",
+    "code": "user.assign_role",
+    "module": "users",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "29",
+    "name": "Create Role",
+    "code": "role.create",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "30",
+    "name": "View Role",
+    "code": "role.view",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "31",
+    "name": "List Roles",
+    "code": "role.list",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "32",
+    "name": "Update Role",
+    "code": "role.update",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "33",
+    "name": "Delete Role",
+    "code": "role.delete",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "34",
+    "name": "Manage Roles",
+    "code": "role.manage",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "35",
+    "name": "Assign Permission",
+    "code": "role.assign_permission",
+    "module": "roles",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "36",
+    "name": "Login",
+    "code": "auth.login",
+    "module": "auth",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "37",
+    "name": "Logout",
+    "code": "auth.logout",
+    "module": "auth",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "38",
+    "name": "Refresh Token",
+    "code": "auth.refresh",
+    "module": "auth",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "39",
+    "name": "View Sessions",
+    "code": "auth.sessions",
+    "module": "auth",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "40",
+    "name": "Impersonate User",
+    "code": "auth.impersonate",
+    "module": "auth",
+    "created_at": "2026-06-07 02:53:25"
+  },
+  {
+    "id": "41",
+    "name": "Create Company",
+    "code": "company.create",
+    "module": "company",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "42",
+    "name": "View Company",
+    "code": "company.view",
+    "module": "company",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "43",
+    "name": "List Companies",
+    "code": "company.list",
+    "module": "company",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "44",
+    "name": "Update Company",
+    "code": "company.update",
+    "module": "company",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "45",
+    "name": "Delete Company",
+    "code": "company.delete",
+    "module": "company",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "46",
+    "name": "Manage Company Settings",
+    "code": "company.settings",
+    "module": "company",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "47",
+    "name": "Create Warehouse",
+    "code": "warehouse.create",
+    "module": "warehouses",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "48",
+    "name": "View Warehouse",
+    "code": "warehouse.view",
+    "module": "warehouses",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "49",
+    "name": "List Warehouses",
+    "code": "warehouse.list",
+    "module": "warehouses",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "50",
+    "name": "Update Warehouse",
+    "code": "warehouse.update",
+    "module": "warehouses",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "51",
+    "name": "Delete Warehouse",
+    "code": "warehouse.delete",
+    "module": "warehouses",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "52",
+    "name": "Assign Warehouse User",
+    "code": "warehouse.assign_user",
+    "module": "warehouses",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "53",
+    "name": "Stock Overview",
+    "code": "stock.overview",
+    "module": "stocks",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "54",
+    "name": "View Movements",
+    "code": "movement.view",
+    "module": "movements",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "55",
+    "name": "List Movements",
+    "code": "movement.list",
+    "module": "movements",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "56",
+    "name": "Create Movement",
+    "code": "movement.create",
+    "module": "movements",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "57",
+    "name": "Transfer Stock",
+    "code": "movement.transfer",
+    "module": "movements",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "58",
+    "name": "Adjust Movement",
+    "code": "movement.adjust",
+    "module": "movements",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "59",
+    "name": "Movement History",
+    "code": "movement.history",
+    "module": "movements",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "60",
+    "name": "View Suppliers",
+    "code": "supplier.view",
+    "module": "suppliers",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "61",
+    "name": "List Suppliers",
+    "code": "supplier.list",
+    "module": "suppliers",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "62",
+    "name": "Create Supplier",
+    "code": "supplier.create",
+    "module": "suppliers",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "63",
+    "name": "Update Supplier",
+    "code": "supplier.update",
+    "module": "suppliers",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "64",
+    "name": "Delete Supplier",
+    "code": "supplier.delete",
+    "module": "suppliers",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "65",
+    "name": "Export Suppliers",
+    "code": "supplier.export",
+    "module": "suppliers",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "66",
+    "name": "View Purchases",
+    "code": "purchase.view",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "67",
+    "name": "List Purchases",
+    "code": "purchase.list",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "68",
+    "name": "Create Purchase",
+    "code": "purchase.create",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "69",
+    "name": "Update Purchase",
+    "code": "purchase.update",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "70",
+    "name": "Delete Purchase",
+    "code": "purchase.delete",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "71",
+    "name": "Receive Purchase",
+    "code": "purchase.receive",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "72",
+    "name": "Export Purchases",
+    "code": "purchase.export",
+    "module": "purchases",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "73",
+    "name": "View Invoices",
+    "code": "invoice.view",
+    "module": "invoices",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "74",
+    "name": "List Invoices",
+    "code": "invoice.list",
+    "module": "invoices",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "75",
+    "name": "Create Invoice",
+    "code": "invoice.create",
+    "module": "invoices",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "76",
+    "name": "Update Invoice",
+    "code": "invoice.update",
+    "module": "invoices",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "77",
+    "name": "Delete Invoice",
+    "code": "invoice.delete",
+    "module": "invoices",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "78",
+    "name": "Export Invoice",
+    "code": "invoice.export",
+    "module": "invoices",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "79",
+    "name": "View Dashboard",
+    "code": "dashboard.view",
+    "module": "dashboard",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "80",
+    "name": "View Stock Report",
+    "code": "report.stock",
+    "module": "reports",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "81",
+    "name": "View Movement Report",
+    "code": "report.movement",
+    "module": "reports",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "82",
+    "name": "Export Excel Report",
+    "code": "report.export_excel",
+    "module": "reports",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "83",
+    "name": "Export PDF Report",
+    "code": "report.export_pdf",
+    "module": "reports",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "84",
+    "name": "View Stock Alerts",
+    "code": "alert.stock.view",
+    "module": "alerts",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "85",
+    "name": "Manage Alerts",
+    "code": "alert.manage",
+    "module": "alerts",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "86",
+    "name": "View Subscription",
+    "code": "subscription.view",
+    "module": "subscriptions",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "87",
+    "name": "Create Subscription",
+    "code": "subscription.create",
+    "module": "subscriptions",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "88",
+    "name": "Update Subscription",
+    "code": "subscription.update",
+    "module": "subscriptions",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "89",
+    "name": "Cancel Subscription",
+    "code": "subscription.cancel",
+    "module": "subscriptions",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "90",
+    "name": "Manage Subscription",
+    "code": "subscription.manage",
+    "module": "subscriptions",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "91",
+    "name": "View Activity Logs",
+    "code": "activity.view",
+    "module": "activity_logs",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "92",
+    "name": "List Activity Logs",
+    "code": "activity.list",
+    "module": "activity_logs",
+    "created_at": "2026-06-14 00:00:11"
+  },
+  {
+    "id": "99",
+    "name": "View system Logs",
+    "code": "log.view",
+    "module": "system",
+    "created_at": "2026-06-14 00:20:12"
+  },
+  {
+    "id": "100",
+    "name": "List system Logs",
+    "code": "log.list",
+    "module": "system",
+    "created_at": "2026-06-14 00:20:12"
+  },
+  {
+    "id": "101",
+    "name": "Manage system",
+    "code": "system.manage",
+    "module": "system",
+    "created_at": "2026-06-14 00:20:12"
+  },
+  {
+    "id": "102",
+    "name": "View SaaS stats",
+    "code": "saas.view",
+    "module": "system",
+    "created_at": "2026-06-14 00:20:12"
+  },
+  {
+    "id": "103",
+    "name": "Manage companies",
+    "code": "company.manage",
+    "module": "system",
+    "created_at": "2026-06-14 00:20:12"
+  },
+  {
+    "id": "104",
+    "name": "Manage subscriptions",
+    "code": "subscriptions.manage",
+    "module": "system",
+    "created_at": "2026-06-14 00:20:12"
+  }
+]

@@ -28,12 +28,90 @@ class TeamController extends BaseControleur
     {
         // Simuler des données d'utilisateurs
         $users = [
-            ['id' => 1, 'name' => 'Alice'],
-            ['id' => 2, 'name' => 'Bob'],
-            ['id' => 3, 'name' => 'Charlie'],
-        ];
+            [
+                'id' => 1,
+                'name' => 'John Owner',
+                'email' => 'owner@acme.cd',
+                'role' => 'Owner',
+                'warehouse' => 'Tous les entrepôts',
+                'status' => 'Actif',
+                'last_login' => "Aujourd'hui, 09:42",
+                'created_at' => '10/06/2026'
+            ],
 
-        return json($users);
+            [
+                'id' => 2,
+                'name' => 'Marie Admin',
+                'email' => 'marie@acme.cd',
+                'role' => 'Admin',
+                'warehouse' => 'Entrepôt Central',
+                'status' => 'Actif',
+                'last_login' => "Aujourd'hui, 08:15",
+                'created_at' => '11/06/2026'
+            ],
+
+            [
+                'id' => 3,
+                'name' => 'Patrick Stock',
+                'email' => 'patrick@acme.cd',
+                'role' => 'Employé',
+                'warehouse' => 'Entrepôt Central',
+                'status' => 'Actif',
+                'last_login' => 'Hier, 17:28',
+                'created_at' => '12/06/2026'
+            ],
+
+            [
+                'id' => 4,
+                'name' => 'Sarah Vente',
+                'email' => 'sarah@acme.cd',
+                'role' => 'Employé',
+                'warehouse' => 'Magasin Gombe',
+                'status' => 'Inactif',
+                'last_login' => '08/06/2026 14:30',
+                'created_at' => '05/06/2026'
+            ],
+
+            [
+                'id' => 5,
+                'name' => 'David Manager',
+                'email' => 'david@acme.cd',
+                'role' => 'Manager',
+                'warehouse' => 'Entrepôt Est',
+                'status' => 'Actif',
+                'last_login' => 'Aujourd\'hui, 10:05',
+                'created_at' => '09/06/2026',
+                'statut' => 'inactif'
+            ],
+
+            [
+                'id' => 6,
+                'name' => 'Grace Support',
+                'email' => 'grace@acme.cd',
+                'role' => 'Employé',
+                'warehouse' => 'Entrepôt Ouest',
+                'status' => 'Suspendu',
+                'last_login' => '01/06/2026 11:20',
+                'created_at' => '28/05/2026',
+                'statut' => 'inactif'
+            ]
+        ];
+        $stats = [
+            'activeUsers' => 142,
+            'activeTrend' => '+18 ce mois-ci',
+
+            'pendingInvites' => 11,
+            'pendingTrend' => '+4 cette semaine',
+
+            'roles' => 8,
+
+            'totalUsers' => 167,
+            'totalTrend' => '+24 ce mois-ci'
+        ];
+        return json([
+            'users' => $users,
+            'stats' => $stats
+        ]);
     }
     public function entrepots(Requete $requete, Reponse $response)
     {

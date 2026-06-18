@@ -76,6 +76,9 @@ class Qtix {
     return router.navigate(path, data);
   }
 
+  back() {
+    return router.back();
+  }
   /**
    * Navigate vers page registrée
    */
@@ -333,6 +336,40 @@ class Qtix {
    */
   isInitialized() {
     return this.initialized;
+  }
+  /**
+   * delay a time
+   */
+  delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+  async openPage(path) {
+    const app = document.getElementById("app");
+
+    try {
+      this.startLoading();
+
+      // Cache l'ancienne page
+      app.style.opacity = "0";
+
+      await this.navigate(path);
+
+      // Position initiale de la nouvelle page
+      app.style.transition = "none";
+      app.style.opacity = "0";
+      app.style.transform = "translateY(100px)";
+
+      // Force le rendu
+      await this.delay(2700);
+
+      // Animation d'entrée
+      app.style.transition =
+        "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)";
+      app.style.opacity = "1";
+      app.style.transform = "translateY(0)";
+    } finally {
+      this.stopLoading();
+    }
   }
 }
 
