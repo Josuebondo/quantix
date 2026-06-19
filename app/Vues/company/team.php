@@ -292,35 +292,57 @@
                     placeholder="alice@quantix.com"
                     class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
             </div>
-            <div>
-                <label
-                    class="block mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Entrepôt
                 </label>
 
-                <select id="warehouse"
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
-                    <option value="">Sélectionner un entrepôt</option>
-                    <!-- Entrepôt -->
+                <div class="relative">
+                    <select
+                        id="warehouse"
+                        class="w-full appearance-none px-4 py-3 pr-10 rounded-xl
+             border border-slate-200 dark:border-slate-700
+             bg-white dark:bg-slate-900
+             text-slate-700 dark:text-slate-200
+             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+             transition shadow-sm">
+                        <option value="">Sélectionner un entrepôt</option>
+                    </select>
 
-                </select>
+                    <!-- icône dropdown -->
+                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label
-                    class="block mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Rôle
                 </label>
 
-                <select
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                <div class="relative">
+                    <select
+                        id="selectedRole"
+                        class="w-full appearance-none px-4 py-3 pr-10 rounded-xl
+             border border-slate-200 dark:border-slate-700
+             bg-white dark:bg-slate-900
+             text-slate-700 dark:text-slate-200
+             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+             transition shadow-sm">
+                        <option value="">Sélectionner un rôle</option>
+                    </select>
 
-                    <option>Sélectionner un rôle</option>
-                    <option>Administrateur</option>
-                    <option>Manager</option>
-                    <option>Employé</option>
-                    <option>Analyste</option>
-
-                </select>
+                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
             </div>
 
 

@@ -15,7 +15,7 @@ class TeamService
         $data = [];
         return $data;
     }
-    public function getRoles(company $compay)
+    public function getRoles(company $compay): array
     {
         $roles = $compay->roles();
         $data = [];
@@ -28,7 +28,7 @@ class TeamService
         }
         return $data;
     }
-    public function getWarehouses(company $compay)
+    public function getWarehouses(company $compay): array
     {
         $warehouses = $compay->warehouses();
         $data = [];
@@ -45,5 +45,27 @@ class TeamService
             ];
         }
         return $data;
+    }
+    public function getTeam(company $compay): array
+    {
+        $data = $compay->usersWithDetails();
+        $users = [];
+        // dd($data);
+        foreach ($data as $user) {
+            $users[] = [
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'warehouse_id' => $user->warehouse_id,
+                'warehouse_name' => $user->warehouse_name,
+                'role' => $user->role_name,
+                'status' => $user->status,
+                'last_login_at' => $user->last_login_at,
+
+
+            ];
+        }
+        return $users;
     }
 }

@@ -19,7 +19,20 @@ class company extends Modele
     {
         return $this->aPlusieurs(users::class, 'company_id', 'id');
     }
-
+    public function usersWithDetails()
+    {
+        $users = users::ou('users.id', '>', 0)
+            ->joindre('user_roles', 'users.id', 'user_roles.user_id')
+            ->joindre('roles', 'user_roles.role_id', 'roles.id')
+            ->joindreGauche('warehouses', 'users.warehouse_id', 'warehouses.id')
+            ->selectionner([
+                'users.*',
+                'roles.name as role_name',
+                'warehouses.name as warehouse_name'
+            ])
+            ->obtenir();
+        return $users;
+    }
     /**
      * Relation: une entreprise a plusieurs entrepôts
      */

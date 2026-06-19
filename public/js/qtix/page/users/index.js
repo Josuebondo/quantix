@@ -50,7 +50,37 @@ async function loadUsers() {
     Qtix.error("Erreur chargement utilisateurs");
   }
 }
+async function data() {
+  try {
+    const res = await Qtix.get("/team/data");
 
+    return (
+      res?.data ??
+      res ?? {
+        entrepots: [],
+        roles: [],
+        teams: [],
+      }
+    );
+  } catch (e) {
+    Qtix.error("Erreur chargement donnée");
+
+    return {
+      entrepots: [],
+      roles: [],
+      teams: [],
+    };
+  }
+}
+async function loadInviteUsedata() {
+  const res = await data();
+  const entrepots = res.entrepots ?? [];
+  const roles = res.roles ?? [];
+  const warehouseSelect = document.getElementById("warehouse");
+  const roleSelect = document.getElementById("selectedRole");
+  fillSelect(warehouseSelect, entrepots, "Sélectionner un entrepôt");
+  fillSelect(roleSelect, roles, "Sélectionner un rôle");
+}
 function getPaginatedData() {
   let data = [...state.filtered];
 
@@ -368,9 +398,29 @@ async function toggleUser(id) {
 }
 
 function openInviteModal() {
+  loadInviteUsedata();
   Qtix.toggleModal("invite-modal");
 }
+function fillSelect(selectEl, data, placeholder = "Sélectionner") {
+  if (!selectEl) return;
 
+  // reset options
+  selectEl.innerHTML = "";
+
+  // option placeholder
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = placeholder;
+  selectEl.appendChild(defaultOption);
+
+  // options dynamiques
+  data.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = item.name;
+    selectEl.appendChild(option);
+  });
+}
 function editUser(id) {
   Qtix.navigate(`/users/edit/${id}`);
 }

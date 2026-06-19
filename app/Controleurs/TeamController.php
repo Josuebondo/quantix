@@ -3,12 +3,10 @@
 namespace App\Controleurs;
 
 use App\BaseControleur;
-use App\Modeles\company;
-use App\Modeles\role;
 use App\Modeles\users;
 use App\Services\TeamService;
-use Core\Requete;
 use Core\Reponse;
+use Core\Requete;
 
 /**
  * TeamController Contrôleur
@@ -150,10 +148,12 @@ class TeamController extends BaseControleur
         $ts = new TeamService();
         $roles = $ts->getRoles($company);
         $entrepots = $ts->getWarehouses($company);
-        // dd($entrepots);
+        $teams = $ts->getTeam($company);
+        // dd($teams['0']['first_name']);
         $data = [
             'roles' => $roles,
-            'entrepots' => $entrepots
+            'entrepots' => $entrepots,
+            'teams' => $teams
 
         ];
         return json($data);

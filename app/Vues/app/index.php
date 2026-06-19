@@ -215,15 +215,28 @@
     }" class="font-display bg-background-light text-on-surface dark:bg-background-dark dark:text-inverse-on-surface overflow-hidden">
     <div class="flex h-screen overflow-hidden">
         <!-- decoration-->
-        <div class="absolute top-20 -left-20 w-96 h-96 bg-primary-container opacity-10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-tertiary-container opacity-10 rounded-full blur-3xl"></div>
 
         <!-- Mobile Sidebar Overlay -->
+        <!-- Overlay mobile -->
+        <div
+            x-show="sidebarOpen"
+            x-transition.opacity
+            class="fixed inset-0 bg-black/40 backdrop-blur-sm lg:hidden z-40"
+            @click="closeSidebar()">
+        </div>
 
-        <div class="fixed inset-0 bg-on-surface/45 dark:bg-black/60 z-40 lg:hidden" id="sidebar-overlay" @click="closeSidebar()" x-show="sidebarOpen" x-transition x-cloak></div>
         <!-- SideNavBar -->
 
-        <aside class="w-[280px] h-screen  fixed lg:static left-0 top-0 bg-surface/95 dark:bg-surface-dark/95 border-r border-outline-variant dark:border-border-dark flex flex-col py-6 z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0 backdrop-blur-xl" id="sidebar" :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }" @keydown.escape="closeSidebar()">
+        <aside
+            id="sidebar"
+            class="w-[280px] h-screen fixed lg:static left-0 top-0
+           bg-surface/95 dark:bg-surface-dark/95
+           border-r border-outline-variant dark:border-border-dark
+           flex flex-col py-6 z-50
+           backdrop-blur-xl
+           transition-transform duration-300 ease-in-out
+           lg:translate-x-0"
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
             <div class="px-6 mb-8 flex items-center justify-between">
                 <div class="flex items-center gap-3 text-2xl font-extrabold tracking-tight text-primary dark:text-primary-fixed">
                     <!-- Brand Logo -->
@@ -255,7 +268,7 @@
 
                     <template x-if="!item.separator">
                         <a
-                            @click="openPage(item.route)"
+                            @click="openPage(item.route); closeSidebar()"
                             class="nav-item flex items-center gap-3 px-4 py-3 mx-2 rounded-lg cursor-pointer"
                             :class="isActive(item.route)
                                     ? 'bg-blue-600 text-white'
@@ -374,12 +387,6 @@
             </main>
 
 
-            <div id="app-modal"
-                class="left-[280px]  z-[999] pointer-events-none">
-
-
-
-            </div>
 
 
         </div>
