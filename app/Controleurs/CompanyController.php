@@ -270,7 +270,7 @@ class CompanyController extends BaseControleur
     {
         try {
             // Récupérer toutes les permissions depuis la table et les convertir en tableaux
-            $allPermissions = permission::ou('id', '>', 0)->obtenir();
+            $allPermissions = permission::ou('id', '<>', 'system')->obtenir();
             if (!$allPermissions) {
                 throw new \Exception('Aucune permission trouvée');
             }
@@ -298,15 +298,20 @@ class CompanyController extends BaseControleur
 
             return $response->json([
                 'success' => true,
-                'data' => $modules,
-                'permissions' => $permissions,
+                'data' => [
+                    'modules' => $modules,
+                    'permission' => $permissions
+                ],
+
             ]);
         } catch (\Exception $e) {
             // Retourner liste par défaut en cas d'erreur
             return $response->json([
                 'success' => true,
-                'data' => ['Inventaire', 'Sites', 'Commandes', 'Analyses', 'Utilisateurs'],
-                'permissions' => [],
+                'data' => [
+                    'modules' => ['Inventaire', 'Sites', 'Commandes', 'Analyses', 'Utilisateurs'],
+                    'permissions' => []
+                ],
             ]);
         }
     }

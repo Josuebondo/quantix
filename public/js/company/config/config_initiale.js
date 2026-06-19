@@ -587,10 +587,9 @@ const WizardController = {
           response_data.message || "Impossible de charger les permissions",
         );
       }
+      const data = response_data.data;
 
-      const permissions = Array.isArray(response_data)
-        ? response_data
-        : response_data.permissions || [];
+      const permissions = data.permissions || [];
 
       // console.debug(
       //   "[WIZARD] loadPermissions(): permissions count",

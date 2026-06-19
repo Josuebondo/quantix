@@ -21,6 +21,13 @@ class company extends Modele
     }
 
     /**
+     * Relation: une entreprise a plusieurs entrepôts
+     */
+    public function warehouses()
+    {
+        return $this->aPlusieurs('App\Modeles\warehouse', 'company_id', 'id');
+    }
+    /**
      * Relation: une entreprise a plusieurs rôles
      */
     public function roles()

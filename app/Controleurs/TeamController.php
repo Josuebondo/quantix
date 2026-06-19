@@ -3,6 +3,10 @@
 namespace App\Controleurs;
 
 use App\BaseControleur;
+use App\Modeles\company;
+use App\Modeles\role;
+use App\Modeles\users;
+use App\Services\TeamService;
 use Core\Requete;
 use Core\Reponse;
 
@@ -138,5 +142,20 @@ class TeamController extends BaseControleur
         return vue('company.mouvement', [
             'documents' => $documents,
         ]);
+    }
+    public function data(Requete $req, Reponse $res)
+    {
+
+        $company = users::company();
+        $ts = new TeamService();
+        $roles = $ts->getRoles($company);
+        $entrepots = $ts->getWarehouses($company);
+        // dd($entrepots);
+        $data = [
+            'roles' => $roles,
+            'entrepots' => $entrepots
+
+        ];
+        return json($data);
     }
 }
