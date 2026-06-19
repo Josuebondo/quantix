@@ -119,6 +119,36 @@
                 grid-template-columns: repeat(4, minmax(0, 1fr));
             }
         }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-modal-in {
+            animation: modalIn .25s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn .25s ease;
+        }
     </style>
     <script>
         (function() {
@@ -344,6 +374,13 @@
             </main>
 
 
+            <div id="app-modal"
+                class="left-[280px]  z-[999] pointer-events-none">
+
+
+
+            </div>
+
 
         </div>
         <script src="<?= asset('js/qtix/utils/sidebare.js') ?>"></script>
@@ -352,6 +389,7 @@
             Qtix.iniLoading('loader-container');
             // Qtix.startLoading();
             //enregistrer les routes web
+
 
 
 

@@ -371,6 +371,10 @@ class Qtix {
       this.stopLoading();
     }
   }
+  toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.toggle("hidden");
+  }
 }
 
 export default new Qtix();

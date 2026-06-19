@@ -118,11 +118,12 @@ Routeur::publier('/api/company/activate', 'CompanyController@apiActivate')->nom(
 
 
 //gestion de equipes d'une entreprise
-Routeur::vue('/company/team', 'company.team')->nom('company.teams');
+Routeur::vue('/company/team', 'team.index')->nom('company.teams');
 Routeur::obtenir('/api/company/teams', 'TeamController@index')->nom('company.teams.index');
 Routeur::obtenir('/api/company/teams/list', 'TeamController@all')->nom('company.teams.index');
 Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('company.teams.entrepots');
 Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('company.teams.mouvements');
+Routeur::obtenir('/api/team/data', 'TeamController@data')->middleware([MiddlewareCSRF::class, MiddlewareAuth::class])->nom('company.teams.mouvements');
 
 
 //app routes

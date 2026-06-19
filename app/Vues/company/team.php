@@ -2,9 +2,9 @@
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8">
         <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-primary dark:text-primary-fixed mb-2">Administration</p>
-            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-on-surface dark:text-inverse-on-surface mb-2">Teams</h1>
-            <p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">Gérez les utilisateurs, invitations et rôles de votre entreprise.</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-primary mb-2">Administration</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">Teams</h1>
+            <p class="font-body-md text-body-md text-slate-500 dark:text-slate-400">Gérez les utilisateurs, invitations et rôles de votre entreprise.</p>
         </div>
         <button id="btnInviteUser" class="h-11 px-6 bg-primary hover:bg-primary-container dark:bg-primary-fixed dark:hover:bg-primary-fixed/90 text-on-primary dark:text-on-primary-fixed rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20 dark:shadow-primary/10">
             <span class="material-symbols-outlined text-base">add</span> Inviter un utilisateur
@@ -12,13 +12,13 @@
     </div>
     <!-- Tabs -->
     <div class="flex border-b border-outline-variant dark:border-outline mb-8 space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide" id="tabsContainer">
-        <button class="tab-btn pb-3 flex items-center gap-2 whitespace-nowrap border-b-2 transition-colors" :class="activeTab === 'users' ? 'text-primary dark:text-primary-fixed font-bold border-primary dark:border-primary-fixed' : 'text-on-surface-variant dark:text-surface-variant border-transparent hover:text-primary dark:hover:text-primary-fixed'" @click="selectTab('users')">
+        <button class="tab-btn pb-3 flex items-center gap-2 whitespace-nowrap border-b-2 transition-colors" :class="activeTab === 'users' ? 'text-primary font-bold border-primary' : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-primary'" @click="selectTab('users')">
             <span class="material-symbols-outlined">group</span> Utilisateurs
         </button>
-        <button class="tab-btn pb-3 flex items-center gap-2 whitespace-nowrap border-b-2 transition-colors" :class="activeTab === 'invitations' ? 'text-primary dark:text-primary-fixed font-bold border-primary dark:border-primary-fixed' : 'text-on-surface-variant dark:text-surface-variant border-transparent hover:text-primary dark:hover:text-primary-fixed'" @click="selectTab('invitations')">
+        <button class="tab-btn pb-3 flex items-center gap-2 whitespace-nowrap border-b-2 transition-colors" :class="activeTab === 'invitations' ? 'text-primary font-bold border-primary' : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-primary'" @click="selectTab('invitations')">
             <span class="material-symbols-outlined">mail</span> Invitations
         </button>
-        <button class="tab-btn pb-3 flex items-center gap-2 whitespace-nowrap border-b-2 transition-colors" :class="activeTab === 'roles' ? 'text-primary dark:text-primary-fixed font-bold border-primary dark:border-primary-fixed' : 'text-on-surface-variant dark:text-surface-variant border-transparent hover:text-primary dark:hover:text-primary-fixed'" @click="selectTab('roles')">
+        <button class="tab-btn pb-3 flex items-center gap-2 whitespace-nowrap border-b-2 transition-colors" :class="activeTab === 'roles' ? 'text-primary font-bold border-primary' : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-primary'" @click="selectTab('roles')">
             <span class="material-symbols-outlined">shield_person</span> Rôles &amp; Permissions
         </button>
     </div>
@@ -26,7 +26,7 @@
     <div class="tab-pane" x-show="activeTab === 'users'" x-transition>
         <!-- KPI Cards - Responsive Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
-            <div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
+            <div class="bg-white dark:bg-slate-800 border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
                 <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0">
                     <span class="material-symbols-outlined text-2xl">group</span>
                 </div>
@@ -36,7 +36,7 @@
                     <div id="stat-active-trend" class="font-body-sm text-body-sm text-[#22C55E] flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_up</span> +2 ce mois-ci</div>
                 </div>
             </div>
-            <div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
+            <div class="bg-white dark:bg-slate-800 border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
                 <div class="w-12 h-12 rounded-full bg-[#FFF7ED] dark:bg-[#431407] flex items-center justify-center text-[#EA580C] dark:text-[#FDBA74] shrink-0">
                     <span class="material-symbols-outlined text-2xl">mail</span>
                 </div>
@@ -46,7 +46,7 @@
                     <div id="stat-pending-trend" class="font-body-sm text-body-sm text-error flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">trending_down</span> -1 ce mois-ci</div>
                 </div>
             </div>
-            <div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
+            <div class="bg-white dark:bg-slate-800 border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
                 <div class="w-12 h-12 rounded-full bg-[#F0FDF4] dark:bg-[#052E16] flex items-center justify-center text-[#16A34A] dark:text-[#86EFAC] shrink-0">
                     <span class="material-symbols-outlined text-2xl">verified_user</span>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-variant mt-1">Aucun changement</div>
                 </div>
             </div>
-            <div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
+            <div class="bg-white dark:bg-slate-800 border border-outline-variant dark:border-outline rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-colors">
                 <div class="w-12 h-12 rounded-full bg-[#FAF5FF] dark:bg-[#3B0764] flex items-center justify-center text-[#9333EA] dark:text-[#D8B4FE] shrink-0">
                     <span class="material-symbols-outlined text-2xl">person</span>
                 </div>
@@ -83,6 +83,7 @@
                         <option value="manager">Manager</option>
 
                     </select>
+
                     <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
                 </div>
                 <button class="h-11 px-4 border border-outline-variant dark:border-outline rounded-xl bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface flex items-center gap-2 hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-body-md">
@@ -208,9 +209,170 @@
             </table>
         </div>
     </div>
-
-    <!-- Modal invitation -->
-    <!-- Invitation utilisateur -->
-
-
 </section>
+<!-- Modal invitation -->
+
+<!-- Invitation utilisateur -->
+<div id="invite-modal"
+    class=" absolute flex hidden inset-0 items-center justify-center pointer-events-auto">
+
+    <!-- Overlay -->
+    <div
+        class="fixed h-screen inset-0 bg-slate-900/30  dark:bg-black/50 backdrop-blur-sm">
+    </div>
+
+    <!-- Modal -->
+    <div
+        class="relative w-full max-w-lg mx-4 md:mx-6 overflow-hidden rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-2xl animate-modal-in">
+
+        <!-- Header -->
+        <div
+            class="flex items-start justify-between gap-4 px-6 py-5 border-b border-border-light dark:border-border-dark">
+
+            <div class="flex items-center gap-4">
+
+                <div
+                    class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary">
+
+                    <span class="material-symbols-outlined">
+                        person_add
+                    </span>
+
+                </div>
+
+                <div>
+                    <h2
+                        class="text-lg font-semibold text-slate-900 dark:text-white">
+                        Inviter un collaborateur
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Ajouter un nouvel utilisateur à l'organisation.
+                    </p>
+                </div>
+
+            </div>
+
+            <button
+                onclick="Qtix.toggleModal('invite-modal')"
+                class="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+
+                <span class="material-symbols-outlined">
+                    close
+                </span>
+
+            </button>
+
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-5">
+
+            <div>
+                <label
+                    class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Nom complet
+                </label>
+
+                <input
+                    type="text"
+                    placeholder="Alice Lukau"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+            </div>
+
+            <div>
+                <label
+                    class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Adresse email
+                </label>
+
+                <input
+                    type="email"
+                    placeholder="alice@quantix.com"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+            </div>
+            <div>
+                <label
+                    class="block mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Entrepôt
+                </label>
+
+                <select id="warehouse"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                    <option value="">Sélectionner un entrepôt</option>
+                    <!-- Entrepôt -->
+
+                </select>
+            </div>
+            <div>
+                <label
+                    class="block mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Rôle
+                </label>
+
+                <select
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+
+                    <option>Sélectionner un rôle</option>
+                    <option>Administrateur</option>
+                    <option>Manager</option>
+                    <option>Employé</option>
+                    <option>Analyste</option>
+
+                </select>
+            </div>
+
+
+            <div
+                class="flex gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+
+                <span
+                    class="material-symbols-outlined text-primary shrink-0">
+                    info
+                </span>
+
+                <div>
+                    <p
+                        class="text-sm font-medium text-slate-900 dark:text-white">
+                        Invitation sécurisée
+                    </p>
+
+                    <p
+                        class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        Un email d'activation sera envoyé automatiquement.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end px-6 py-5 border-t border-border-light dark:border-border-dark">
+
+            <button
+                onclick="Qtix.toggleModal('invite-modal')"
+                class="h-11 px-5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+
+                Annuler
+
+            </button>
+
+            <button
+                class="h-11 px-5 rounded-xl bg-primary text-white hover:bg-primary-dark transition flex items-center justify-center gap-2 shadow-sm shadow-primary/20">
+
+                <span class="material-symbols-outlined text-[18px]">
+                    send
+                </span>
+
+                Envoyer l'invitation
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

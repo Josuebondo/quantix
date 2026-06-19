@@ -368,7 +368,7 @@ async function toggleUser(id) {
 }
 
 function openInviteModal() {
-  Qtix.info("Ouvrir modal invitation");
+  Qtix.toggleModal("invite-modal");
 }
 
 function editUser(id) {
