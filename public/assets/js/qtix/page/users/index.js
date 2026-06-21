@@ -22,6 +22,7 @@ export async function init() {
 
   await loadUsers();
   await renderIntitation();
+  await renderRoles();
   bindEvents();
 }
 
@@ -165,7 +166,7 @@ function renderStats(stats) {
 }
 
 /**
- * TABLE
+ * TABLE USERS
  */
 async function renderTable() {
   const tbody = document.querySelector("#usersTable");
@@ -258,7 +259,7 @@ async function renderTable() {
   renderPagination();
 }
 /**
- * TABLE Invitations
+ * TABLE INVITATIONS
  */
 async function renderIntitation() {
   const res = await getdata();
@@ -278,6 +279,32 @@ async function renderIntitation() {
                             <button class="text-primary dark:text-primary-fixed hover:text-primary-container dark:hover:text-primary-fixed-dim text-sm font-medium mr-3">Renvoyer</button>
                             <button class="text-error hover:text-danger dark:hover:text-red-300 text-sm font-medium">Annuler</button>
                         </td>
+               `;
+    tbody.appendChild(tr);
+    // console.log(d.email);
+  });
+  // const { data } = getPaginatedData();
+}
+/**
+ * TABLE ROLES
+ */
+async function renderRoles() {
+  const res = await getdata();
+  const data = res.roles;
+  const tbody = helpers.el("RolesTable");
+  data.forEach((d) => {
+    const tr = document.createElement("tr");
+    tr.className =
+      "hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group";
+    tr.innerHTML = `   
+                      
+                        <td class="py-4 px-6"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-fixed text-primary">${d.name}</span></td>
+                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">${d.description}</td>
+                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface">1</td>
+                        <td class="py-4 px-6 text-right">
+                            <button class="p-2 text-outline rounded-full transition-colors opacity-50 cursor-not-allowed" disabled=""><span class="material-symbols-outlined text-sm">edit</span></button>
+                        </td>
+                   
                `;
     tbody.appendChild(tr);
     // console.log(d.email);

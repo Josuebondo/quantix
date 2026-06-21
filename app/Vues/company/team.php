@@ -175,23 +175,8 @@
                         <th class="py-4 px-6 font-semibold text-right">ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant dark:divide-outline">
-                    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
-                        <td class="py-4 px-6"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-fixed text-primary">Owner</span></td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">Accès total au système</td>
-                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface">1</td>
-                        <td class="py-4 px-6 text-right">
-                            <button class="p-2 text-outline rounded-full transition-colors opacity-50 cursor-not-allowed" disabled=""><span class="material-symbols-outlined text-sm">edit</span></button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
-                        <td class="py-4 px-6"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#E0E7FF] dark:bg-[#312E81] text-[#4338CA] dark:text-[#A5B4FC]">Admin</span></td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">Gestion administrative complète</td>
-                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface">3</td>
-                        <td class="py-4 px-6 text-right">
-                            <button class="p-2 text-outline hover:text-primary dark:hover:text-primary-fixed rounded-full transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>
-                        </td>
-                    </tr>
+                <tbody class="divide-y divide-outline-variant dark:divide-outline" id="RolesTable">
+                    <!-- charger avec Qtix.js -->
                 </tbody>
             </table>
         </div>

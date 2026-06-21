@@ -23,6 +23,7 @@ class TeamService
             $data[] = [
                 'id' => $role->id,
                 'name' => $role->name,
+                'description' => $role->description,
                 'code' => $role->code
             ];
         }
