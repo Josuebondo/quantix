@@ -77,10 +77,7 @@
                 <div class="relative w-full sm:w-auto">
                     <select id="roleFilter" class="w-full h-11 pl-3 pr-8 rounded-xl border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface text-body-md appearance-none focus:border-primary focus:ring-1 focus:ring-primary min-w-[120px] transition-colors">
 
-                        <option value="all">Tous les rôles</option>
-                        <option value="admin">Admin</option>
-                        <option value="user">Utilisateur</option>
-                        <option value="manager">Manager</option>
+
 
                     </select>
 
@@ -135,7 +132,7 @@
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
                 <input class="w-full h-11 pl-10 pr-3 rounded-xl border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-body-md focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-on-surface dark:text-inverse-on-surface" placeholder="Rechercher une invitation..." type="text" />
             </div>
-            <button @click="$store.modal.open('invite-user')" class="w-full sm:w-auto h-11 px-4 border border-outline-variant dark:border-outline rounded-xl bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface flex items-center justify-center gap-2 hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-body-md open-invitation-modal">
+            <button @click="Qtix.toggleModal('invite-modal')" class="w-full sm:w-auto h-11 px-4 border border-outline-variant dark:border-outline rounded-xl bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface flex items-center justify-center gap-2 hover:bg-surface-container-low dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-body-md open-invitation-modal">
                 <span class="material-symbols-outlined text-sm">send</span> Nouvelle invitation
             </button>
         </div>
@@ -151,18 +148,8 @@
                         <th class="py-4 px-6 font-semibold text-right">ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant dark:divide-outline">
-                    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
-                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface font-medium">nouveau.dev@acme.cd</td>
-                        <td class="py-4 px-6"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-variant dark:bg-outline text-on-surface-variant dark:text-surface-variant">Développeur</span></td>
-                        <td class="py-4 px-6"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#FEF9C3] dark:bg-[#713F12] text-[#A16207] dark:text-[#FEF08A]"><span class="w-1.5 h-1.5 rounded-full bg-[#A16207] dark:bg-[#FEF08A]"></span> En attente</span></td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">15/10/2023</td>
-                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">22/10/2023</td>
-                        <td class="py-4 px-6 text-right">
-                            <button class="text-primary dark:text-primary-fixed hover:text-primary-container dark:hover:text-primary-fixed-dim text-sm font-medium mr-3">Renvoyer</button>
-                            <button class="text-error hover:text-danger dark:hover:text-red-300 text-sm font-medium">Annuler</button>
-                        </td>
-                    </tr>
+                <tbody class="divide-y divide-outline-variant dark:divide-outline" id="invitationTable">
+                    <!-- charger avec Qtix.js -->
                 </tbody>
             </table>
         </div>
@@ -277,8 +264,10 @@
 
                 <input
                     type="text"
+                    id="invitation-nom"
                     placeholder="Alice Lukau"
                     class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                <p id="nom-error" class="text-xl font-medium text-red-700 italic"></p>
             </div>
 
             <div>
@@ -289,8 +278,10 @@
 
                 <input
                     type="email"
+                    id="invitation-email"
                     placeholder="alice@quantix.com"
                     class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+                <p id="email-error" class="text-xl font-medium text-red-700 italic"></p>
             </div>
             <div class="space-y-2">
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -299,13 +290,13 @@
 
                 <div class="relative">
                     <select
-                        id="warehouse"
+                        id="invitation-Entrepôt"
                         class="w-full appearance-none px-4 py-3 pr-10 rounded-xl
-             border border-slate-200 dark:border-slate-700
-             bg-white dark:bg-slate-900
-             text-slate-700 dark:text-slate-200
-             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-             transition shadow-sm">
+                            border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-900
+                            text-slate-700 dark:text-slate-200
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+                            transition shadow-sm">
                         <option value="">Sélectionner un entrepôt</option>
                     </select>
 
@@ -317,6 +308,7 @@
                         </svg>
                     </div>
                 </div>
+                <p id="Entrepôt-error" class="text-xl font-medium text-red-700 italic"></p>
             </div>
 
             <div class="space-y-2">
@@ -326,13 +318,13 @@
 
                 <div class="relative">
                     <select
-                        id="selectedRole"
+                        id="invitation-Role"
                         class="w-full appearance-none px-4 py-3 pr-10 rounded-xl
-             border border-slate-200 dark:border-slate-700
-             bg-white dark:bg-slate-900
-             text-slate-700 dark:text-slate-200
-             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-             transition shadow-sm">
+                        border border-slate-200 dark:border-slate-700
+                        bg-white dark:bg-slate-900
+                        text-slate-700 dark:text-slate-200
+                        focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+                        transition shadow-sm">
                         <option value="">Sélectionner un rôle</option>
                     </select>
 
@@ -343,6 +335,7 @@
                         </svg>
                     </div>
                 </div>
+                <p id="role-error" class="text-xl font-medium text-red-700 italic"></p>
             </div>
 
 
@@ -382,7 +375,8 @@
 
             </button>
 
-            <button
+            <button @click="submitInvitation()"
+                id="submintInin-btn"
                 class="h-11 px-5 rounded-xl bg-primary text-white hover:bg-primary-dark transition flex items-center justify-center gap-2 shadow-sm shadow-primary/20">
 
                 <span class="material-symbols-outlined text-[18px]">

@@ -6,12 +6,10 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quantix | Connexion</title>
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link rel="stylesheet" href="/css/loader.css">
-    <!-- Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<?= asset('/css/tailwind.css') ?>">
+    <link rel="stylesheet" href="<?= asset('/css/loader.css') ?>">
+    <link rel="stylesheet" href="<?= asset('/css/app.css') ?>">
+    <link rel="icon" href="<?= asset('/images/quantix_logo.jpeg') ?>">
     <style>
         body {
             font-family: "Manrope", sans-serif;
@@ -28,24 +26,6 @@
                 linear-gradient(rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.98));
             background-size: cover;
             background-position: center;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .spin {
-            animation: spin 1s linear infinite;
         }
     </style>
 </head>

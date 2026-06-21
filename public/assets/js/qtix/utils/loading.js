@@ -3,8 +3,8 @@
  * Gère les états de chargement
  */
 
-import Qtix from "/js/qtix/qtix.js";
-import { html } from "/js/qtix/components/loader.js";
+import Qtix from "/assets/js/qtix/qtix.js";
+import { html } from "/assets/js/qtix/components/loader.js";
 class LoadingManager {
   constructor() {
     this.isLoading = false;

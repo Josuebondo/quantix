@@ -3,12 +3,11 @@
 namespace App\Services;
 
 use App\Modeles\company;
-use \App\Modeles\users;
 use App\Modeles\Invitation;
 use App\Modeles\User_role;
+use App\Modeles\users;
 use App\Services\MailService;
 use Bmvc\BAuth\Support\Password;
-
 
 class InvitationService
 {
@@ -30,7 +29,12 @@ class InvitationService
                 ->premier();
 
             if (!$role) {
-                throw new \Exception("Rôle invalide");
+
+                return [
+                    "success" => false,
+                    'message' => "Rôle invalide",
+                    'errors' => ['Role' => 'Rôle invalide']
+                ];;
             }
 
             // 🟢 3. CHECK USER EXISTING
@@ -39,7 +43,12 @@ class InvitationService
                 ->premier();
 
             if ($existingUser) {
-                throw new \Exception("Un utilisateur existe déjà avec cet email");
+
+                return [
+                    "success" => false,
+                    'message' => "Un utilisateur existe déjà avec cet email",
+                    'errors' => ['email' => ['Un utilisateur existe déjà avec cet email']]
+                ];
             }
 
             // 🟢 4. CHECK INVITATION EXISTANTE
@@ -49,7 +58,14 @@ class InvitationService
                 ->premier();
 
             if ($existingInvitation) {
-                throw new \Exception("Une invitation est déjà en attente pour cet email");
+
+                return [
+                    "success" => false,
+                    'message' => "Une invitation est déjà en attente pour cet email",
+                    'errors' => [
+                        'email' => ['Une invitation est déjà en attente pour cet email']
+                    ]
+                ];
             }
 
             // 🟢 5. GENERATE TOKEN SECURISÉ
@@ -59,11 +75,13 @@ class InvitationService
             $invitation = \App\Modeles\Invitation::creer([
                 'company_id' => $company->id,
                 'role_id' => $role->id,
+                'warehouse' => $state['warehouse'],
+                'name' => $state['name'],
                 'email' => $email,
                 'token' => $token,
                 'status' => 'pending',
                 'expires_at' => date('Y-m-d H:i:s', strtotime('+7 days')),
-                'invited_by' => $state['user_id'] ?? null
+                'invited_by' => auth()->userId() ?? null
             ]);
 
             if (!$invitation) {
@@ -74,7 +92,7 @@ class InvitationService
             $link = "https://app.quantix.com/accept-invitation?token=" . $token;
 
             // 🟢 8. SEND EMAIL (simple version)
-            $this->sendInvitationEmail($email, $company->name, $role->name, $link);
+            // $this->sendInvitationEmail($email, $state['name'], $company->name, $role->name, $link);
 
             // 🟢 9. RETURN RESPONSE CLEAN
             return [
@@ -95,7 +113,7 @@ class InvitationService
             ];
         }
     }
-    private function sendInvitationEmail(string $email, string $companyName, string $roleName, string $link)
+    private function sendInvitationEmail(string $email, string $name, string $companyName, string $roleName, string $link)
     {
         // version simple BMVC
         $m = new MailService();
@@ -103,7 +121,7 @@ class InvitationService
             $email,
             "Invitation à rejoindre $companyName",
             "
-        Bonjour,
+        Bonjour $name,
 
         Vous avez été invité à rejoindre $companyName en tant que $roleName.
 

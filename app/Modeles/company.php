@@ -38,7 +38,15 @@ class company extends Modele
      */
     public function warehouses()
     {
+
         return $this->aPlusieurs('App\Modeles\warehouse', 'company_id', 'id');
+    }
+    /**
+     * Relation: une entreprise a plusieurs invitations
+     */
+    public function invitations()
+    {
+        return $this->aPlusieurs('App\Modeles\Invitation', 'company_id', 'id');
     }
     /**
      * Relation: une entreprise a plusieurs rôles

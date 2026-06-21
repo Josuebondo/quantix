@@ -46,6 +46,27 @@ class TeamService
         }
         return $data;
     }
+    public function getInvitation(company $compay): array
+    {
+        $invitations = $compay->invitations();
+        $data = [];
+        // dd($invitations);
+        foreach ($invitations as $invitation) {
+            $data[] = [
+                'id' => $invitation->id,
+                'name' => $invitation->name,
+                'status' => $invitation->status,
+                'email' => $invitation->email,
+                'expires_at' => $invitation->expires_at,
+                'accepted_at' => $invitation->accepted_at,
+                'created_at' => $invitation->created_at,
+                'updated_at' => $invitation->updated_at,
+
+
+            ];
+        }
+        return $data;
+    }
     public function getTeam(company $compay): array
     {
         $data = $compay->usersWithDetails();
@@ -56,12 +77,14 @@ class TeamService
                 'id' => $user->id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
+                'name' => $user->first_name . ' ' . $user->last_name,
                 'email' => $user->email,
                 'warehouse_id' => $user->warehouse_id,
                 'warehouse_name' => $user->warehouse_name,
                 'role' => $user->role_name,
                 'status' => $user->status,
                 'last_login_at' => $user->last_login_at,
+                'created_at' => $user->created_at,
 
 
             ];

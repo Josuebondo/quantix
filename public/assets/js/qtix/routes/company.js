@@ -16,7 +16,7 @@ export default function registerCompanyRoutes(Qtix) {
       return await fetch("/api/company/teams").then((r) => r.text());
     },
     requireAuth: true, // Accessible sans être connecté
-    controller: "/js/qtix/page/users/index.js",
+    controller: "/assets/js/qtix/page/users/index.js",
   });
   Qtix.registerRoute("/dashboard", {
     component: async () => {

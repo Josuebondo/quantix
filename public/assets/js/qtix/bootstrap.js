@@ -1,6 +1,6 @@
-import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/module.esm.js";
-import Qtix from "/js/qtix/qtix.js";
-import { setupAlpineDirectives } from "/js/qtix/alpine.js";
+import Alpine from "/assets/js/vendor/alpine.js";
+import Qtix from "/assets/js/qtix/qtix.js";
+import { setupAlpineDirectives } from "/assets/js/qtix/alpine.js";
 import registerWebRoutes from "./routes/web.js";
 import registerCompanyRoutes from "./routes/company.js";
 

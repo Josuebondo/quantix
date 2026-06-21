@@ -123,7 +123,8 @@ Routeur::obtenir('/api/company/teams', 'TeamController@index')->nom('company.tea
 Routeur::obtenir('/api/company/teams/list', 'TeamController@all')->nom('company.teams.index');
 Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('company.teams.entrepots');
 Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('company.teams.mouvements');
-Routeur::obtenir('/api/team/data', 'TeamController@data')->nom('company.teams.mouvements');
+Routeur::obtenir('/api/team/data', 'TeamController@data')->nom('company.teams.data');
+Routeur::publier('/api/team/invite', 'TeamController@invite')->nom('company.teams.invite');
 
 
 //app routes

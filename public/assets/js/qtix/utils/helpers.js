@@ -77,6 +77,12 @@ export function debounce(fn, delay = 300) {
     timeout = setTimeout(() => fn(...args), delay);
   };
 }
+/**
+ * get element by id
+ */
+export function el(id) {
+  return document.getElementById(id);
+}
 
 /**
  * Throttle

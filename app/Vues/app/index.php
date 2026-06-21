@@ -5,15 +5,10 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="<?php echo csrf_token(); ?>">
     <title>Quantix | App workspaces</title>
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link rel="stylesheet" href="/css/loader.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<?= asset('/css/tailwind.css') ?>">
+    <link rel="stylesheet" href="<?= asset('/css/loader.css') ?>">
+    <link rel="stylesheet" href="<?= asset('/css/app.css') ?>">
+    <link rel="icon" href="<?= asset('/images/logo.png') ?>">
     <style>
         body {
             font-family: 'Manrope', sans-serif;
@@ -53,9 +48,7 @@
             background: #3b82f6;
         }
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
-        }
+
 
         .movement-grid {
             display: grid;
@@ -396,7 +389,6 @@
             Qtix.iniLoading('loader-container');
             // Qtix.startLoading();
             //enregistrer les routes web
-
 
 
 

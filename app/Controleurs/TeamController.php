@@ -4,6 +4,7 @@ namespace App\Controleurs;
 
 use App\BaseControleur;
 use App\Modeles\users;
+use App\Services\InvitationService;
 use App\Services\TeamService;
 use Core\Reponse;
 use Core\Requete;
@@ -149,13 +150,55 @@ class TeamController extends BaseControleur
         $roles = $ts->getRoles($company);
         $entrepots = $ts->getWarehouses($company);
         $teams = $ts->getTeam($company);
+        $invitations = $ts->getInvitation($company);
         // dd($teams['0']['first_name']);
+        $stats = [
+            'activeUsers' => 142,
+            'activeTrend' => '+18 ce mois-ci',
+
+            'pendingInvites' => 11,
+            'pendingTrend' => '+4 cette semaine',
+
+            'roles' => 8,
+
+            'totalUsers' => 167,
+            'totalTrend' => '+24 ce mois-ci'
+        ];
         $data = [
             'roles' => $roles,
             'entrepots' => $entrepots,
-            'teams' => $teams
+            'teams' => $teams,
+            'stats' => $stats,
+            'invitations' => $invitations
 
         ];
-        return json($data);
+        return $res->json($data);
+    }
+    public function invite(Requete $req, Reponse $res)
+    {
+        $data = $req->json();
+        $v = validateur();
+        $v->ajouter('email', ['email', 'requis']);
+        $v->ajouter('nom', ['requis']);
+        $v->ajouter('Entrepôt', ['requis']);
+        $v->ajouter('role', ['requis']);
+        if (!$v->valider($data)) {
+            return $res->json([
+                "success" => false,
+                'errors' => $v->erreurs(),
+                'message' => 'Erreur de validation'
+            ]);
+        }
+        $state = [
+            'role_id' => $data['role'],
+            'warehouse' => $data['Entrepôt'],
+            'email' => $data['email'],
+            'name' => $data['nom']
+        ];
+        $company = users::company();
+        $InvS = new InvitationService();
+        $result = $InvS->createInvitation($state, $company);
+
+        return $res->json($result);
     }
 }

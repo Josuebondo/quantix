@@ -64,8 +64,8 @@ class AuthControleur extends BaseControleur
     {
         $email = $requete->obtenir('email', 'josuebondojw@gmail.com');
         $domain = strtolower(substr(strrchr($email, '@'), 1));
-        $session = session();
-        dd($session->tous());
+        // $session = session();
+        // dd($session->tous());
         $mailUrl = null;
         $mailLabel = null;
 

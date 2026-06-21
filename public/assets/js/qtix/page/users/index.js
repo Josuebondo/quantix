@@ -1,3 +1,4 @@
+import { helpers } from "/assets/js/qtix/qtix.js";
 let state = {
   users: [],
   stats: null,
@@ -17,9 +18,10 @@ let state = {
 let events = [];
 
 export async function init() {
-  console.log("Users page loaded");
+  // console.log("Users page loaded");
 
   await loadUsers();
+  await renderIntitation();
   bindEvents();
 }
 
@@ -36,9 +38,9 @@ export function destroy() {
  */
 async function loadUsers() {
   try {
-    const res = await Qtix.get("/company/teams/list");
+    const res = await getdata();
 
-    state.users = res.users || [];
+    state.users = res.teams || [];
     state.stats = res.stats || {};
 
     state.filtered = state.users;
@@ -50,7 +52,7 @@ async function loadUsers() {
     Qtix.error("Erreur chargement utilisateurs");
   }
 }
-async function data() {
+async function getdata() {
   try {
     const res = await Qtix.get("/team/data");
 
@@ -60,6 +62,8 @@ async function data() {
         entrepots: [],
         roles: [],
         teams: [],
+        stats: [],
+        invitation: [],
       }
     );
   } catch (e) {
@@ -69,15 +73,17 @@ async function data() {
       entrepots: [],
       roles: [],
       teams: [],
+      stats: [],
+      invitation: [],
     };
   }
 }
 async function loadInviteUsedata() {
-  const res = await data();
+  const res = await getdata();
   const entrepots = res.entrepots ?? [];
   const roles = res.roles ?? [];
-  const warehouseSelect = document.getElementById("warehouse");
-  const roleSelect = document.getElementById("selectedRole");
+  const warehouseSelect = document.getElementById("invitation-Entrepôt");
+  const roleSelect = document.getElementById("invitation-Role");
   fillSelect(warehouseSelect, entrepots, "Sélectionner un entrepôt");
   fillSelect(roleSelect, roles, "Sélectionner un rôle");
 }
@@ -161,7 +167,7 @@ function renderStats(stats) {
 /**
  * TABLE
  */
-function renderTable() {
+async function renderTable() {
   const tbody = document.querySelector("#usersTable");
   if (!tbody) return;
 
@@ -186,7 +192,7 @@ function renderTable() {
       </td>
 
       <td class="px-6">${user.role}</td>
-      <td class="px-6">${user.warehouse}</td>
+      <td class="px-6">${user.warehouse || "-"}</td>
 
       <td class="px-6">
         <span class="px-2 py-1 rounded text-xs ${
@@ -198,7 +204,7 @@ function renderTable() {
         </span>
       </td>
 
-      <td class="px-6">${user.last_login}</td>
+      <td class="px-6">${user.last_login_at}</td>
       <td class="px-6">${user.created_at}</td>
 
      <td class="px-6">
@@ -245,13 +251,44 @@ function renderTable() {
   `,
     )
     .join("");
-
+  const res = await getdata();
+  const roles = res.roles ?? [];
+  const roleSelect = document.getElementById("roleFilter");
+  fillSelect(roleSelect, roles, "Tous les rôles", "all", true);
   renderPagination();
+}
+/**
+ * TABLE Invitations
+ */
+async function renderIntitation() {
+  const res = await getdata();
+  const data = res.invitations;
+  const tbody = helpers.el("invitationTable");
+  data.forEach((d) => {
+    const tr = document.createElement("tr");
+    tr.className =
+      "hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group";
+    tr.innerHTML = `   
+                        <td class="py-4 px-6 text-on-surface dark:text-inverse-on-surface font-medium">${d.email}</td>
+                        <td class="py-4 px-6"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-variant dark:bg-outline text-on-surface-variant dark:text-surface-variant">${d.name}</span></td>
+                        <td class="py-4 px-6"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#FEF9C3] dark:bg-[#713F12] text-[#A16207] dark:text-[#FEF08A]"><span class="w-1.5 h-1.5 rounded-full bg-[#A16207] dark:bg-[#FEF08A]"></span> En attente</span></td>
+                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">${d.created_at}</td>
+                        <td class="py-4 px-6 text-on-surface-variant dark:text-surface-variant">${d.expires_at}</td>
+                        <td class="py-4 px-6 text-right">
+                            <button class="text-primary dark:text-primary-fixed hover:text-primary-container dark:hover:text-primary-fixed-dim text-sm font-medium mr-3">Renvoyer</button>
+                            <button class="text-error hover:text-danger dark:hover:text-red-300 text-sm font-medium">Annuler</button>
+                        </td>
+               `;
+    tbody.appendChild(tr);
+    // console.log(d.email);
+  });
+  // const { data } = getPaginatedData();
 }
 
 /**
  * EVENTS
  */
+
 function bindEvents() {
   const btn = document.querySelector("#btnInviteUser");
 
@@ -291,11 +328,7 @@ function bindEvents() {
     role.addEventListener("change", handler);
     events.push({ element: role, event: "change", handler });
   }
-  role.addEventListener("change", (e) => {
-    state.role = e.target.value;
-    console.log(state.role);
-    applyFilters();
-  });
+
   // table actions
   const table = document.querySelector("#usersTable");
 
@@ -357,6 +390,7 @@ function applyFilters() {
 
   // ROLE FILTER
   if (state.role && state.role !== "all") {
+    console.log(state.role);
     result = result.filter((u) => u.role === state.role);
   }
 
@@ -401,7 +435,20 @@ function openInviteModal() {
   loadInviteUsedata();
   Qtix.toggleModal("invite-modal");
 }
-function fillSelect(selectEl, data, placeholder = "Sélectionner") {
+async function submitInvitation() {
+  // Qtix.toggleModal("invite-modal");
+
+  // console.log("submited");
+  sendInvitation();
+}
+window.submitInvitation = submitInvitation;
+function fillSelect(
+  selectEl,
+  data,
+  placeholder = "Sélectionner",
+  defaul = "",
+  v = false,
+) {
   if (!selectEl) return;
 
   // reset options
@@ -409,17 +456,72 @@ function fillSelect(selectEl, data, placeholder = "Sélectionner") {
 
   // option placeholder
   const defaultOption = document.createElement("option");
-  defaultOption.value = "";
+  defaultOption.value = defaul;
   defaultOption.textContent = placeholder;
   selectEl.appendChild(defaultOption);
+  if (v === false) {
+    // options dynamiques
+    data.forEach((item) => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      selectEl.appendChild(option);
+    });
+  } else {
+    data.forEach((item) => {
+      const option = document.createElement("option");
+      option.value = item.name;
+      option.textContent = item.name;
+      selectEl.appendChild(option);
+    });
+  }
+}
 
-  // options dynamiques
-  data.forEach((item) => {
-    const option = document.createElement("option");
-    option.value = item.id;
-    option.textContent = item.name;
-    selectEl.appendChild(option);
-  });
+async function sendInvitation() {
+  Qtix.startLoading();
+  await Qtix.delay(2700);
+  const email = helpers.el("invitation-email").value;
+  const nom = helpers.el("invitation-nom").value;
+  const Entrepôt = helpers.el("invitation-Entrepôt").value;
+  const role = helpers.el("invitation-Role").value;
+  const data = {
+    email,
+    nom,
+    Entrepôt,
+    role,
+  };
+  const res = await Qtix.post("/team/invite", data);
+  console.log(res);
+  if (res.success !== true) {
+    const errors = res.errors;
+
+    if (errors !== undefined) {
+      const champs = Object.keys(errors);
+      // console.log(champs);
+      let i = 0;
+      while (i < champs.length) {
+        const champ = champs[i];
+        let j = 0;
+        while (j < errors[champ].length) {
+          helpers.el(champ + "-error").textContent = errors[champ][j];
+          // console.log(errors);
+          setTimeout(() => {
+            helpers.el(champ + "-error").textContent = "";
+          }, 5000);
+          j++;
+        }
+        i++;
+      }
+    }
+    Qtix.error(res.message);
+    Qtix.stopLoading();
+  } else {
+    Qtix.success(res.message);
+
+    Qtix.stopLoading();
+    Qtix.toggleModal("invite-modal");
+  }
+  // console.log(req);
 }
 function editUser(id) {
   Qtix.navigate(`/users/edit/${id}`);

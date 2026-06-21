@@ -304,12 +304,12 @@ if (!function_exists('asset')) {
     function asset(string $chemin = ''): string
     {
         $chemin = ltrim($chemin, '/');
-        $base = getenv('URL_APPLICATION') ?: '';
+        $base = env('URL_APPLICATION') ?: '';
         if ($base) {
-            return rtrim($base, '/public/') . '/' . $chemin;
+            return rtrim($base, '/public/') . '/assets/' . $chemin;
         }
         // Par défaut, retourner un chemin relatif depuis la racine publique
-        return '/' . $chemin;
+        return '/public/assets/' . $chemin;
     }
 }
 
