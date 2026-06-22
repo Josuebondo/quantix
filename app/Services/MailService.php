@@ -19,12 +19,12 @@ class MailService
         $this->mailer->SMTPAuth = true;
         $this->mailer->Username = env('MAIL_USERNAME', 'user@example.com');
         $this->mailer->Password = env('MAIL_PASSWORD', 'password');
-        $this->mailer->SMTPSecure = env('MAIL_ENCRYPTION', 'tls');
+        $this->mailer->SMTPSecure = env('MAIL_ENCRYPTION', PHPMailer::ENCRYPTION_STARTTLS);
         $this->mailer->Port = env('MAIL_PORT', 587);
         $this->mailer->CharSet = 'UTF-8';
         $this->mailer->setFrom(
             env('MAIL_FROM_ADDRESS', 'noreply@example.com'),
-            env('MAIL_FROM_NAME', 'Zàndo')
+            env('MAIL_FROM_NAME', 'Quantix')
         );
     }
 
@@ -42,7 +42,7 @@ class MailService
         } catch (Exception $e) {
             error_log('PHPMailer error: ' . $e->getMessage());
             // Affichage direct pour debug
-            echo '<div style="color:red">PHPMailer error: ' . $e->getMessage() . '</div>';
+            echo 'PHPMailer error: ' . $e->getMessage();
             return false;
         }
     }

@@ -8,6 +8,7 @@ use App\Modeles\User_role;
 use App\Modeles\users;
 use App\Services\MailService;
 use Bmvc\BAuth\Support\Password;
+use Firebase\JWT\JWT;
 
 class InvitationService
 {
@@ -69,7 +70,14 @@ class InvitationService
             }
 
             // 🟢 5. GENERATE TOKEN SECURISÉ
-            $token = bin2hex(random_bytes(32));
+            $jwt = auth()->getTokenProvider();
+            $payload = [
+                'name' => $state['name'],
+                'warehouse' => $state['warehouse'],
+                'role_id' => $role->id,
+                'company_id' => $company->id,
+            ];
+            $token = $jwt->generate($payload,  60 * 60 * 24 * 7);
 
             // 🟢 6. CREATE INVITATION
             $invitation = \App\Modeles\Invitation::creer([
@@ -89,10 +97,10 @@ class InvitationService
             }
 
             // 🟢 7. BUILD LINK
-            $link = "https://app.quantix.com/accept-invitation?token=" . $token;
+            $link = env('URL_APPLICATION') . "/accept-invitation?token=" . $token;
 
             // 🟢 8. SEND EMAIL (simple version)
-            // $this->sendInvitationEmail($email, $state['name'], $company->name, $role->name, $link);
+            $this->sendInvitationEmail($email, $state['name'], $company->name, $role->name, $link);
 
             // 🟢 9. RETURN RESPONSE CLEAN
             return [
@@ -116,24 +124,133 @@ class InvitationService
     private function sendInvitationEmail(string $email, string $name, string $companyName, string $roleName, string $link)
     {
         // version simple BMVC
+        // version HTML professionnelle
         $m = new MailService();
-        $m->send(
-            $email,
-            "Invitation à rejoindre $companyName",
-            "
-        Bonjour $name,
 
-        Vous avez été invité à rejoindre $companyName en tant que $roleName.
+        $subject = "Invitation à rejoindre $companyName";
+        $currentYear = date('Y');
+        $message = <<<HTML
+                        <!DOCTYPE html>
+                        <html lang="fr">
+                        <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Invitation Quantix</title>
+                        </head>
+                        <body style="margin:0;padding:0;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;">
 
-        Cliquez ici pour accepter l'invitation :
-        $link
+                        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:40px 20px;">
+                        <tr>
+                        <td align="center">
 
-        Ce lien expire dans 7 jours.
+                        <table width="600" cellpadding="0" cellspacing="0"
+                            style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08);">
 
-        Cordialement,
-        L'équipe $companyName
-        "
-        );
+                            <!-- Header -->
+                            <tr>
+                                <td style="background:#2563eb;padding:30px;text-align:center;">
+                                    <h1 style="margin:0;color:#ffffff;font-size:28px;">
+                                        Quantix
+                                    </h1>
+                                    <p style="margin:8px 0 0;color:#dbeafe;">
+                                        Gestion intelligente des stocks
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding:40px;">
+                                    <h2 style="margin-top:0;color:#1e293b;">
+                                        Bonjour {$name},
+                                    </h2>
+
+                                    <p style="color:#475569;font-size:16px;line-height:1.7;">
+                                        Vous avez été invité à rejoindre l'entreprise
+                                        <strong>{$companyName}</strong>
+                                        sur Quantix.
+                                    </p>
+
+                                    <p style="color:#475569;font-size:16px;line-height:1.7;">
+                                        Votre rôle sera :
+                                    </p>
+
+                                    <div style="
+                                        background:#eff6ff;
+                                        border:1px solid #bfdbfe;
+                                        border-radius:10px;
+                                        padding:16px;
+                                        text-align:center;
+                                        margin:24px 0;
+                                    ">
+                                        <strong style="color:#1d4ed8;font-size:18px;">
+                                            {$roleName}
+                                        </strong>
+                                    </div>
+
+                                    <p style="color:#475569;font-size:16px;line-height:1.7;">
+                                        Cliquez sur le bouton ci-dessous pour accepter cette invitation :
+                                    </p>
+
+                                    <div style="text-align:center;margin:35px 0;">
+                                        <a href="{$link}"
+                                        style="
+                                                background:#2563eb;
+                                                color:#ffffff;
+                                                text-decoration:none;
+                                                padding:14px 30px;
+                                                border-radius:10px;
+                                                display:inline-block;
+                                                font-weight:bold;
+                                                font-size:16px;
+                                        ">
+                                            Accepter l'invitation
+                                        </a>
+                                    </div>
+
+                                    <p style="color:#64748b;font-size:14px;">
+                                        Cette invitation expirera dans <strong>7 jours</strong>.
+                                    </p>
+
+                                    <p style="color:#64748b;font-size:14px;">
+                                        Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :
+                                    </p>
+
+                                    <p style="word-break:break-all;font-size:13px;color:#2563eb;">
+                                        {$link}
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <!-- Footer -->
+                            <tr>
+                                <td style="
+                                    background:#f8fafc;
+                                    padding:24px;
+                                    text-align:center;
+                                    border-top:1px solid #e2e8f0;
+                                ">
+                                    <p style="margin:0;color:#64748b;font-size:13px;">
+                                         © {$currentYear} {$companyName}
+                                    </p>
+
+                                    <p style="margin-top:8px;color:#94a3b8;font-size:12px;">
+                                        Cet email a été envoyé automatiquement par Quantix.
+                                    </p>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        </td>
+                        </tr>
+                        </table>
+
+                        </body>
+                        </html>
+                        HTML;
+
+        $m->send($email, $subject, $message, true);
     }
     public function acceptInvitation(string $token, array $data): array
     {

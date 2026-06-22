@@ -173,7 +173,16 @@ async function renderTable() {
   if (!tbody) return;
 
   const { data } = getPaginatedData();
-
+  if (data.length === 0) {
+    tbody.innerHTML = `
+    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
+      <td colspan="7" class="py-4 px-6 text-center text-on-surface dark:text-inverse-on-surface font-medium">
+        Aucune utilisateur trouvé
+      </td>
+    </tr>
+  `;
+    return;
+  }
   tbody.innerHTML = data
     .map(
       (user) => `
@@ -262,9 +271,21 @@ async function renderTable() {
  * TABLE INVITATIONS
  */
 async function renderIntitation() {
+  const tbody = helpers.el("invitationTable");
   const res = await getdata();
   const data = res.invitations;
-  const tbody = helpers.el("invitationTable");
+  tbody.innerHTML = "";
+  if (data.length === 0) {
+    tbody.innerHTML = `
+    <tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/20 transition-colors group">
+      <td colspan="6" class="py-4 px-6 text-center text-on-surface dark:text-inverse-on-surface font-medium">
+        Aucune invitation envoyée
+      </td>
+    </tr>
+  `;
+    return;
+  }
+
   data.forEach((d) => {
     const tr = document.createElement("tr");
     tr.className =
@@ -545,6 +566,7 @@ async function sendInvitation() {
   } else {
     Qtix.success(res.message);
 
+    await renderIntitation();
     Qtix.stopLoading();
     Qtix.toggleModal("invite-modal");
   }
