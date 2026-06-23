@@ -201,4 +201,83 @@ class TeamController extends BaseControleur
 
         return $res->json($result);
     }
+    /**
+     * GET /accept-invitation?token=abc123
+     * Page d'activation - Utilisateur clique le lien depuis l'email
+     */
+    public function accept(Requete $req, Reponse $res)
+    {
+        $token = $req->obtenir('token') ?? '';
+        if (!$token) {
+            return vue('team.setup_error', [
+                'status' => 'error',
+                'title' => 'Token manquant',
+                'message' => 'Le lien d\'activation est invalide ou mal formé. Veuillez réessayer.',
+            ]);
+        }
+        $jwt = auth()->getTokenProvider();
+        $decoded = $jwt->verify($token);
+        if (!$decoded) {
+            return vue('team.setup_error', [
+                'status' => 'error',
+                'title' => 'Token invalide',
+                'message' => "Le lien d'activation est invalide ou a expiré. Veuillez demander une autre liens au proprietaire de l'entreprise pour vous envoyer une autre invitations.",
+            ]);
+        }
+        $data = [
+            'name' => strtoupper($decoded['name']),
+            'token' => $token
+        ];
+        // dd($data);
+
+        return vue('team.activate', $data);
+        // return vue('team.activate', $data);s
+    }
+    /**
+     * post /accept-invitation{password, token, comfirmpassword}
+     * Page d'activation - Utilisateur clique le lien depuis l'email
+     */
+    public function apiaccept(Requete $req, Reponse $res)
+    {
+        $data = $req->json() ?? '';
+        $token = $data['token'];
+        $password = $data['password'];
+        $comfirm = $data['comfirm'];
+        $v = validateur();
+        $v->ajouter('mot_de_passe', [
+            'requis',
+            'min:8',
+            'regex:/[A-Z]/',  // Au moins une majuscule
+            'regex:/[0-9]/',  // Au moins un chiffre
+        ], [
+            'regex' => 'Le mot de passe doit contenir au minimum une majuscule et un chiffre'
+        ]);
+        $v->ajouter('confirmation_mot_de_passe', ['match:mot_de_passe']);
+        $valid = $v->valider(['mot_de_passe' => $password, 'confirmation_mot_de_passe' => $comfirm]);
+        if (!$valid) {
+            return json([
+                'success' => false,
+                'message' => 'Erreur de validation :' . $v->premier()
+            ]);
+        }
+
+        $jwt = auth()->getTokenProvider();
+        $decoded = $jwt->verify($token);
+
+        $data = [
+            'name' => $decoded['name'],
+            'password' => $password
+        ];
+        // dd($data);
+        $InvS = new InvitationService();
+
+        $result = $InvS->acceptInvitation($token, $data);
+        if (!$result || $result['success'] !== true) {
+
+            return $res->json($result);
+        }
+
+        return $res->json($result);
+        // return vue('team.activate', $data);s
+    }
 }

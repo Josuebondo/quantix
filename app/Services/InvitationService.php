@@ -261,27 +261,55 @@ class InvitationService
                 ->premier();
 
             if (!$invitation) {
-                throw new \Exception("Invitation invalide");
+
+                return [
+                    'success' => false,
+                    'message' => "Invitation invalide"
+                ];
             }
 
             if ($invitation->status !== 'pending') {
-                throw new \Exception("Invitation déjà utilisée");
+
+                return [
+                    'success' => false,
+                    'message' => "Invitation déjà utilisée"
+                ];
             }
 
             if (strtotime($invitation->expires_at) < time()) {
-                throw new \Exception("Invitation expirée");
+                return [
+                    'success' => false,
+                    'message' => "Invitation expirée"
+                ];
             }
-
+            $exist = users::ou('email', '=', $invitation->email)->premier();
+            if ($exist) {
+                // $invitation->status = 'pending';
+                // $invitation->expires_at = date('Y-m-d H:i:s');
+                // $invitation->sauvegarder();
+                return [
+                    'success' => false,
+                    'message' => " Utilisateur existe déjà avec cet email"
+                ];
+            }
             // 🟢 2. CHECK EMAIL MATCH
-            if (strtolower($invitation->email) !== strtolower($data['email'])) {
-                throw new \Exception("Email incorrect");
-            }
+            // if (strtolower($invitation->email) !== strtolower($data['email'])) {
+            //     throw new \Exception("Email incorrect");
+            // }
+            $name = explode(' ', $data['name']);
+            $prenom = $name[0] ?? '';
+            $nom = $name[1] ?? '';
 
             // 🟢 3. CREATE USER
             $user = users::creer([
                 'company_id' => $invitation->company_id,
+                'first_name' => $prenom,
+                'last_name' => $nom,
                 'email' => $invitation->email,
                 'password' => Password::hash($data['password']),
+                'activation_status' => 'activated',
+                'is_activated' => 1,
+                'activated_at' => now(),
                 'status' => 1
             ]);
 
@@ -292,15 +320,15 @@ class InvitationService
             ]);
 
             // 🟢 5. UPDATE INVITATION
-            \App\Modeles\Invitation::modifier($invitation->id, [
-                'status' => 'accepted',
-                'accepted_at' => date('Y-m-d H:i:s')
-            ]);
+            $invitation->status = 'accepted';
+            $invitation->accepted_at = now();
+            $invitation->sauvegarder();
 
             return [
                 'success' => true,
                 'message' => 'Compte créé avec succès',
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'email' => $user->email
             ];
         } catch (\Exception $e) {
 

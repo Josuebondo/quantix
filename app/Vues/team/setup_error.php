@@ -97,70 +97,10 @@
                 <p class="font-body-lg text-body-lg text-slate-300 mb-10 leading-relaxed max-w-md mx-auto">
                     <?= e($message ?? '') ?? "Le lien d'activation que vous avez utilisé est expiré ou invalide. Veuillez demander un nouveau lien d'activation pour continuer la configuration de votre compte." ?>
                 </p>
-                <!-- Actions -->
-                <div class="flex flex-col items-center">
-                    <!-- 1. INITIAL BUTTON -->
-                    <div class="w-full" id="initial-action-container">
-                        <button type="button" class="w-full px-10 py-4 bg-primary text-white font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="request-link-btn">
-                            <span id="btn-text-request">Demander un nouveau lien</span>
-                            <span class="hidden material-symbols-outlined transition-transform animate-spin-custom" id="loader-request">progress_activity</span>
 
-                        </button>
-                    </div>
-                    <!-- 2. EMAIL INPUT (Hidden initially) -->
-                    <form class="w-full space-y-6 hidden-state" id="activation-form">
-                        <div class="w-full text-left">
-                            <label class="block font-label-sm text-label-sm text-slate-300 mb-2 ml-1" for="admin-email">Email de l'administrateur</label>
-                            <input class="w-full bg-surface-container-high border border-white/10 rounded-lg px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300" id="admin-email" name="email" placeholder="admin@entreprise.com" required="" type="email" />
-                        </div>
-                        <button class="w-full px-10 py-4 bg-primary text-white font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 flex items-center justify-center gap-3" id="submit-activation-btn" type="submit">
-                            <span id="btn-text-submit">Envoyer le lien d'activation</span>
-                            <span class="hidden material-symbols-outlined animate-spin-custom" id="loader-submit">progress_activity</span>
-                        </button>
-                    </form>
-                    <!-- message container -->
-                    <div class="mt-6 " id="message-container">
-
-
-
-                    </div>
-                    <div class="flex flex-col md:flex-row items-center gap-6 mt-10">
-                        <a class="font-label-sm text-label-sm text-slate-300 hover:text-primary transition-colors flex items-center gap-2" href="#">
-                            <span class="material-symbols-outlined text-[18px]">support_agent</span>
-                            Contacter le support
-                        </a>
-                        <span class="hidden md:block w-1 h-1 bg-surface-variant rounded-full"></span>
-                        <a class="font-label-sm text-label-sm text-slate-300 hover:text-primary transition-colors flex items-center gap-2" href="#">
-                            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                            Retour à la connexion
-                        </a>
-                    </div>
-
-                </div>
             </div>
             <!-- Success State (Hidden by default) -->
-            <div class="hidden-state fade-transition" id="success-state">
-                <!-- Success Icon Visual -->
-                <div class="mb-8 relative inline-block">
-                    <div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150"></div>
-                    <div class="relative w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center border border-white/10 mx-auto">
-                        <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1, 'wght' 400;">check_circle</span>
-                    </div>
-                </div>
-                <!-- Typography Content -->
-                <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6 tracking-tight">
-                    Lien envoyé !
-                </h1>
-                <p class="font-body-lg text-body-lg text-slate-300 mb-10 leading-relaxed max-w-md mx-auto">
-                    Un nouveau lien d'activation a été envoyé à votre adresse email. Pensez à vérifier vos courriers indésirables si vous ne le recevez pas d'ici quelques minutes.
-                </p>
-                <!-- Actions -->
-                <div class="w-full">
-                    <a class="block w-full px-10 py-4 bg-primary text-white text-center font-semibold rounded-lg transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95" href="/login">
-                        Retour à la connexion
-                    </a>
-                </div>
-            </div>
+
             <!-- Message Container  -->
         </div>
 

@@ -27,7 +27,7 @@ class AuthManager {
       const response = await api.get("/auth/me", { headers: api.getHeaders() });
       this.user = response.user;
       this.notifyListeners();
-      // console.log("Utilisateur chargé:", response);
+      console.log("Utilisateur chargé:", response);
     } catch (error) {
       console.error("Erreur chargement utilisateur:", error);
       this.logout();

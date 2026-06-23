@@ -532,7 +532,7 @@ class Modele
     /**
      * Modfifier l'enregistrement actuel
      */
-    public static function modifier($id, array $data): void
+    public static function modifier(int $id, array $data): void
     {
         $instance = static::trouver($id);
         $instance->donnees = $data;

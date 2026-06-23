@@ -125,6 +125,8 @@ Routeur::obtenir('/api/company/entrepots', 'TeamController@entrepots')->nom('com
 Routeur::obtenir('/api/company/mouvements', 'TeamController@mouvements')->nom('company.teams.mouvements');
 Routeur::obtenir('/api/team/data', 'TeamController@data')->nom('company.teams.data');
 Routeur::publier('/api/team/invite', 'TeamController@invite')->nom('company.teams.invite');
+Routeur::obtenir('/accept-invitation', 'TeamController@accept')->nom('company.teams.invite.accept');
+Routeur::publier('/api/accept-invitation', 'TeamController@apiaccept')->nom('company.teams.invite.accept');
 
 
 //app routes
