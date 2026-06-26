@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
+// import Header from "../components/layout/Header";
+// import Footer from "../components/layout/Footer";
 import { useEffect } from "react";
 import { useAppStore } from "../store/useAppStore";
 
@@ -28,11 +28,11 @@ export default function AuthLayout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-surface-container-lowest text-on-surface">
-      <Header />
+      {/* <Header /> */}
       <div className="hero-pattern flex-1 px-4 py-6 md:px-8 md:py-10">
         <Outlet />
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

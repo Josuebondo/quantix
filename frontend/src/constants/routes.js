@@ -1,166 +1,202 @@
+import { HomePage, FeaturesPage } from "../pages";
+
 export const APP_ROUTES = [
-  { path: "/", title: "Accueil", layout: "auth", requireAuth: false },
+  // ==========================
+  // PUBLIC
+  // ==========================
+  {
+    path: "/",
+    title: "Accueil",
+    layout: "public",
+    requireAuth: false,
+    component: HomePage,
+  },
   {
     path: "/documentation",
     title: "Documentation",
+    layout: "public",
+    requireAuth: false,
+    // component: DocumentationPage,
+  },
+  {
+    path: "/features",
+    title: "Documentation",
+    layout: "public",
+    requireAuth: false,
+    component: FeaturesPage,
+  },
+  {
+    path: "/pricing",
+    title: "Tarifs",
+    layout: "public",
+    requireAuth: false,
+    // component: PricingPage,
+  },
+  {
+    path: "/about",
+    title: "À propos",
+    layout: "public",
+    requireAuth: false,
+    // component: AboutPage,
+  },
+  {
+    path: "/contact",
+    title: "Contact",
+    layout: "public",
+    requireAuth: false,
+    // component: ContactPage,
+  },
+
+  // ==========================
+  // AUTHENTIFICATION
+  // ==========================
+  {
+    path: "/login",
+    title: "Connexion",
     layout: "auth",
     requireAuth: false,
+    // component: LoginPage,
   },
-  { path: "/login", title: "Connexion", layout: "auth", requireAuth: false },
-  { path: "/logout", title: "Déconnexion", layout: "auth", requireAuth: false },
+  {
+    path: "/logout",
+    title: "Déconnexion",
+    layout: "auth",
+    requireAuth: false,
+    // component: LogoutPage,
+  },
   {
     path: "/get-started",
-    title: "Inscription",
+    title: "Créer un compte",
     layout: "auth",
     requireAuth: false,
+    // component: RegisterPage,
   },
   {
-    path: "/company/register",
-    title: "Inscription Entreprise",
+    path: "/forgot-password",
+    title: "Mot de passe oublié",
     layout: "auth",
     requireAuth: false,
+    // component: ForgotPasswordPage,
   },
   {
-    path: "/company/configuration",
-    title: "Configuration Entreprise",
+    path: "/reset-password",
+    title: "Réinitialiser",
     layout: "auth",
     requireAuth: false,
-  },
-  {
-    path: "/company/activate",
-    title: "Activation Entreprise",
-    layout: "auth",
-    requireAuth: false,
-  },
-  {
-    path: "/acount/activate",
-    title: "Activation Compte",
-    layout: "auth",
-    requireAuth: false,
+    // component: ResetPasswordPage,
   },
   {
     path: "/accept-invitation",
-    title: "Accepter Invitation",
+    title: "Invitation",
     layout: "auth",
     requireAuth: false,
+    // component: AcceptInvitationPage,
   },
-  { path: "/403", title: "Accès Refusé", layout: "auth", requireAuth: false },
   {
-    path: "/404",
-    title: "Page Non Trouvée",
+    path: "/account/activate",
+    title: "Activation compte",
     layout: "auth",
     requireAuth: false,
+    // component: ActivateAccountPage,
   },
 
+  // ==========================
+  // ENTREPRISE
+  // ==========================
   {
-    path: "/app",
-    title: "Application",
-    layout: "dashboard",
-    requireAuth: true,
+    path: "/company/register",
+    title: "Créer entreprise",
+    layout: "auth",
+    requireAuth: false,
+    // component: CompanyRegisterPage,
   },
+  {
+    path: "/company/configuration",
+    title: "Configuration entreprise",
+    layout: "auth",
+    requireAuth: false,
+    // component: CompanyConfigurationPage,
+  },
+  {
+    path: "/company/activate",
+    title: "Activation entreprise",
+    layout: "auth",
+    requireAuth: false,
+    // component: CompanyActivationPage,
+  },
+
+  // ==========================
+  // DASHBOARD
+  // ==========================
   {
     path: "/dashboard",
-    title: "Tableau de bord",
+    title: "Dashboard",
     layout: "dashboard",
     requireAuth: true,
+    // component: DashboardPage,
   },
-  {
-    path: "/documents",
-    title: "Documents",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/documents/creer",
-    title: "Créer Document",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/documents/:id/editer",
-    title: "Éditer Document",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/inventaire",
-    title: "Inventaire",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/mouvements",
-    title: "Mouvements",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/articles",
-    title: "Articles",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/versements",
-    title: "Versements",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/folder",
-    title: "Dossiers",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/importer",
-    title: "Importer",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  { path: "/plans", title: "Plans", layout: "dashboard", requireAuth: true },
-  {
-    path: "/plans/creer",
-    title: "Créer Plan",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/plans/:id/editer",
-    title: "Éditer Plan",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  {
-    path: "/welcome",
-    title: "Bienvenue",
-    layout: "auth",
-    requireAuth: false,
-  },
-  {
-    path: "/workspace/setup",
-    title: "Configuration Workspace",
-    layout: "auth",
-    requireAuth: false,
-  },
-  {
-    path: "/company/team",
-    title: "Équipe Entreprise",
-    layout: "dashboard",
-    requireAuth: true,
-  },
-  { path: "/test", title: "Test", layout: "dashboard", requireAuth: true },
-  { path: "/tester", title: "Tester", layout: "dashboard", requireAuth: true },
-];
 
+  // ... toutes les autres routes dashboard ...
+
+  {
+    path: "/403",
+    title: "Accès refusé",
+    layout: "auth",
+    requireAuth: false,
+    // component: ForbiddenPage,
+  },
+  {
+    path: "/404",
+    title: "Page introuvable",
+    layout: "auth",
+    requireAuth: false,
+    // component: NotFoundPage,
+  },
+];
 export const SIDEBAR_ITEMS = [
-  { label: "Documents", icon: "description", path: "/documents" },
-  { label: "Inventaire", icon: "inventory", path: "/inventaire" },
-  { label: "Mouvements", icon: "swap_horiz", path: "/mouvements" },
-  { label: "Articles", icon: "inventory_2", path: "/articles" },
-  { label: "Versements", icon: "payments", path: "/versements" },
-  { label: "Plans", icon: "analytics", path: "/plans" },
-  { label: "Import", icon: "upload_file", path: "/importer" },
-  { label: "Team", icon: "group", path: "/company/team" },
-  { label: "Setup", icon: "settings", path: "/workspace/setup" },
+  {
+    label: "Dashboard",
+    icon: "dashboard",
+    path: "/dashboard",
+  },
+  {
+    label: "Produits",
+    icon: "inventory_2",
+    path: "/products",
+  },
+  {
+    label: "Stock",
+    icon: "inventory",
+    path: "/stock",
+  },
+  {
+    label: "Mouvements",
+    icon: "swap_horiz",
+    path: "/movements",
+  },
+  {
+    label: "Documents",
+    icon: "description",
+    path: "/documents",
+  },
+  {
+    label: "Entrepôts",
+    icon: "warehouse",
+    path: "/warehouses",
+  },
+  {
+    label: "Utilisateurs",
+    icon: "group",
+    path: "/users",
+  },
+  {
+    label: "Rapports",
+    icon: "assessment",
+    path: "/reports",
+  },
+  {
+    label: "Paramètres",
+    icon: "settings",
+    path: "/settings",
+  },
 ];
