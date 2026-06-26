@@ -1,0 +1,316 @@
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Manrope:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 100 700;
+  src: url("../assets/fonts/MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].woff2")
+    format("woff2");
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  font-family: "Manrope", "Inter", sans-serif;
+  background: linear-gradient(180deg, #f8f9ff 0%, #eef4ff 100%);
+  color: #0b1c30;
+}
+
+*:focus-visible {
+  outline: 2px solid rgba(19, 236, 128, 0.55);
+  outline-offset: 2px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.theme-shell {
+  background-image:
+    radial-gradient(
+      circle at top left,
+      rgba(0, 80, 203, 0.1),
+      transparent 32rem
+    ),
+    linear-gradient(180deg, #f8f9ff 0%, #eff4ff 100%);
+}
+
+.dark .theme-shell {
+  background-image:
+    radial-gradient(
+      circle at top left,
+      rgba(179, 197, 255, 0.1),
+      transparent 34rem
+    ),
+    linear-gradient(180deg, #0b0e14 0%, #161b26 100%);
+}
+
+.hero-pattern {
+  background-color: #f8f9ff;
+  background-image: radial-gradient(#d3e4fe 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-pattern {
+  background-image:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(19, 236, 128, 0.03) 0%,
+      transparent 50%
+    ),
+    linear-gradient(rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.98));
+  background-size: cover;
+  background-position: center;
+}
+
+.glass-effect {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.glass-panel {
+  background: rgba(29, 32, 34, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.grid-bg {
+  background-image: radial-gradient(
+    circle at 2px 2px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 0
+  );
+  background-size: 40px 40px;
+}
+
+.emerald-glow {
+  box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.2);
+}
+
+.fade-transition {
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
+}
+
+.step-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-transition:hover {
+  transform: translateX(8px);
+  border-color: rgba(0, 230, 118, 0.3);
+}
+
+.dark .hero-pattern {
+  background-color: #0b1c30;
+  background-image: radial-gradient(#1e3a5f 1px, transparent 1px);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-modal-in {
+  animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-spin-custom {
+  animation: spin 1s linear infinite;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  background-image:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(19, 236, 128, 0.08),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(0, 102, 255, 0.12),
+      transparent 45%
+    ),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.96), rgba(2, 6, 23, 0.99));
+}
+
+.auth-card {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 80px rgba(2, 6, 23, 0.5);
+}
+
+.auth-input {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  padding: 0.85rem 1rem;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.auth-input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.auth-input:focus {
+  border-color: rgba(19, 236, 128, 0.45);
+  box-shadow: 0 0 0 4px rgba(19, 236, 128, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.auth-input[aria-invalid="true"] {
+  border-color: rgba(248, 113, 113, 0.7);
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.14);
+}
+.auth-input {
+  padding: 0.85rem 1rem;
+}
+
+.auth-input-icon {
+  padding-left: 3rem;
+}
+
+.auth-btn-primary {
+  border-radius: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.auth-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.auth-btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.auth-btn-primary:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.auth-error-text {
+  color: #fda4af;
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.auth-live {
+  min-height: 1.6rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.skeleton-line {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.2),
+    rgba(148, 163, 184, 0.32),
+    rgba(148, 163, 184, 0.2)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+  border-radius: 0.6rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
