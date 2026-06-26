@@ -21,7 +21,17 @@ function ProtectedStubRoute({ route }) {
   }
 
   if (route.requireAuth && !isAuthenticated) {
+    console.log(
+      "isAuthenticated:",
+      isAuthenticated,
+      "route.requireAuth:",
+      route.requireAuth,
+      "route.path:",
+      route.path,
+    );
     return <Navigate to="/login" replace />;
+
+    return;
   }
 
   return <PageStub title={route.title} path={route.path} status="stub" />;

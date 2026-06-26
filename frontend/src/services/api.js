@@ -71,8 +71,13 @@ api.interceptors.response.use(
     useAppStore.getState().endLoading();
     const normalized = normalizeApiError(error);
 
-    if (normalized.status === 401) {
+    if (
+      normalized.status === 401 &&
+      !normalized.url.includes("/api/auth/login") &&
+      !normalized.url.includes("/api/auth/register")
+    ) {
       useAppStore.getState().clearAuth();
+
       window.dispatchEvent(
         new CustomEvent("quantix:unauthorized", {
           detail: normalized,

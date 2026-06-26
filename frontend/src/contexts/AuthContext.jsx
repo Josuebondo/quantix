@@ -18,7 +18,12 @@ export function AuthProvider({ children }) {
   const clearAuth = useAppStore((state) => state.clearAuth);
   const addToast = useAppStore((state) => state.addToast);
   const [ready, setReady] = useState(false);
-
+  // console.log(
+  //   "AuthProvider rendered. Auth state:",
+  //   auth,
+  //   "Ready state:",
+  //   ready,
+  // );
   const loadCurrentUser = useCallback(async () => {
     if (!auth?.token) {
       setReady(true);
@@ -26,44 +31,50 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const response = await authService.me();
-      const user =
-        response?.data?.user ?? response?.user ?? response?.data ?? null;
-      setUser(user);
-      setReady(true);
-      return user;
+      const { data } = await authService.me();
+
+      setUser(data.user);
+      return data.user;
     } catch (error) {
-      clearAuth();
-      setReady(true);
+      // console.error("Erreur /me :", error.response?.status, error);
+
+      // Ne supprimer l'auth que si le serveur répond 401
+      if (error.response?.status === 401) {
+        clearAuth();
+      }
+
       return null;
+    } finally {
+      setReady(true);
     }
   }, [auth?.token, clearAuth, setUser]);
-
   useEffect(() => {
     loadCurrentUser();
   }, [loadCurrentUser]);
 
   const login = useCallback(
     async (payload) => {
-      const response = await authService.login(payload);
-      const data = response?.data ?? response;
-      const token = data?.data?.tokens?.access_token ?? data?.token ?? null;
-      const user = data?.data?.user ?? data?.user ?? null;
+      const { data } = await authService.login(payload);
 
-      if (!token) {
-        throw new Error("Token manquant dans la réponse de connexion.");
-      }
+      const token = data.data.tokens.access_token;
 
-      setAuth({ token, user });
+      setAuth({
+        token,
+        user: data.data.user,
+      });
+
+      // recharge le profil
+      await loadCurrentUser();
+
       addToast({
         type: "success",
         title: "Connexion",
-        message: "Connexion réussie.",
+        message: "Connexion réussie",
       });
 
       return data;
     },
-    [addToast, setAuth],
+    [setAuth, loadCurrentUser, addToast],
   );
 
   const logout = useCallback(async () => {

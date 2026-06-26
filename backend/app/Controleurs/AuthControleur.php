@@ -271,9 +271,18 @@ class AuthControleur extends BaseControleur
     }
     public function me(Requete $requete, Reponse $response)
     {
-        $auth = $this->authService->getAuth();
-        $user = $auth->user();
+        $jwt = Auth()->getTokenProvider();
+        $token = $jwt->extractFromRequest();
+        if (!$token) {
+            return $response->json([
+                'success' => false,
+                'message' => 'Token manquant'
+            ], 401);
+        }
+        // dd($token);
 
+        $user = auth_service()->verify($token) ?? null;
+        // dd($user);
         if (!$user) {
             return $response->json([
                 'success' => false,

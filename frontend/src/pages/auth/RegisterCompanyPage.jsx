@@ -172,7 +172,7 @@ export default function RegisterCompanyPage() {
             </h1>
             <p className="text-white/50 font-body-md max-w-lg mx-auto">
               Inscrivez votre entreprise et commencez a utiliser Quantix des
-              aujourd'hui.
+              aujourd'hui
             </p>
           </div>
 

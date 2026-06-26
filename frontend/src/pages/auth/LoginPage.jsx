@@ -44,7 +44,7 @@ export default function LoginPage() {
         email: values.email.trim(),
         password: values.password,
       });
-
+      console.log("Login response:", data);
       if (data?.success) {
         setPendingRedirect(true);
         setMessage({
@@ -62,6 +62,7 @@ export default function LoginPage() {
         text: data?.message || "Identifiants incorrects",
       });
     } catch (error) {
+      console.error("Login error:", error);
       setMessage({
         type: "error",
         text: error?.message || "Impossible de contacter le serveur",
@@ -78,7 +79,7 @@ export default function LoginPage() {
               alt="Quantix Logo"
               className="h-20 w-auto object-contain dark:brightness-200"
               style={{ borderRadius: "100%" }}
-              src="/images/quantix_logo.jpeg"
+              src="/src/assets/images/quantix_logo.jpeg"
             />
           </div>
           <div className="flex flex-col">
@@ -128,7 +129,7 @@ export default function LoginPage() {
                   aria-describedby={
                     errors.email ? "login-email-error" : undefined
                   }
-                  className="auth-input block w-full pl-11 pr-4"
+                  className="auth-input block w-full auth-input-icon"
                   {...register("email")}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" && !errors.email) {
@@ -172,7 +173,7 @@ export default function LoginPage() {
                     errors.password ? "login-password-error" : undefined
                   }
                   placeholder="••••••••"
-                  className="auth-input block w-full pl-11 pr-12"
+                  className="auth-input block w-full auth-input-icon pr-12"
                   {...register("password")}
                 />
                 <button

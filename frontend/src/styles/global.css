@@ -240,6 +240,13 @@ body {
   border-color: rgba(248, 113, 113, 0.7);
   box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.14);
 }
+.auth-input {
+  padding: 0.85rem 1rem;
+}
+
+.auth-input-icon {
+  padding-left: 3rem;
+}
 
 .auth-btn-primary {
   border-radius: 0.9rem;

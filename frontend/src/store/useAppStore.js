@@ -75,22 +75,27 @@ export const useAppStore = create(
             isAuthenticated: Boolean(state.auth.token),
           },
         })),
-      setAuth: ({ token, user }) =>
+      setAuth: ({ token, user }) => {
         set(() => ({
           auth: {
             token: token ?? null,
             user: user ?? null,
             isAuthenticated: Boolean(token),
           },
-        })),
-      clearAuth: () =>
+        }));
+        // console.log("Auth state updated:", get().auth);
+      },
+      clearAuth: () => {
+        console.trace("clearAuth appelé");
+
         set(() => ({
           auth: {
             token: null,
             user: null,
             isAuthenticated: false,
           },
-        })),
+        }));
+      },
 
       hasRole: (role) => {
         const roles = get().auth.user?.roles ?? [];

@@ -257,25 +257,25 @@ class BAuthService
      * Vérifier le token d'accès
      * GET /api/auth/verify
      */
-    public function verify(?string $token = null)
+    public function verify(?string $token = null): ?array
     {
         try {
-            // Vérifier le token avec BAuth
+
             $payload = $this->auth->verifyToken($token);
 
             if (!$payload) {
-                return $this->error('Token invalide', 401);
+                return null;
             }
 
-            // Récupérer les infos utilisateur complètes
-            $userModel = users::trouver($payload['user_id'] ?? null);
+            $userModel = Users::trouver($payload['user_id']);
+
             if (!$userModel) {
-                return $this->error('Utilisateur non trouvé', 404);
+                return null;
             }
 
-            $user = $userModel->enTableau();
-        } catch (\Exception $e) {
-            return $this->error('Token invalide: ' . $e->getMessage(), 401);
+            return $userModel->enTableau();
+        } catch (\Throwable $e) {
+            return null;
         }
     }
 
