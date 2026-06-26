@@ -1,12 +1,12 @@
 import { AuthProvider } from "./contexts/AuthContext";
-import PageLoader from "./components/ui/Loader";
+import LoadingOverlay from "./components/ui/LoadingOverlay";
 import ToastContainer from "./components/ui/Toast";
 import AppRouter from "./router";
 
 export default function App() {
   return (
     <AuthProvider>
-      <PageLoader />
+      <LoadingOverlay />
       <ToastContainer />
       <AppRouter />
     </AuthProvider>
