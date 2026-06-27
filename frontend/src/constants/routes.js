@@ -1,4 +1,4 @@
-import { HomePage, FeaturesPage } from "../pages";
+import { HomePage, FeaturesPage, LoginPage } from "../pages";
 
 export const APP_ROUTES = [
   // ==========================
@@ -55,7 +55,7 @@ export const APP_ROUTES = [
     title: "Connexion",
     layout: "auth",
     requireAuth: false,
-    // component: LoginPage,
+    component: LoginPage,
   },
   {
     path: "/logout",

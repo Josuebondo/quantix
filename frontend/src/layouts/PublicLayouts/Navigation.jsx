@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-const links = [
+export const PUBLIC_NAV_LINKS = [
   { label: "Accueil", path: "/" },
   { label: "Fonctionnalités", path: "/features" },
   { label: "Tarifs", path: "/pricing" },
@@ -12,7 +12,7 @@ const links = [
 export default function Navigation() {
   return (
     <nav className="flex items-center gap-8">
-      {links.map((item) => (
+      {PUBLIC_NAV_LINKS.map((item) => (
         <NavLink
           key={item.path}
           to={item.path}
