@@ -1,3 +1,1 @@
-SELECT *
-FROM role_permissions
-WHERE role_id
+DELETE From users 

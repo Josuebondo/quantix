@@ -32,6 +32,7 @@ export function normalizeApiError(error) {
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "/",
   timeout: DEFAULT_TIMEOUT,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     "X-Requested-With": "XMLHttpRequest",
@@ -40,7 +41,13 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    useAppStore.getState().beginLoading();
+    const silentLoading =
+      Boolean(config?.meta?.silentLoading) ||
+      config?.headers?.["X-Silent-Loading"] === "true";
+
+    if (!silentLoading) {
+      useAppStore.getState().beginLoading();
+    }
 
     const token = useAppStore.getState().auth?.token;
     if (token) {
@@ -57,18 +64,36 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    useAppStore.getState().endLoading();
+    const silentLoading =
+      Boolean(error?.config?.meta?.silentLoading) ||
+      error?.config?.headers?.["X-Silent-Loading"] === "true";
+
+    if (!silentLoading) {
+      useAppStore.getState().endLoading();
+    }
     return Promise.reject(normalizeApiError(error));
   },
 );
 
 api.interceptors.response.use(
   (response) => {
-    useAppStore.getState().endLoading();
+    const silentLoading =
+      Boolean(response?.config?.meta?.silentLoading) ||
+      response?.config?.headers?.["X-Silent-Loading"] === "true";
+
+    if (!silentLoading) {
+      useAppStore.getState().endLoading();
+    }
     return response;
   },
   async (error) => {
-    useAppStore.getState().endLoading();
+    const silentLoading =
+      Boolean(error?.config?.meta?.silentLoading) ||
+      error?.config?.headers?.["X-Silent-Loading"] === "true";
+
+    if (!silentLoading) {
+      useAppStore.getState().endLoading();
+    }
     const normalized = normalizeApiError(error);
 
     if (

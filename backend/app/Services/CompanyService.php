@@ -196,7 +196,8 @@ class CompanyService
         ], 86400); // 24h expirationdesqwx
         $mailService = new MailService();
 
-        $activationLink = env('URL_APPLICATION') . "/company/activate?token=$token";
+        $frontendUrl = rtrim((string)(env('URL_FRONTEND') ?: env('URL_APPLICATION')), '/');
+        $activationLink = $frontendUrl . "/company/activate?token=$token";
         $pricingLink = env('URL_APPLICATION') . "/pricing";
 
 

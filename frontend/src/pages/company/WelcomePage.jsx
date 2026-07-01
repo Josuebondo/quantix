@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { companyService } from "../../services/companyService";
+import { Logo } from "../../layouts/PublicLayouts";
 
 export default function WelcomePage() {
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ export default function WelcomePage() {
       }
 
       const sessionId = payload.data.sessionId;
-      window.location.href = `/workspace/setup?session=${encodeURIComponent(sessionId)}`;
+      window.location.href = `/onboarding/workspace?session=${encodeURIComponent(sessionId)}`;
     } catch (error) {
       setErrorMessage(
         error?.message || "Erreur lors de l'initialisation du wizard",
@@ -37,14 +38,7 @@ export default function WelcomePage() {
       <header className="w-full h-20 flex justify-center items-center px-margin-desktop sticky top-0 z-50">
         <div className="w-full max-w-container-max-width flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <img
-              alt="Quatinx Logo"
-              className="h-10 w-auto"
-              src="/images/quantix_logo.jpeg"
-            />
-            <span className="font-headline-md text-headline-md text-on-surface tracking-tight">
-              Quatinx
-            </span>
+            <Logo />
           </div>
           <div className="flex items-center gap-4">
             <button

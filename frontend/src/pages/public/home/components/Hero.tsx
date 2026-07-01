@@ -53,7 +53,7 @@ export default function Hero() {
 
             <div className="flex flex-col gap-4 sm:flex-row">
               <a
-                href="/company/register"
+                href="/get-started"
                 className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-center text-base font-bold text-on-primary shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
               >
                 Commencer gratuitement

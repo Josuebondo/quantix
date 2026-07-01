@@ -10,9 +10,35 @@ export const companyService = {
   acceptInvitation: (payload) => api.post("/api/accept-invitation", payload),
 
   wizardInit: (payload) => api.post("/api/wizard/init", payload),
-  wizardResume: () => api.get("/api/wizard/resume"),
-  wizardAutosave: (payload) => api.post("/api/wizard/autosave", payload),
-  wizardDeploy: (payload) => api.post("/api/wizard/deploy", payload),
+  wizardResume: (sessionId) =>
+    api.get("/api/wizard/resume", { params: { session: sessionId } }),
+  wizardAutosave: (payload) =>
+    api.post("/api/wizard/autosave", payload, {
+      meta: { silentLoading: true },
+      headers: { "X-Silent-Loading": "true" },
+    }),
+  wizardDeploy: (payload, idempotencyKey) =>
+    api.post("/api/wizard/deploy", payload, {
+      headers: {
+        "X-Idempotency-Key":
+          idempotencyKey || crypto?.randomUUID?.() || String(Date.now()),
+      },
+    }),
   wizardPermissions: () => api.get("/api/wizard/permissions"),
   wizardGenerateSku: (payload) => api.post("/api/wizard/generate-sku", payload),
+
+  // Frontend aliases mapped to existing backend endpoints
+  wizardGet: (sessionId) =>
+    api.get("/api/wizard/resume", { params: { session: sessionId } }),
+  wizardNext: (payload) =>
+    api.post("/api/wizard/autosave", payload, {
+      meta: { silentLoading: true },
+      headers: { "X-Silent-Loading": "true" },
+    }),
+  wizardFinish: (payload) =>
+    api.post("/api/wizard/deploy", payload, {
+      headers: {
+        "X-Idempotency-Key": crypto?.randomUUID?.() || String(Date.now()),
+      },
+    }),
 };

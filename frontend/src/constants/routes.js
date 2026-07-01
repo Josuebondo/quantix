@@ -1,4 +1,7 @@
-import { HomePage, FeaturesPage, LoginPage } from "../pages";
+import { HomePage, FeaturesPage, LoginPage, SigninPage } from "../pages";
+import CompanyActivationPage from "../pages/CompanyActivationPage";
+import WorkspaceSetupPage from "../pages/company/WorkspaceSetupPage";
+import WelcomePage from "../pages/company/WelcomePage";
 
 export const APP_ROUTES = [
   // ==========================
@@ -69,7 +72,7 @@ export const APP_ROUTES = [
     title: "Créer un compte",
     layout: "auth",
     requireAuth: false,
-    // component: RegisterPage,
+    component: SigninPage,
   },
   {
     path: "/forgot-password",
@@ -122,7 +125,35 @@ export const APP_ROUTES = [
     title: "Activation entreprise",
     layout: "auth",
     requireAuth: false,
-    // component: CompanyActivationPage,
+    component: CompanyActivationPage,
+  },
+  {
+    path: "/onboarding",
+    title: "Onboarding",
+    layout: "auth",
+    requireAuth: true,
+    component: WelcomePage,
+  },
+  {
+    path: "/onboarding/workspace",
+    title: "Wizard workspace",
+    layout: "auth",
+    requireAuth: true,
+    component: WorkspaceSetupPage,
+  },
+  {
+    path: "/onboarding/users",
+    title: "Wizard users",
+    layout: "auth",
+    requireAuth: true,
+    component: WorkspaceSetupPage,
+  },
+  {
+    path: "/onboarding/finish",
+    title: "Wizard finish",
+    layout: "auth",
+    requireAuth: true,
+    component: WorkspaceSetupPage,
   },
 
   // ==========================

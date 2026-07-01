@@ -9,6 +9,10 @@ const STANDALONE_AUTH_PATHS = new Set([
   "/get-started",
   "/company/register",
   "/company/activate",
+  "/onboarding",
+  "/onboarding/workspace",
+  "/onboarding/users",
+  "/onboarding/finish",
   "/welcome",
   "/workspace/setup",
 ]);

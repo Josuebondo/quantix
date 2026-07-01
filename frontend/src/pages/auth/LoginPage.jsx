@@ -229,7 +229,7 @@ export default function LoginPage() {
               type="submit"
               disabled={isDisabled}
               aria-busy={isLoading || pendingRedirect}
-              className="auth-btn-primary w-full py-3.5 h-14 bg-primary text-midnight shadow-lg shadow-primary/10 flex items-center justify-center gap-2 group"
+              className="auth-btn-primary w-full py-3.5 h-14 bg-primary text-black shadow-lg shadow-primary/10 flex items-center justify-center gap-2 group"
             >
               <span>
                 {isLoading || pendingRedirect ? "Connexion..." : "Se connecter"}

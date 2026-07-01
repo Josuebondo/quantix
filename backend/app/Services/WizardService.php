@@ -184,9 +184,9 @@ class WizardService
                 // Update existing company with finalized data
                 $company->name = $finalState['workspaceName'] ?? $company->name;
                 $company->slug = $this->generateSlug($finalState['workspaceName']);
-                $company->currency = $finalState['currency'] ?? 'USD';
-                $company->country = $finalState['country'] ?? 'RDC';
-                $company->timezone = $finalState['timezone'] ?? 'UTC+1';
+                $company->currency = $this->normalizeCurrency($finalState['currency'] ?? 'USD');
+                $company->country = $this->normalizeBoundedString($finalState['country'] ?? 'RDC', 100);
+                $company->timezone = $this->normalizeBoundedString($finalState['timezone'] ?? 'UTC+1', 50);
                 $company->status = 1; // Active
                 $company->setup_step = 100; // ✅ Completed
                 $company->setup_completed_at = now();
@@ -292,9 +292,71 @@ class WizardService
 
         // ✅ Send Invitations
         if (!empty($state['invitations']) && is_array($state['invitations'])) {
-            $InvService = new InvitationService();
-            $InvService->createInvitation($state['invitations'], $company);
+            $invService = new InvitationService();
+
+            foreach ($state['invitations'] as $invitation) {
+                if (!is_array($invitation)) {
+                    continue;
+                }
+
+                $email = trim((string)($invitation['email'] ?? ''));
+                if ($email === '') {
+                    continue;
+                }
+
+                $roleId = $this->resolveRoleIdForInvitation($company->id, $invitation, $state);
+                if (!$roleId) {
+                    error_log("[WIZARD] Invitation ignorée (rôle introuvable): {$email}");
+                    continue;
+                }
+
+                $name = trim((string)($invitation['name'] ?? ''));
+                if ($name === '') {
+                    $name = explode('@', $email)[0] ?? $email;
+                }
+
+                $payload = [
+                    'email' => $email,
+                    'role_id' => $roleId,
+                    'name' => $name,
+                    'warehouse' => $invitation['warehouse'] ?? null,
+                ];
+
+                $result = $invService->createInvitation($payload, $company);
+                if (empty($result['success'])) {
+                    $message = $result['message'] ?? "Échec d'envoi d'invitation pour {$email}";
+                    log_app("[WIZARD] Invitation non envoyée: {$message}");
+                    continue;
+                }
+            }
         }
+    }
+
+    private function resolveRoleIdForInvitation(int $companyId, array $invitation, array $state): ?int
+    {
+        $candidateRoleId = $invitation['role_id'] ?? null;
+        if (!empty($candidateRoleId)) {
+            $role = \App\Modeles\role::ou('id', '=', $candidateRoleId)
+                ->et('company_id', '=', $companyId)
+                ->premier();
+
+            if ($role) {
+                return (int)$role->id;
+            }
+        }
+
+        $candidateRoleName = trim((string)($invitation['role'] ?? $state['selectedRole'] ?? ''));
+        if ($candidateRoleName !== '') {
+            $role = \App\Modeles\role::ou('name', '=', $candidateRoleName)
+                ->et('company_id', '=', $companyId)
+                ->premier();
+
+            if ($role) {
+                return (int)$role->id;
+            }
+        }
+
+        return null;
     }
 
     public function createRolesAndPermissions(company $company, array $state): void
@@ -309,14 +371,24 @@ class WizardService
                 $roleName = trim($roleName);
 
                 if (!empty($roleName)) {
+                    $roleCode = strtoupper(
+                        preg_replace('/[^A-Za-z0-9]/', '_', trim($roleName))
+                    );
+
+                    $existingRole = \App\Modeles\role::ou('company_id', '=', $company->id)
+                        ->et('code', '=', $roleCode)
+                        ->premier();
+
+                    if ($existingRole) {
+                        $createdRoles[$roleName] = $existingRole->id;
+                        continue;
+                    }
 
                     $role = \App\Modeles\role::creer([
                         'company_id' => $company->id,
                         'name' => $roleName,
                         'description' => '',
-                        'code' => strtoupper(
-                            preg_replace('/[^A-Za-z0-9]/', '_', trim($roleName))
-                        ),
+                        'code' => $roleCode,
                     ]);
 
                     if (!$role) {
@@ -399,6 +471,41 @@ class WizardService
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
         $count = company::ou('slug', 'LIKE', "$slug%")->compter();
         return $count > 0 ? "$slug-$count" : $slug;
+    }
+
+    /**
+     * Normalize currency input from UI labels to ISO-like code (max 10 chars).
+     * Accepts values like "US Dollar (USD)", "USD - Dollar", or "usd".
+     */
+    private function normalizeCurrency(string $raw): string
+    {
+        $value = trim((string)$raw);
+        if ($value === '') {
+            return 'USD';
+        }
+
+        if (preg_match('/\(([A-Za-z]{3,10})\)/', $value, $m)) {
+            return strtoupper(substr($m[1], 0, 10));
+        }
+
+        if (preg_match('/\b([A-Za-z]{3,10})\b/', $value, $m)) {
+            return strtoupper(substr($m[1], 0, 10));
+        }
+
+        return strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $value), 0, 10)) ?: 'USD';
+    }
+
+    /**
+     * Safely trim any user-provided scalar to a DB-friendly bounded string.
+     */
+    private function normalizeBoundedString(string $raw, int $max): string
+    {
+        $value = trim((string)$raw);
+        if ($value === '') {
+            return '';
+        }
+
+        return substr($value, 0, $max);
     }
 
     /**

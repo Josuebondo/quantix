@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import api from "../../services/api";
 import { authService } from "../../services/authService";
 import { useAppStore } from "../../store/useAppStore";
+import Logo from "../../components/common/Logo";
 
 const stepOneSchema = z.object({
   company_name: z.string().min(1, "Le nom de l'entreprise est requis"),
@@ -28,6 +29,196 @@ const stepTwoSchema = z
     path: ["admin_password_confirm"],
   });
 
+const stepperItems = [
+  {
+    number: "01",
+    icon: "business",
+    title: "Entreprise",
+    description: "Informations de base",
+  },
+  {
+    number: "02",
+    icon: "person",
+    title: "Administrateur",
+    description: "Compte proprietaire",
+  },
+  {
+    number: "03",
+    icon: "mark_email_read",
+    title: "Activation",
+    description: "Verification e-mail",
+  },
+  {
+    number: "04",
+    icon: "rocket_launch",
+    title: "Configuration",
+    description: "Workspace pret",
+  },
+];
+
+const benefitItems = [
+  { icon: "verified", label: "Donnees securisees" },
+  { icon: "security", label: "Sauvegarde automatique" },
+  { icon: "warehouse", label: "Multi-entrepots" },
+  { icon: "groups", label: "Multi-utilisateurs" },
+  { icon: "cloud_done", label: "Disponible partout" },
+  { icon: "speed", label: "Installation en 2 minutes" },
+];
+
+const loadingTimeline = [
+  "Creation de votre espace...",
+  "Configuration...",
+  "Creation du workspace...",
+  "Envoi de l'e-mail...",
+];
+
+function toSubdomain(value) {
+  const clean = String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 30);
+  return clean || "workspace-demo";
+}
+
+function passwordChecks(value) {
+  return {
+    length: value.length >= 8,
+    lowerUpper: /[a-z]/.test(value) && /[A-Z]/.test(value),
+    number: /\d/.test(value),
+    special: /[^A-Za-z0-9]/.test(value),
+  };
+}
+
+function scorePassword(value) {
+  const checks = passwordChecks(value);
+  return Object.values(checks).filter(Boolean).length;
+}
+
+function fieldClasses(hasError) {
+  return `auth-input auth-input-icon pr-3 h-12 ${
+    hasError ? "aria-[invalid=true]:border-red-400" : ""
+  }`;
+}
+
+function InfoInput({
+  id,
+  label,
+  icon,
+  type = "text",
+  placeholder,
+  error,
+  register,
+  autoFocus = false,
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label
+        htmlFor={id}
+        className="text-[11px] font-bold text-white/55 uppercase tracking-[0.18em]"
+      >
+        {label}
+      </label>
+      <div className="relative group">
+        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-[20px] transition-colors group-focus-within:text-primary">
+          {icon}
+        </span>
+        <input
+          id={id}
+          type={type}
+          autoFocus={autoFocus}
+          placeholder={placeholder}
+          className={fieldClasses(Boolean(error))}
+          aria-invalid={error ? "true" : "false"}
+          aria-label={label}
+          {...register}
+        />
+      </div>
+      <p className="auth-error-text min-h-4" role="alert">
+        {error?.message}
+      </p>
+    </div>
+  );
+}
+
+function ConfigInput({ id, label, icon, value, onChange, placeholder }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label
+        htmlFor={id}
+        className="text-[11px] font-bold text-white/55 uppercase tracking-[0.18em]"
+      >
+        {label}
+      </label>
+      <div className="relative group">
+        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-[20px] transition-colors group-focus-within:text-primary">
+          {icon}
+        </span>
+        <input
+          id={id}
+          type="text"
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className="auth-input auth-input-icon pr-3 h-12"
+          aria-label={label}
+        />
+      </div>
+    </div>
+  );
+}
+
+function PreviewCard({ preview }) {
+  const items = [
+    { icon: "business", label: "Nom entreprise", value: preview.companyName },
+    { icon: "language", label: "Sous-domaine", value: preview.subdomain },
+    { icon: "payments", label: "Plan", value: preview.plan },
+    { icon: "public", label: "Pays", value: preview.country },
+    { icon: "attach_money", label: "Devise", value: preview.currency },
+    { icon: "schedule", label: "Fuseau horaire", value: preview.timezone },
+  ];
+
+  return (
+    <aside className="auth-card p-6 lg:p-7 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_28px_90px_rgba(2,6,23,0.58)]">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-primary/80">
+            Apercu en temps reel
+          </p>
+          <h3 className="text-white text-xl font-semibold mt-2">
+            Votre workspace
+          </h3>
+        </div>
+        <span className="material-symbols-outlined text-primary text-2xl animate-pulse">
+          rocket_launch
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5 transition-colors duration-300 hover:bg-white/[0.045]"
+          >
+            <p className="text-[11px] uppercase tracking-[0.16em] text-white/50 mb-1 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[16px] text-primary/80">
+                {item.icon}
+              </span>
+              {item.label}
+            </p>
+            <p className="text-sm font-semibold text-white break-all">
+              {item.value}
+            </p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 export default function SigninPage() {
   const setAuth = useAppStore((state) => state.setAuth);
   const [currentStep, setCurrentStep] = useState(1);
@@ -36,6 +227,16 @@ export default function SigninPage() {
     "Traitement en cours...",
   );
   const [result, setResult] = useState({ type: "", message: "" });
+  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
+  const [workspaceConfig, setWorkspaceConfig] = useState({
+    country: "Congo (RDC)",
+    currency: "USD",
+    language: "Francais",
+    timezone: "Africa/Kinshasa",
+    industry: "Distribution",
+    employees: "1-10",
+    plan: "Essai Gratuit",
+  });
 
   const stepOneForm = useForm({
     resolver: zodResolver(stepOneSchema),
@@ -147,9 +348,6 @@ export default function SigninPage() {
     }
   };
 
-  const lineWidth =
-    currentStep === 1 ? "0%" : currentStep === 2 ? "50%" : "100%";
-
   const disableContinueStepOne =
     !stepOneForm.formState.isValid || isSubmitting || currentStep !== 1;
   const disableContinueStepTwo =
@@ -158,397 +356,683 @@ export default function SigninPage() {
     return !isSubmitting && !!stepTwoForm.getValues("admin_email");
   }, [isSubmitting, stepTwoForm]);
 
+  const companyName = stepOneForm.watch("company_name") || "KABIPANGI-FILS";
+  const companyEmail =
+    stepOneForm.watch("company_email") || "contact@entreprise.com";
+  const companyPhone = stepOneForm.watch("company_phone") || "+243 000 000 000";
+  const adminEmail = stepTwoForm.watch("admin_email") || "admin@entreprise.com";
+  const adminPassword = stepTwoForm.watch("admin_password") || "";
+  const checks = passwordChecks(adminPassword);
+  const passwordScore = scorePassword(adminPassword);
+  const passwordPercent = (passwordScore / 4) * 100;
+  const passwordLevel =
+    passwordScore <= 1
+      ? "Faible"
+      : passwordScore <= 2
+        ? "Moyen"
+        : passwordScore <= 3
+          ? "Bon"
+          : "Excellent";
+
+  const visualStep =
+    currentStep === 1
+      ? 1
+      : currentStep === 2
+        ? 2
+        : isSubmitting
+          ? 3
+          : result.type
+            ? 4
+            : 3;
+  const stepProgress = `${((visualStep - 1) / (stepperItems.length - 1)) * 100}%`;
+
+  const preview = useMemo(() => {
+    const domain = `${toSubdomain(companyName)}.quantix.app`;
+    return {
+      companyName,
+      subdomain: domain,
+      plan: workspaceConfig.plan,
+      country: workspaceConfig.country,
+      currency: workspaceConfig.currency,
+      timezone: workspaceConfig.timezone,
+      adminEmail,
+    };
+  }, [adminEmail, companyName, workspaceConfig]);
+
+  useEffect(() => {
+    if (!isSubmitting) {
+      setLoadingStepIndex(0);
+      return;
+    }
+
+    setLoadingStepIndex(0);
+    setLoadingMessage(loadingTimeline[0]);
+
+    const timer = setInterval(() => {
+      setLoadingStepIndex((prev) => {
+        const next = Math.min(prev + 1, loadingTimeline.length - 1);
+        setLoadingMessage(loadingTimeline[next]);
+        return next;
+      });
+    }, 1200);
+
+    return () => clearInterval(timer);
+  }, [isSubmitting]);
+
+  const updateConfig = (field) => (event) => {
+    setWorkspaceConfig((prev) => ({
+      ...prev,
+      [field]: event.target.value,
+    }));
+  };
+
   return (
-    <div className="auth-shell text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary/30 antialiased overflow-x-hidden">
-      <nav className="bg-background/40 backdrop-blur-xl text-sm border-b border-white/5 flex justify-between items-center px-8 h-20 w-full fixed top-0 z-50">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 shadow-[0_0_15px_rgba(19,236,128,0.1)]">
-            <span className="material-symbols-outlined text-primary text-2xl">
-              deployed_code
-            </span>
+    <div className="auth-shell text-on-background font-body-md min-h-screen selection:bg-primary/30 antialiased overflow-x-hidden">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
+        <div className="mx-auto max-w-[1280px] h-20 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Logo />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-bold text-white tracking-tight leading-none font-headline-md">
-              QUATINX
-            </span>
-            <span className="text-[8px] uppercase tracking-[0.2em] text-white/40 font-semibold">
-              Enterprise Solution
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <span className="text-on-surface-variant text-xs font-semibold tracking-widest uppercase opacity-70">
-            Support
-          </span>
-          <button
-            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
-            type="button"
+          <a
+            href="/login"
+            className="h-10 px-4 rounded-lg border border-white/15 text-xs font-bold tracking-[0.18em] uppercase text-white/70 hover:text-white hover:border-white/30 transition-colors duration-200 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            aria-label="Acceder a la connexion"
           >
-            <span className="material-symbols-outlined text-sm">help</span>
-          </button>
+            <span className="material-symbols-outlined text-base">login</span>
+            <span className="hidden sm:inline">Connexion</span>
+          </a>
         </div>
-      </nav>
+      </header>
 
-      <main className="flex-grow flex flex-col items-center justify-start pt-40 pb-32 px-6 w-full relative z-10">
-        <div className="w-full max-w-xl mb-24 relative">
-          <div className="flex items-center justify-between relative">
-            <div className="absolute top-5 left-4 right-4 h-[1px] bg-white/10 -z-0"></div>
-            <div
-              className="absolute top-5 left-4 h-[1px] bg-primary transition-all duration-500 -z-0"
-              style={{ width: `calc(${lineWidth} - 2rem)` }}
-            ></div>
+      <main className="relative z-10 px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <section className="mx-auto max-w-[1280px] mb-8 md:mb-10 animate-fade-in">
+          <div className="auth-card px-5 py-8 sm:p-8 lg:p-10">
+            <p className="text-primary/90 text-xs font-bold tracking-[0.2em] uppercase mb-3">
+              Get Started
+            </p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.05]">
+              Lancez votre espace Quantix en moins de 2 minutes
+            </h1>
+            <p className="hidden sm:block text-white/65 mt-4 text-sm sm:text-base max-w-3xl leading-relaxed">
+              Onboarding premium, configuration guidee et activation immediate.
+              Concentrez-vous sur votre business, Quantix gere le reste.
+            </p>
 
-            {[1, 2, 3].map((step) => {
-              const active = currentStep >= step;
-              const current = currentStep === step;
-              const icon =
-                step === 1 ? "business" : step === 2 ? "person" : "verified";
-              const label = step === 1 ? "Infos" : step === 2 ? "Owner" : "Fin";
-              return (
-                <div
-                  key={step}
-                  className="relative z-10 flex flex-col items-center gap-4"
+            <div className="mt-6 flex flex-wrap gap-3">
+              {[
+                "Essai gratuit",
+                "Sans carte bancaire",
+                "Configuration en moins de 2 minutes",
+              ].map((badge, index) => (
+                <span
+                  key={badge}
+                  className={`inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-xs font-semibold text-primary transition-transform duration-300 hover:-translate-y-0.5 ${
+                    index > 0 ? "hidden sm:inline-flex" : "inline-flex"
+                  }`}
                 >
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ring-8 ring-background transition-all duration-500 ${active ? (current ? "bg-primary text-on-primary shadow-[0_0_15px_rgba(19,236,128,0.3)]" : "bg-primary/20 text-primary") : "bg-surface-container-highest text-on-surface-variant/40"}`}
-                  >
-                    <span className="material-symbols-outlined text-base">
-                      {active && !current ? "done" : icon}
-                    </span>
-                  </div>
-                  <span
-                    className={`text-[10px] font-bold uppercase tracking-[0.2em] ${active ? "text-primary" : "text-outline opacity-50"}`}
-                  >
-                    {label}
+                  <span className="material-symbols-outlined text-[16px]">
+                    verified
                   </span>
-                </div>
-              );
-            })}
+                  {badge}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="w-full max-w-5xl mx-auto">
-          {currentStep === 1 ? (
-            <section className="step-content active">
-              <div className="max-w-2xl mx-auto auth-card p-8 md:p-12">
-                <div className="mb-10">
-                  <h2 className="text-3xl font-bold text-white mb-3 font-headline-md tracking-tight">
-                    Creez votre entreprise
+        <section className="mx-auto max-w-[1280px] mb-8 md:mb-10 animate-fade-in">
+          <div className="auth-card p-5 sm:p-6 lg:p-8">
+            <div className="relative">
+              <div className="absolute top-6 left-0 right-0 h-[2px] bg-white/10" />
+              <div
+                className="absolute top-6 left-0 h-[2px] bg-primary transition-all duration-700 ease-out"
+                style={{ width: stepProgress }}
+                aria-hidden="true"
+              />
+
+              <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                {stepperItems.map((item, index) => {
+                  const stepIndex = index + 1;
+                  const isDone = visualStep > stepIndex;
+                  const isCurrent = visualStep === stepIndex;
+
+                  return (
+                    <div
+                      key={item.title}
+                      className="pt-0.5"
+                      aria-current={isCurrent ? "step" : undefined}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-all duration-500 ${
+                            isDone
+                              ? "bg-primary text-slate-900 border-primary"
+                              : isCurrent
+                                ? "bg-primary/15 text-primary border-primary/50 shadow-[0_0_0_4px_rgba(19,236,128,0.12)]"
+                                : "bg-white/[0.02] text-white/50 border-white/15"
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-[20px]">
+                            {isDone ? "check_circle" : item.icon}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="hidden sm:block text-[10px] tracking-[0.2em] uppercase font-bold text-white/45">
+                            {item.number}
+                          </p>
+                          <p
+                            className={`text-sm font-semibold ${
+                              isCurrent || isDone
+                                ? "text-white"
+                                : "text-white/60"
+                            }`}
+                          >
+                            {item.title}
+                          </p>
+                          <p className="hidden md:block text-xs text-white/45">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[1280px] grid grid-cols-1 xl:grid-cols-[280px_minmax(0,1fr)_320px] gap-6 items-start">
+          <aside className="order-3 auth-card p-6 animate-fade-in md:hidden xl:block xl:order-1">
+            <div className="mb-5">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-primary/80 font-bold">
+                Pourquoi Quantix
+              </p>
+              <h3 className="text-white text-xl font-semibold mt-2">
+                Avantages inclus
+              </h3>
+            </div>
+            <ul className="space-y-3">
+              {benefitItems.map((benefit) => (
+                <li
+                  key={benefit.label}
+                  className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 flex items-center gap-3 transition-all duration-200 hover:bg-white/[0.05] hover:border-white/20"
+                >
+                  <span className="material-symbols-outlined text-primary text-[20px]">
+                    {benefit.icon}
+                  </span>
+                  <span className="text-sm text-white/80">{benefit.label}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
+
+          <div className="order-1 xl:order-2 animate-fade-in">
+            {currentStep === 1 ? (
+              <section className="auth-card p-5 sm:p-8 lg:p-10 transition-all duration-500">
+                <div className="mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    Informations Entreprise
                   </h2>
-                  <p className="text-white/50 text-sm font-body-md">
-                    Commencons par configurer votre profil et votre entreprise.
+                  <p className="text-white/60 mt-2">
+                    Configurez votre entreprise et vos preferences de workspace.
                   </p>
                 </div>
+
+                <div className="hidden md:block xl:hidden mb-6">
+                  <PreviewCard preview={preview} />
+                </div>
+
                 <form
-                  className="space-y-8"
+                  className="space-y-6"
                   onSubmit={stepOneForm.handleSubmit(() => setCurrentStep(2))}
+                  aria-label="Formulaire entreprise"
                 >
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-bold text-primary uppercase tracking-[0.2em]">
-                      Informations Entreprise
-                    </h3>
-                    <div className="flex flex-col gap-2.5">
-                      <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                        Nom de l'entreprise *
-                      </label>
-                      <input
-                        className="auth-input"
-                        type="text"
-                        placeholder="Entreprise SARL"
-                        autoFocus
-                        aria-invalid={
-                          stepOneForm.formState.errors.company_name
-                            ? "true"
-                            : "false"
-                        }
-                        {...stepOneForm.register("company_name")}
-                      />
-                      <p className="auth-error-text min-h-4" role="alert">
-                        {stepOneForm.formState.errors.company_name?.message}
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                          Email entreprise
-                        </label>
-                        <input
-                          className="auth-input"
-                          type="email"
-                          placeholder="contact@entreprise.com"
-                          aria-invalid={
-                            stepOneForm.formState.errors.company_email
-                              ? "true"
-                              : "false"
-                          }
-                          {...stepOneForm.register("company_email")}
-                        />
-                        <p className="auth-error-text min-h-4" role="alert">
-                          {stepOneForm.formState.errors.company_email?.message}
-                        </p>
-                      </div>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                          Telephone
-                        </label>
-                        <input
-                          className="auth-input"
-                          type="tel"
-                          placeholder="+33 1 23 45 67 89"
-                          {...stepOneForm.register("company_phone")}
-                        />
-                      </div>
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <InfoInput
+                      id="company_name"
+                      label="Nom *"
+                      icon="business"
+                      placeholder="Entreprise SARL"
+                      error={stepOneForm.formState.errors.company_name}
+                      register={stepOneForm.register("company_name")}
+                      autoFocus
+                    />
+
+                    <InfoInput
+                      id="company_email"
+                      label="Email"
+                      icon="mail"
+                      type="email"
+                      placeholder="contact@entreprise.com"
+                      error={stepOneForm.formState.errors.company_email}
+                      register={stepOneForm.register("company_email")}
+                    />
+
+                    <InfoInput
+                      id="company_phone"
+                      label="Telephone"
+                      icon="call"
+                      type="tel"
+                      placeholder="+33 1 23 45 67 89"
+                      error={stepOneForm.formState.errors.company_phone}
+                      register={stepOneForm.register("company_phone")}
+                    />
+
+                    <ConfigInput
+                      id="company_country"
+                      label="Pays"
+                      icon="public"
+                      value={workspaceConfig.country}
+                      onChange={updateConfig("country")}
+                      placeholder="France"
+                    />
+
+                    <ConfigInput
+                      id="company_currency"
+                      label="Devise"
+                      icon="payments"
+                      value={workspaceConfig.currency}
+                      onChange={updateConfig("currency")}
+                      placeholder="EUR"
+                    />
+
+                    <ConfigInput
+                      id="company_language"
+                      label="Langue"
+                      icon="language"
+                      value={workspaceConfig.language}
+                      onChange={updateConfig("language")}
+                      placeholder="Francais"
+                    />
+
+                    <ConfigInput
+                      id="company_timezone"
+                      label="Fuseau horaire"
+                      icon="schedule"
+                      value={workspaceConfig.timezone}
+                      onChange={updateConfig("timezone")}
+                      placeholder="Africa/Paris"
+                    />
+
+                    <ConfigInput
+                      id="company_industry"
+                      label="Secteur d'activite"
+                      icon="business_center"
+                      value={workspaceConfig.industry}
+                      onChange={updateConfig("industry")}
+                      placeholder="Retail"
+                    />
+
+                    <ConfigInput
+                      id="company_employees"
+                      label="Nombre d'employes"
+                      icon="groups"
+                      value={workspaceConfig.employees}
+                      onChange={updateConfig("employees")}
+                      placeholder="1-10"
+                    />
                   </div>
+
                   <button
-                    className="auth-btn-primary w-full bg-primary text-white font-bold py-5 rounded-xl"
+                    className="auth-btn-primary h-12 px-6 w-full sm:w-auto bg-primary text-slate-900 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 shadow-[0_16px_30px_rgba(19,236,128,0.2)] hover:shadow-[0_20px_36px_rgba(19,236,128,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 disabled:opacity-60"
                     type="submit"
                     disabled={disableContinueStepOne}
                     aria-busy={isSubmitting}
+                    aria-label="Continuer vers administrateur"
                   >
-                    CONTINUER{" "}
-                    <span className="material-symbols-outlined text-lg align-middle">
+                    Continuer
+                    <span className="material-symbols-outlined text-lg">
                       arrow_forward
                     </span>
                   </button>
                 </form>
-              </div>
-            </section>
-          ) : null}
+              </section>
+            ) : null}
 
-          {currentStep === 2 ? (
-            <section className="step-content active">
-              <form onSubmit={stepTwoForm.handleSubmit(submitRegistration)}>
-                <div className="max-w-2xl mx-auto auth-card p-8 md:p-12">
-                  <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold text-white mb-4">
-                      Informations de l'Administrateur
-                    </h2>
-                    <p className="text-white/50">
-                      Veuillez fournir les informations de l'administrateur.
-                    </p>
+            {currentStep === 2 ? (
+              <section className="auth-card p-5 sm:p-8 lg:p-10 transition-all duration-500">
+                <div className="mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    Compte Administrateur
+                  </h2>
+                  <p className="text-white/60 mt-2">
+                    Creez le compte principal qui pilotera votre workspace.
+                  </p>
+                </div>
+
+                <form
+                  onSubmit={stepTwoForm.handleSubmit(submitRegistration)}
+                  className="space-y-6"
+                  aria-label="Formulaire administrateur"
+                >
+                  <div className="hidden md:block xl:hidden">
+                    <PreviewCard preview={preview} />
                   </div>
-                  <div className="pt-6 border-t border-white/5 space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                          Prenom *
-                        </label>
-                        <input
-                          className="auth-input"
-                          type="text"
-                          placeholder="Jean"
-                          aria-invalid={
-                            stepTwoForm.formState.errors.admin_first_name
-                              ? "true"
-                              : "false"
-                          }
-                          {...stepTwoForm.register("admin_first_name")}
-                        />
-                        <p className="auth-error-text min-h-4" role="alert">
-                          {
-                            stepTwoForm.formState.errors.admin_first_name
-                              ?.message
-                          }
-                        </p>
-                      </div>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                          Nom *
-                        </label>
-                        <input
-                          className="auth-input"
-                          type="text"
-                          placeholder="Dupont"
-                          aria-invalid={
-                            stepTwoForm.formState.errors.admin_last_name
-                              ? "true"
-                              : "false"
-                          }
-                          {...stepTwoForm.register("admin_last_name")}
-                        />
-                        <p className="auth-error-text min-h-4" role="alert">
-                          {
-                            stepTwoForm.formState.errors.admin_last_name
-                              ?.message
-                          }
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2.5">
-                      <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                        Email professionnel *
-                      </label>
-                      <input
-                        className="auth-input"
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <InfoInput
+                      id="admin_first_name"
+                      label="Prenom *"
+                      icon="badge"
+                      placeholder="Jean"
+                      error={stepTwoForm.formState.errors.admin_first_name}
+                      register={stepTwoForm.register("admin_first_name")}
+                    />
+
+                    <InfoInput
+                      id="admin_last_name"
+                      label="Nom *"
+                      icon="badge"
+                      placeholder="Dupont"
+                      error={stepTwoForm.formState.errors.admin_last_name}
+                      register={stepTwoForm.register("admin_last_name")}
+                    />
+
+                    <div className="sm:col-span-2">
+                      <InfoInput
+                        id="admin_email"
+                        label="Email professionnel *"
+                        icon="mail"
                         type="email"
                         placeholder="jean@entreprise.com"
-                        aria-invalid={
-                          stepTwoForm.formState.errors.admin_email
-                            ? "true"
-                            : "false"
-                        }
-                        {...stepTwoForm.register("admin_email")}
+                        error={stepTwoForm.formState.errors.admin_email}
+                        register={stepTwoForm.register("admin_email")}
                       />
-                      <p className="auth-error-text min-h-4" role="alert">
-                        {stepTwoForm.formState.errors.admin_email?.message}
+                    </div>
+
+                    <InfoInput
+                      id="admin_password"
+                      label="Mot de passe *"
+                      icon="lock"
+                      type="password"
+                      placeholder="********"
+                      error={stepTwoForm.formState.errors.admin_password}
+                      register={stepTwoForm.register("admin_password")}
+                    />
+
+                    <InfoInput
+                      id="admin_password_confirm"
+                      label="Confirmation *"
+                      icon="lock_reset"
+                      type="password"
+                      placeholder="********"
+                      error={
+                        stepTwoForm.formState.errors.admin_password_confirm
+                      }
+                      register={stepTwoForm.register("admin_password_confirm")}
+                    />
+                  </div>
+
+                  <div
+                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"
+                    aria-live="polite"
+                  >
+                    <div className="flex items-center justify-between gap-4 mb-3">
+                      <p className="text-xs uppercase tracking-[0.18em] text-white/60 font-bold">
+                        Force du mot de passe
+                      </p>
+                      <p className="text-sm font-semibold text-primary">
+                        {passwordLevel}
                       </p>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                          Mot de passe *
-                        </label>
-                        <input
-                          className="auth-input"
-                          type="password"
-                          placeholder="••••••••"
-                          aria-invalid={
-                            stepTwoForm.formState.errors.admin_password
-                              ? "true"
-                              : "false"
-                          }
-                          {...stepTwoForm.register("admin_password")}
-                        />
-                        <p className="auth-error-text min-h-4" role="alert">
-                          {stepTwoForm.formState.errors.admin_password?.message}
+                    <div className="h-2 rounded-full bg-white/10 overflow-hidden mb-4">
+                      <div
+                        className={`h-full transition-all duration-500 ${
+                          passwordScore <= 1
+                            ? "bg-red-500"
+                            : passwordScore <= 2
+                              ? "bg-amber-400"
+                              : passwordScore <= 3
+                                ? "bg-primary/70"
+                                : "bg-primary"
+                        }`}
+                        style={{ width: `${passwordPercent}%` }}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {[
+                        { ok: checks.length, text: "Minimum 8 caracteres" },
+                        {
+                          ok: checks.lowerUpper,
+                          text: "Majuscule et minuscule",
+                        },
+                        { ok: checks.number, text: "Au moins un chiffre" },
+                        {
+                          ok: checks.special,
+                          text: "Au moins un caractere special",
+                        },
+                      ].map((rule) => (
+                        <p
+                          key={rule.text}
+                          className={`text-xs flex items-center gap-2 ${
+                            rule.ok ? "text-primary" : "text-white/55"
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-[16px]">
+                            {rule.ok ? "check_circle" : "cancel"}
+                          </span>
+                          {rule.text}
                         </p>
-                      </div>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.15em]">
-                          Confirmer mot de passe *
-                        </label>
-                        <input
-                          className="auth-input"
-                          type="password"
-                          placeholder="••••••••"
-                          aria-invalid={
-                            stepTwoForm.formState.errors.admin_password_confirm
-                              ? "true"
-                              : "false"
-                          }
-                          {...stepTwoForm.register("admin_password_confirm")}
-                        />
-                        <p className="auth-error-text min-h-4" role="alert">
-                          {
-                            stepTwoForm.formState.errors.admin_password_confirm
-                              ?.message
-                          }
-                        </p>
-                      </div>
+                      ))}
                     </div>
                   </div>
-                </div>
 
-                <div className="flex justify-center mt-20 gap-6">
-                  <button
-                    className="px-10 py-4 rounded-xl border border-white/10 text-white/50 font-bold text-xs tracking-widest uppercase hover:border-white/20 hover:text-white transition-colors"
-                    onClick={() => setCurrentStep(1)}
-                    type="button"
-                    disabled={isSubmitting}
-                  >
-                    RETOUR
-                  </button>
-                  <button
-                    className="auth-btn-primary px-14 py-4 rounded-xl bg-primary text-midnight font-bold text-xs tracking-widest flex items-center gap-3 uppercase shadow-lg shadow-primary/20"
-                    type="submit"
-                    disabled={disableContinueStepTwo}
-                    aria-busy={isSubmitting}
-                  >
-                    {isSubmitting ? "CREATION..." : "SUIVANT"}{" "}
-                    <span className="material-symbols-outlined text-lg">
-                      {isSubmitting ? "autorenew" : "arrow_forward"}
-                    </span>
-                  </button>
-                </div>
-              </form>
-            </section>
-          ) : null}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button
+                      className="h-12 px-6 rounded-xl border border-white/15 text-white/75 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 transition-all duration-200 hover:border-white/30 hover:text-white active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 disabled:opacity-60"
+                      onClick={() => setCurrentStep(1)}
+                      type="button"
+                      disabled={isSubmitting}
+                      aria-label="Revenir aux informations entreprise"
+                    >
+                      <span className="material-symbols-outlined text-lg">
+                        arrow_back
+                      </span>
+                      Retour
+                    </button>
 
-          {currentStep === 3 ? (
-            <section className="step-content active">
-              <div className="flex flex-col items-center text-center py-16 px-8 md:px-12 auth-card rounded-3xl max-w-3xl mx-auto">
+                    <button
+                      className="auth-btn-primary h-12 px-6 rounded-xl bg-primary text-slate-900 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 shadow-[0_16px_30px_rgba(19,236,128,0.2)] hover:shadow-[0_20px_36px_rgba(19,236,128,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 disabled:opacity-60"
+                      type="submit"
+                      disabled={disableContinueStepTwo}
+                      aria-busy={isSubmitting}
+                      aria-label="Lancer la creation du workspace"
+                    >
+                      {isSubmitting ? "Creation..." : "Lancer"}
+                      <span className="material-symbols-outlined text-lg">
+                        {isSubmitting ? "progress_activity" : "rocket_launch"}
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              </section>
+            ) : null}
+
+            {currentStep === 3 ? (
+              <section className="auth-card p-6 sm:p-10 transition-all duration-500">
                 {isSubmitting ? (
                   <div
-                    className="w-full max-w-lg space-y-6"
+                    className="max-w-2xl mx-auto text-center"
                     role="status"
                     aria-live="polite"
                   >
-                    <div className="mx-auto w-14 h-14 rounded-full border-2 border-primary/25 border-t-primary animate-spin"></div>
-                    <p className="loader-text text-white font-semibold">
-                      {loadingMessage}
-                    </p>
-                    <div className="space-y-3">
-                      <div className="h-3 skeleton-line"></div>
-                      <div className="h-3 skeleton-line w-4/5 mx-auto"></div>
-                      <div className="h-3 skeleton-line w-3/5 mx-auto"></div>
+                    <div className="mx-auto mb-6 w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-primary text-4xl animate-spin">
+                        progress_activity
+                      </span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
+                      Creation de votre espace...
+                    </h2>
+                    <p className="text-white/65">{loadingMessage}</p>
+
+                    <div className="mt-8 space-y-2 text-left max-w-lg mx-auto">
+                      {loadingTimeline.map((item, index) => {
+                        const done = index <= loadingStepIndex;
+                        return (
+                          <div
+                            key={item}
+                            className={`rounded-xl border px-4 py-3 flex items-center gap-3 transition-all duration-300 ${
+                              done
+                                ? "border-primary/40 bg-primary/10 text-primary"
+                                : "border-white/10 bg-white/[0.02] text-white/50"
+                            }`}
+                          >
+                            <span className="material-symbols-outlined text-[18px]">
+                              {done ? "check_circle" : "schedule"}
+                            </span>
+                            <span className="text-sm font-medium">{item}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ) : result.type === "success" ? (
-                  <div className="w-full items-center flex flex-col gap-8">
-                    <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center ring-1 ring-primary/30 relative">
-                      <span className="material-symbols-outlined text-6xl text-primary">
-                        mail
+                  <div className="max-w-2xl mx-auto text-center">
+                    <div className="mx-auto mb-7 w-20 h-20 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center shadow-[0_0_32px_rgba(19,236,128,0.22)]">
+                      <span className="material-symbols-outlined text-primary text-5xl">
+                        celebration
                       </span>
                     </div>
-                    <h2 className="text-4xl font-bold text-white tracking-tight">
-                      Votre inscription a ete un succes !
+
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                      Bienvenue sur Quantix
                     </h2>
-                    <p className="text-white/70 text-lg leading-relaxed max-w-lg">
-                      {result.message}
+                    <p className="text-white/70 text-base sm:text-lg mt-3">
+                      Votre espace est pret.
                     </p>
-                    <button
-                      onClick={resendActivationEmail}
-                      className="auth-btn-primary w-full sm:w-auto bg-primary text-midnight font-bold py-5 px-16 rounded-xl text-sm tracking-widest uppercase"
-                      type="button"
-                      disabled={!canResend}
-                    >
-                      Renvoyer l'e-mail
-                    </button>
-                    <a
-                      className="text-white/40 hover:text-primary text-xs font-bold tracking-[0.1em] uppercase"
-                      href="/login"
-                    >
-                      Retour a la connexion
-                    </a>
+
+                    <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                      {[
+                        ["Entreprise", preview.companyName],
+                        ["Sous-domaine", preview.subdomain],
+                        ["Plan", preview.plan],
+                        ["Email", preview.adminEmail],
+                      ].map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3"
+                        >
+                          <p className="text-[11px] uppercase tracking-[0.16em] text-white/55 font-semibold mb-1">
+                            {label}
+                          </p>
+                          <p className="text-sm font-semibold text-white break-all">
+                            {value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                      <a
+                        href={`mailto:${preview.adminEmail}`}
+                        className="h-12 px-5 rounded-xl border border-white/15 text-white/85 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 hover:border-white/30 hover:bg-white/[0.04] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                        aria-label="Ouvrir ma messagerie"
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          mail
+                        </span>
+                        Ouvrir ma messagerie
+                      </a>
+
+                      <button
+                        onClick={resendActivationEmail}
+                        className="auth-btn-primary h-12 px-5 rounded-xl bg-primary text-slate-900 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 disabled:opacity-60"
+                        type="button"
+                        disabled={!canResend}
+                        aria-label="Renvoyer l'e-mail d'activation"
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          refresh
+                        </span>
+                        Renvoyer l'e-mail
+                      </button>
+
+                      <a
+                        href="/login"
+                        className="h-12 px-5 rounded-xl border border-white/15 text-white/85 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 hover:border-white/30 hover:bg-white/[0.04] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                        aria-label="Acceder a la connexion"
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          login
+                        </span>
+                        Acceder a la connexion
+                      </a>
+                    </div>
                   </div>
                 ) : (
-                  <div className="w-full items-center flex flex-col gap-8">
-                    <div className="w-32 h-32 bg-red-600/10 rounded-full flex items-center justify-center ring-1 ring-red-600/30 relative">
-                      <span className="material-symbols-outlined text-6xl text-red-600">
+                  <div className="max-w-2xl mx-auto text-center">
+                    <div className="mx-auto mb-7 w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-red-400 text-5xl">
                         error
                       </span>
                     </div>
-                    <h2 className="text-4xl font-bold text-white tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
                       Une erreur est survenue
                     </h2>
-                    <p className="text-white/70 text-lg leading-relaxed max-w-lg whitespace-pre-line">
+                    <p className="text-white/70 mt-3 whitespace-pre-line">
                       {result.message || "Une erreur est survenue"}
                     </p>
-                    <button
-                      onClick={() => setCurrentStep(1)}
-                      className="w-full sm:w-auto bg-primary text-midnight font-bold py-5 px-16 rounded-xl text-sm tracking-widest uppercase"
-                      type="button"
-                    >
-                      Reessayer
-                    </button>
-                    <a
-                      className="text-white/40 hover:text-primary text-xs font-bold tracking-[0.1em] uppercase"
-                      href="/login"
-                    >
-                      Retour a la connexion
-                    </a>
+
+                    <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                      <button
+                        onClick={() => setCurrentStep(1)}
+                        className="auth-btn-primary h-12 px-6 rounded-xl bg-primary text-slate-900 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                        type="button"
+                        aria-label="Reessayer"
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          refresh
+                        </span>
+                        Reessayer
+                      </button>
+
+                      <a
+                        href="mailto:support@quantix.app"
+                        className="h-12 px-6 rounded-xl border border-white/15 text-white/85 font-bold text-xs tracking-[0.18em] uppercase inline-flex items-center justify-center gap-2 hover:border-white/30 hover:bg-white/[0.04] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                        aria-label="Contacter le support"
+                      >
+                        <span className="material-symbols-outlined text-lg">
+                          support_agent
+                        </span>
+                        Contacter le support
+                      </a>
+                    </div>
                   </div>
                 )}
+              </section>
+            ) : null}
+          </div>
+
+          <div className="order-2 xl:order-3 hidden xl:block animate-fade-in">
+            <PreviewCard preview={preview} />
+            <div className="hidden 2xl:block auth-card mt-5 p-5">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 font-bold mb-3">
+                Activite
+              </p>
+              <div className="space-y-2">
+                {[
+                  `Entreprise: ${companyName}`,
+                  `Contact: ${companyEmail}`,
+                  `Telephone: ${companyPhone}`,
+                  `Admin: ${adminEmail}`,
+                ].map((line) => (
+                  <p key={line} className="text-sm text-white/70 break-all">
+                    {line}
+                  </p>
+                ))}
               </div>
-            </section>
-          ) : null}
-        </div>
+            </div>
+          </div>
+        </section>
       </main>
 
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden bg-slate-950">
-        <div className="absolute top-[-15%] right-[-10%] w-[70%] h-[70%] bg-primary/5 blur-[180px] rounded-full"></div>
-        <div className="absolute bottom-[-20%] left-[-15%] w-[60%] h-[60%] bg-white/2 blur-[160px] rounded-full"></div>
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden bg-slate-950">
+        <div className="absolute top-[-12%] right-[-10%] w-[70%] h-[60%] bg-primary/10 blur-[140px] rounded-full" />
+        <div className="absolute bottom-[-20%] left-[-15%] w-[70%] h-[70%] bg-cyan-400/10 blur-[140px] rounded-full" />
+        <div className="absolute top-[35%] left-[42%] w-[20%] h-[20%] bg-white/5 blur-[120px] rounded-full" />
       </div>
     </div>
   );

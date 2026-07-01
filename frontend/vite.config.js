@@ -13,7 +13,7 @@ export default defineConfig({
         target: backendTarget,
         changeOrigin: true,
       },
-      "/company": {
+      "/company/send-activation": {
         target: backendTarget,
         changeOrigin: true,
       },

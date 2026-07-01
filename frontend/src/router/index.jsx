@@ -98,7 +98,13 @@ export default function AppRouter() {
           <Route
             key={route.path}
             path={route.path}
-            element={<PublicRoute route={route} />}
+            element={
+              route.requireAuth ? (
+                <ProtectedRoute route={route} />
+              ) : (
+                <PublicRoute route={route} />
+              )
+            }
           />
         ))}
       </Route>

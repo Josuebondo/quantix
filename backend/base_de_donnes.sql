@@ -185,7 +185,7 @@ CREATE TABLE `payments` (
 
 --
 -- Table structure for table `permissions`
---
+--<
 
 CREATE TABLE `permissions` (
   `id` bigint(20) UNSIGNED NOT NULL,

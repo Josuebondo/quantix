@@ -79,7 +79,7 @@ class CompanyController extends BaseControleur
      */
     public function apiActivate(Requete $requete, Reponse $response)
     {
-        $token = $requete->obtenir('token') ?? '';
+        $token = $requete->tousCorps()['token'] ?? '';
 
         $result = $this->companyService->activateUserAccount($token);
 

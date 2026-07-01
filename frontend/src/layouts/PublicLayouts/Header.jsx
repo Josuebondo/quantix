@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navigation from "./Navigation";
-import Logo from "./Logo";
+import Logo from "../../components/common/Logo";
 import MobileNavigation from "./MobileNavigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "../../components/common/ThemeToggle";

@@ -20,7 +20,7 @@ export default function ContactCTA() {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
-                  href="/company/register"
+                  href="/get-started"
                   className="inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 font-medium text-on-primary transition-colors duration-200 hover:bg-on-primary-fixed-variant"
                 >
                   Créer mon compte

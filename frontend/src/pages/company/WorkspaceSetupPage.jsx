@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import api from "../../services/api";
 import { companyService } from "../../services/companyService";
+import { Logo } from "../../layouts/PublicLayouts";
+import Loader from "../../components/ui/Loader";
 
 const STEP_INFO = [
   { name: "Workspace", icon: "corporate_fare" },
@@ -188,7 +190,8 @@ export default function WorkspaceSetupPage() {
       try {
         const response = await companyService.wizardPermissions();
         const payload = response?.data ?? response;
-        const permissions = payload?.data?.permissions || [];
+        const permissions =
+          payload?.data?.permission || payload?.data?.permissions || [];
         setDraft((prev) => ({
           ...prev,
           permissions,
@@ -383,19 +386,7 @@ export default function WorkspaceSetupPage() {
       <aside className="w-full md:w-80 md:h-screen bg-gradient-to-b from-slate-800/60 via-slate-900/70 to-slate-950/80 border-b md:border-b-0 md:border-r border-white/10 flex flex-row md:flex-col sticky top-0 md:sticky z-40 shadow-2xl backdrop-blur-xl">
         <div className="p-4 md:p-8 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/60 rounded-xl flex items-center justify-center border border-primary/40 shadow-lg shadow-primary/20 transition-all duration-300 group-hover:shadow-primary/40">
-              <span className="material-symbols-outlined text-white text-2xl">
-                inventory_2
-              </span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white leading-tight">
-                Quatinx
-              </h1>
-              <p className="text-[10px] text-white/60 tracking-[0.2em] uppercase font-semibold">
-                Enterprise Cloud
-              </p>
-            </div>
+            <Logo />
           </div>
         </div>
 
@@ -461,6 +452,17 @@ export default function WorkspaceSetupPage() {
       </aside>
 
       <main className="flex-1 flex flex-col relative overflow-hidden bg-slate-950">
+        {syncState === "saving" ? (
+          <div className="fixed bottom-4 right-4 z-50 bg-slate-900/95 border border-white/15 rounded-lg px-3 py-2 shadow-lg backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-white/85 text-xs uppercase tracking-wider font-semibold">
+              <span className="material-symbols-outlined text-sm animate-spin">
+                autorenew
+              </span>
+              Sauvegarde...
+            </div>
+          </div>
+        ) : null}
+
         <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-slate-950/80 to-transparent z-10 pointer-events-none"></div>
         <div className="flex-1 overflow-y-auto scrollbar-custom px-6 md:px-12 py-24 z-0">
           <div className="max-w-4xl mx-auto">
@@ -1060,13 +1062,12 @@ export default function WorkspaceSetupPage() {
             {currentStep === 8 ? (
               <section>
                 <div className="flex flex-col items-center justify-center min-h-[500px] text-center space-y-12 animate-slide-in">
-                  <div className="relative rounded-full">
-                    <div className="w-40 h-40 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-5xl text-primary animate-pulse">
-                        cloud_upload
-                      </span>
-                    </div>
+                  <div
+                    className="relative rounded-full"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <Loader size={170} className="animate-pulse" />
                   </div>
                   <div className="space-y-2">
                     <p className="text-primary tracking-[0.3em] font-bold uppercase">
